@@ -373,13 +373,27 @@ The positioning still looks strong, but the claim should stay modest: there does
 
 GCP remains the awkward provider in a PowerShell-first workflow. Even if Cloud Tools for PowerShell still exists, it is much less central than `Az` and `AWS.Tools.*`, and many practitioners will already be reaching for the `gcloud` CLI or REST APIs.
 
-**What this means for the module:** the GCP layer should be treated as an adapter boundary. For Summit scope, wrapping `gcloud` JSON output is probably the fastest honest path. Direct REST calls are possible, but they introduce auth, pagination, and schema work you do not need for a 25-minute talk.
+**Decision:** for PSCumulus v1, the GCP layer should be treated as a `gcloud` adapter boundary. That is now the planned implementation path.
+
+**What this means for the module:** wrap `gcloud` JSON output instead of building directly on REST or trying to invest in a PowerShell-specific Google SDK path. Direct REST calls are still possible later, but they introduce auth, pagination, and schema work you do not need for a 25-minute talk.
 
 **What this means for the talk:** it strengthens the story that PowerShell is your stable lens even when the provider-specific experience is uneven.
 
 > *"Azure and AWS both have mature PowerShell stories. GCP is where the seams show fastest. That friction is exactly why I wanted one familiar lens in front of all three."*
 
 That framing is safer than citing a specific deprecation claim you may need to defend live.
+
+### GCP implementation shape
+
+Keep the implementation boring and explicit:
+
+1. Verify `gcloud` is installed.
+2. Verify the user is authenticated and a project has been supplied or resolved.
+3. Invoke `gcloud ... --format=json --quiet`.
+4. Parse JSON into PowerShell objects.
+5. Normalize those objects into the PSCumulus record shape.
+
+Do not mutate global `gcloud` config unless you have to. Prefer passing `--project` explicitly in module commands.
 
 ---
 
@@ -401,7 +415,7 @@ The research confirms Version B is a mistake. Build Version A.
 
 ### The real risks, named honestly
 
-1. **GCP is the least straightforward backend.** Even if Google still ships PowerShell tooling, `gcloud` JSON wrapping is likely the fastest route to a reliable demo.
+1. **GCP is the least straightforward backend.** The sustainable v1 answer is a `gcloud`-backed adapter, which is practical but still adds CLI dependency and parsing concerns.
 2. **IAM/identity cannot be cleanly abstracted.** This is already the planned "where it breaks" section — lean into it rather than fighting it.
 3. **Maintenance compounds fast.** AWS has 300+ sub-modules. Az has 7,000+ cmdlets. Never try to wrap all of it.
 4. **The abstraction ceiling is real.** Networking has the same seams as IAM. Know your ceiling before you start.
@@ -417,8 +431,8 @@ The module is a proof of concept, not a launch. Three working commands. Honest s
 
 The module only needs to exist enough to demo 2-3 commands convincingly. Prioritize:
 
-1. `Connect-Cloud` — the credential abstraction. This is the demo that lands first. GCP should likely wrap `gcloud auth login`, `gcloud auth application-default login`, or a service-account path depending on audience reality.
-2. `Get-CloudInstance` — the poster child for the abstraction working. GCP backend can wrap `gcloud compute instances list --format=json`
+1. `Connect-Cloud` — the credential abstraction. For GCP, validate `gcloud`, validate auth/context, and avoid owning the full auth flow.
+2. `Get-CloudInstance` — the poster child for the abstraction working. GCP backend should wrap `gcloud compute instances list --project <project> --format=json`
 3. `Get-CloudStorage` or `Get-CloudTag` — pick one based on which produces the cleanest cross-cloud output with the least provider-specific weirdness
 4. One deliberate failure case — IAM — to support the "where it breaks" section
 
@@ -429,7 +443,7 @@ Don't polish. Ship enough to be honest about.
 ## Open Questions / Next Steps
 
 - [ ] **Choose module name** — PSCirrus still feels strong, but re-check availability before you commit publicly
-- [ ] **Decide on GCP backend approach** — default to `gcloud` CLI wrapping unless a REST requirement appears
+- [x] **Decide on GCP backend approach** — use `gcloud` CLI wrapping for v1 unless a later REST requirement appears
 - [ ] Decide on Terraform: keep brief or cut entirely
 - [ ] Pick the third service category (tagging recommended over networking)
 - [ ] Write the opening 90 seconds word for word — this is the highest leverage writing in the talk

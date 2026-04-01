@@ -131,7 +131,25 @@ PSCumulus/
 
 The current scaffold is intentionally incomplete. Public commands exist, module loading works, and provider-specific implementations are being added incrementally.
 
-Today, the first real backend paths are Azure and AWS connection plus instance inventory. Storage, tags, and the GCP provider still need fuller implementations.
+Today, the first real backend paths are Azure and AWS connection plus instance inventory. Storage and tag backends are still scaffolded. GCP is planned as a `gcloud`-backed adapter rather than a direct REST or PowerShell-SDK implementation for v1.
+
+## GCP Strategy
+
+PSCumulus will implement GCP support through the `gcloud` CLI for v1.
+
+That choice is intentional:
+
+- it is the most practical and sustainable path for a narrow Summit demo module
+- Google's PowerShell tooling is less central and less actively evolved than the Azure and AWS PowerShell ecosystems
+- it keeps auth aligned with `gcloud auth login` / `gcloud auth application-default login`
+- it gives predictable machine-readable output via `--format=json`
+- it avoids building a custom Google auth and REST layer too early
+
+The planned first GCP slice is:
+
+1. `Connect-GCPBackend`
+2. `Get-GCPInstanceData`
+3. shared `gcloud` JSON invocation helper
 
 ---
 
@@ -196,3 +214,4 @@ MIT — see [LICENSE](./LICENSE).
 - **Slide theme:** [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026) — Marp theme for PowerShell + DevOps Global Summit 2026
 - **Slide review:** [Death by PowerPoint skill](https://github.com/HeyItsGilbert/marketplace/blob/main/plugins/presentation-review/skills/death-by-ppt/SKILL.md) by [@HeyItsGilbert](https://github.com/HeyItsGilbert), based on David JP Phillips' ["How to Avoid Death by PowerPoint"](https://www.youtube.com/watch?v=Iwpi1Lm6dFo)
 - **PowerShell module guidance:** [PoshCode/PowerShellPracticeAndStyle](https://github.com/PoshCode/PowerShellPracticeAndStyle) — used as a reference for function structure, help, output behavior, and packaging hygiene
+- **Google Cloud implementation direction:** current Google Cloud CLI and authentication documentation informed the decision to use a `gcloud`-backed adapter for GCP in PSCumulus v1
