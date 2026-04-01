@@ -23,7 +23,7 @@ Today, this repo contains:
 - a Marp slide skeleton in `slides/PSCumulus.md`
 - an early PowerShell module scaffold for the proof of concept
 
-If your focus is the module, start with `PSCumulus.psd1`, `PSCumulus.psm1`, `Public/`, `Private/`, and `docs/MODULE-ROADMAP.md`.
+If your focus is the module, start with `PSCumulus.psd1`, `PSCumulus.psm1`, `Public/`, `Private/`, `docs/MODULE-ROADMAP.md`, and `docs/NORMALIZATION-STRATEGY.md`.
 
 ---
 
@@ -86,6 +86,10 @@ All commands return a `PSCustomObject` with consistent properties:
 | `Size`      | Instance type / SKU                |
 | `CreatedAt` | Timestamp (where available)        |
 
+The design approach is documented in [`docs/NORMALIZATION-STRATEGY.md`](./docs/NORMALIZATION-STRATEGY.md): normalize by intent, preserve native details in `Metadata`, and stop abstracting when the underlying models are genuinely different.
+
+The `Cloud*` naming is intentional. `Get-CloudInstance` and `Get-CloudStorage` make the public abstraction explicit, avoid likely collisions with provider- or hypervisor-specific modules, and leave room for provider-native detail to live in `Metadata`.
+
 ---
 
 ## Where It Breaks
@@ -131,7 +135,7 @@ PSCumulus/
 
 The current scaffold is intentionally incomplete. Public commands exist, module loading works, and provider-specific implementations are being added incrementally.
 
-Today, the first real backend paths are Azure and AWS connection plus instance inventory. Storage and tag backends are still scaffolded. GCP is planned as a `gcloud`-backed adapter rather than a direct REST or PowerShell-SDK implementation for v1.
+Today, the first real backend paths are Azure, AWS, and GCP connection plus instance inventory. Storage and tag backends are still scaffolded. GCP uses a `gcloud`-backed adapter rather than a direct REST or PowerShell-SDK implementation for v1.
 
 ## GCP Strategy
 
@@ -151,6 +155,27 @@ The planned first GCP slice is:
 2. `Get-GCPInstanceData`
 3. shared `gcloud` JSON invocation helper
 
+## Why Not Terraform?
+
+PSCumulus does not compete with Terraform. It operates at a different layer.
+
+Terraform standardizes how infrastructure is declared and provisioned.
+
+PSCumulus standardizes how infrastructure is queried and interacted with across clouds.
+
+PSCumulus focuses on:
+
+- consistent command patterns
+- normalized output objects
+- interactive operator workflows
+- reducing cognitive switching cost across clouds
+
+Terraform remains the right tool for provisioning. PSCumulus complements it by improving day-to-day cross-cloud usability.
+
+Short version:
+
+> Terraform standardizes infrastructure. PSCumulus standardizes how humans interact with infrastructure across clouds.
+
 ---
 
 ## The Talk
@@ -160,6 +185,8 @@ The planned first GCP slice is:
 The surface story: here's how to use PowerShell across three clouds.
 
 The deep story: here's what happens to your brain when the map doesn't match the territory, and why reaching for a familiar tool is a legitimate engineering decision.
+
+The working spoken argument is captured in `slides/TALK-TRACK.md`.
 
 **Key takeaways:**
 - How to connect to Azure, AWS, and GCP with PowerShell

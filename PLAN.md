@@ -193,9 +193,20 @@ Frame this as **discovery, not instruction.** You're showing them the map you dr
 
 Terraform is an elephant in the room. Address it in under 3 minutes.
 
-One clear framing: *"PowerShell is the shell around the shell. Terraform provisions. PowerShell operates."*
+One clear framing: *"Terraform standardizes infrastructure. PSCumulus standardizes how humans interact with infrastructure across clouds."*
+
+Secondary framing: *"PowerShell is the shell around the shell. Terraform provisions. PowerShell operates."*
 
 One concrete example: a post-deploy tagging compliance check, or drift detection piped into a report.
+
+Important distinction to say out loud:
+
+- Terraform standardizes desired state
+- PSCumulus standardizes operator intent and output shape
+
+Useful line:
+
+> *"Terraform is not an operational shell. PSCumulus is intentionally behaving like one."*
 
 **Do not demo the integration.** Name the relationship, show one real use, and move. Every minute spent on Terraform is a minute not spent on the human story.
 

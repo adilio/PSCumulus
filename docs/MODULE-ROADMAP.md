@@ -13,7 +13,7 @@
 
 - Azure: `Connect-Cloud` and `Get-CloudInstance` backend path implemented via `Az.*`
 - AWS: `Connect-Cloud` and `Get-CloudInstance` backend path implemented via `AWS.Tools.*`
-- GCP: adapter strategy chosen, implementation pending
+- GCP: `Connect-Cloud` and `Get-CloudInstance` backend path implemented via `gcloud`
 - Storage and tag backends: still scaffolded
 
 ## Output contract
@@ -27,6 +27,18 @@ Public inventory-style commands should normalize results into a single object sh
 - `Size`
 - `CreatedAt`
 - `Metadata`
+
+See also: `docs/NORMALIZATION-STRATEGY.md`
+
+## Public naming
+
+The normalized public surface should continue using `Cloud*` nouns for now:
+
+- `Get-CloudInstance`
+- `Get-CloudStorage`
+- `Get-CloudTag`
+
+That naming keeps the abstraction explicit and avoids boxing the module into provider-native nouns too early.
 
 ## Provider strategy
 

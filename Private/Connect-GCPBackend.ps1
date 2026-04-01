@@ -4,6 +4,14 @@ function Connect-GCPBackend {
         [string]$Project
     )
 
-    throw 'Connect-GCPBackend is not implemented yet.'
-}
+    $activeAccount = Assert-GCloudAuthenticated
+    $resolvedProject = Get-GCloudProject -Project $Project
 
+    [pscustomobject]@{
+        PSTypeName   = 'PSCumulus.ConnectionResult'
+        Provider     = 'GCP'
+        Connected    = $true
+        Account      = $activeAccount.account
+        Project      = $resolvedProject
+    }
+}

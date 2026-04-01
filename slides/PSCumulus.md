@@ -165,15 +165,49 @@ Get-EC2Tag
 # Terraform, Briefly
 
 <div class="callout secondary">
-  <h3>Terraform provisions.</h3>
-  <p>PowerShell operates.</p>
+  <h3>Terraform standardizes infrastructure.</h3>
+  <p>PSCumulus standardizes interaction.</p>
 </div>
+
+<!--
+Speaker notes:
+- Terraform is not the wrong tool.
+- It is the wrong layer for the exact problem this module is addressing.
+- "Terraform abstracts resources; PSCumulus abstracts intent."
+-->
+
+---
+
+# Different Layer
+
+<div class="primary-list">
+
+- Terraform: desired state
+- PSCumulus: operator intent
+- Terraform: provisioning
+- PSCumulus: interactive querying
+
+</div>
+
+<!--
+Speaker notes:
+- Say: "Terraform standardizes what exists; PSCumulus standardizes how I interact with what exists."
+- Say: "Terraform is a state engine. PSCumulus is closer to an operational shell."
+- Do not over-explain. This slide is here to make the distinction feel concrete.
+-->
 
 ---
 
 # Where It Breaks
 
 You cannot honestly unify IAM into one neat noun.
+
+<!--
+Speaker notes:
+- This is also part of the Terraform rebuttal.
+- The point is not "Terraform bad"; the point is that these clouds are genuinely different systems.
+- Abstraction is useful only until it becomes misleading.
+-->
 
 ---
 
@@ -206,4 +240,3 @@ What is the tool you will still trust when the job gets weird?
 - questions after
 
 </div>
-
