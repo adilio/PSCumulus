@@ -93,6 +93,34 @@ The technical content rides on top of an emotional arc. Map them together:
 
 ---
 
+## Slide Design Guardrails
+
+Use the HeyItsGilbert `death-by-ppt` skill and the Summit 2026 Marp theme as active constraints while building the deck, not as polish at the end.
+
+### Non-negotiables per slide
+
+- **One message per slide.** If a slide has two takeaways, it is two slides.
+- **Six objects max.** Count headings, bullets, images, icons, code blocks, diagrams, and table chunks.
+- **Prefer phrases over sentences.** The deck should support spoken delivery, not duplicate it.
+- **Make the key idea visually dominant.** The most important thing should be the largest or highest-contrast element.
+- **Density matters more than slide count.** More slides is fine if each one is easy to absorb.
+
+### What this means for this talk
+
+- Open with a nearly blank slide or no slide at all. Do not start with an agenda.
+- Comparative slides should show one concept at a time: compute, then storage, then tagging.
+- Code should be cropped to the few lines the audience actually needs to see.
+- Tables must stay simple. If a comparison table starts to feel like reference material, split it.
+- Any slide that feels like something you would read aloud should be rewritten into keywords and speaker notes.
+
+### Pacing heuristics
+
+- Alternate between story slides, comparison slides, and proof slides so the deck never gets visually monotonous.
+- Use "breathing room" slides after any dense comparison or code example.
+- Keep the IAM failure section visually cleaner than the success section so the contrast helps the lesson land.
+
+---
+
 ## Structural Flow
 
 ### 0:00 - 2:00 | The Wreck
@@ -132,7 +160,7 @@ How you started connecting to each cloud. Lead with credential chaos — that's 
 Show the three auth models side by side:
 - `Connect-AzAccount`
 - `Set-AWSCredential`
-- `gcloud auth` via wrapper or `Invoke-Expression`
+- `gcloud auth login` or `gcloud auth application-default login`
 
 Three CLIs, three auth models, three config file locations. Then show the moment you wrote your first wrapper function and how much smaller the problem felt.
 
@@ -152,7 +180,7 @@ The comparative meat of the talk. Pick three service categories. Go deep enough 
 | Concept | Azure | AWS | GCP |
 |---|---|---|---|
 | Compute | `Get-AzVM` | `Get-EC2Instance` | `gcloud compute instances list` |
-| Storage | `Get-AzStorageAccount` | `Get-S3Bucket` | `gsutil ls` |
+| Storage | `Get-AzStorageAccount` | `Get-S3Bucket` | `gcloud storage ls` |
 | Tags | `Get-AzTag` | `Get-EC2Tag` | Labels via REST |
 
 For each: show the raw provider command, then show your wrapper. Let the audience see the translation layer working.
@@ -249,12 +277,12 @@ That's a better story than "here's a module I built."
 Shortlisted from brainstorm (PSX-style, cloud noun pattern):
 
 - **PSCirrus** — cirrus clouds are high-altitude, span everything, sounds fast and light. Matches the thin abstraction layer design philosophy. Recommended.
-- **PSNimbus** — more substantial sounding, also unclaimed
+- **PSNimbus** — more substantial sounding, strong runner-up
 - **PSStratus** — layered clouds, layered abstraction
 - **PSXCloud** — explicit, the X implies cross/multi
 - **CloudShim** — honest about what it does, no PS prefix
 
-All of the above are **completely unclaimed** on PowerShell Gallery and GitHub (confirmed via research).
+Treat availability as a point-in-time check, not a permanent fact. Re-verify package and repo availability before publishing anything externally.
 
 ---
 
@@ -282,8 +310,19 @@ CrossCloud/
 - Consistent output objects: `PSCustomObject` with standard properties across all providers
   - `Name`, `Provider`, `Region`, `Status`, `Size`, `CreatedAt`
 - Provider param on every public function, not baked into the noun
-- No hard dependencies beyond official SDKs: `Az`, `AWS.Tools.*` — GCP handled via `gcloud` CLI wrapping (see GCP deprecation note below)
+- No hard dependencies beyond official SDKs: `Az`, `AWS.Tools.*` — GCP handled via `gcloud` CLI wrapping (see GCP tooling note below)
 - Explicit over clever: when abstraction gets messy, write three clear functions
+
+### Deck Implementation Notes
+
+Build the slides in Marp with the Summit theme from the start:
+
+- Front-matter should include `marp: true`, `theme: summit-2026`, and `paginate: true`
+- Use `<!-- _class: title -->` for the opening slide rather than inventing a custom title layout
+- Prefer the theme's callouts, branded list styles, and text emphasis utilities over ad hoc HTML/CSS
+- Use `header:` and `footer:` intentionally, but avoid cluttering minimal slides with repeated metadata
+- Default background treatment should follow the theme; use `<!-- _class: no_background -->` only when it improves contrast or focus
+- Treat long paragraphs as speaker-note material, not slide content
 
 ### The Core API Pattern
 
@@ -303,11 +342,11 @@ Get-GCPIAMBinding -Project "my-project"
 
 ## PS Gallery Research: The Space Is Wide Open
 
-Systematic searches across PowerShell Gallery (15,326+ packages) and GitHub found **zero modules** that provide a unified abstraction layer across Azure, AWS, and GCP. The niche is completely unoccupied.
+The positioning still looks strong, but the claim should stay modest: there does not appear to be a widely adopted PowerShell module that offers a clean Azure/AWS/GCP abstraction for the narrow IaaS-style use case this talk is targeting. That is enough to justify the talk. It does **not** require proving that no similar code exists anywhere.
 
 ### What was searched and found
 
-**Names that don't exist at all on PS Gallery:** CloudShim, PSNimbus, PSCirrus, PSStratus, PolyCloud — all completely unclaimed.
+**Name check guidance:** treat names like CloudShim, PSNimbus, PSCirrus, PSStratus, and PolyCloud as candidates that must be re-checked close to publication. Avoid locking the talk strategy to any one name until that check is repeated.
 
 **Names that exist but serve different purposes:**
 - `PSCloudPC` — Windows 365 only (23,709 downloads)
@@ -317,7 +356,7 @@ Systematic searches across PowerShell Gallery (15,326+ packages) and GitHub foun
 
 **GitHub near-miss worth noting:** `viciousviper/PowerShellCloudProvider` implements a unified PS filesystem provider across multiple clouds — but targets consumer storage (OneDrive, Google Drive, Box), not IaaS. Last updated 2015. The design pattern validates the technical approach even if the scope is different.
 
-**Cross-cloud abstraction exists in other languages** — Python's CloudBridge, C#'s FluentStorage, TypeScript's storage-abstraction — proving the pattern is viable and in demand. Nobody has done it in PowerShell.
+**Cross-cloud abstraction exists in other ecosystems** — for example Python's CloudBridge. That helps validate the pattern. Avoid overstating demand or uniqueness unless you have fresh evidence in hand.
 
 ### The competitive landscape summary
 
@@ -325,22 +364,22 @@ Systematic searches across PowerShell Gallery (15,326+ packages) and GitHub foun
 |---|---|---|
 | Azure | Az.\* | Actively maintained by Microsoft |
 | AWS | AWS.Tools.\* | Actively maintained by Amazon |
-| GCP | GoogleCloud | **Deprecated January 14, 2026** |
-| Cross-cloud abstraction | — | **Does not exist** |
+| GCP | GoogleCloud / Cloud Tools for PowerShell docs still present | Less central in the PowerShell ecosystem; verify current support posture before citing it live |
+| Cross-cloud abstraction | No obvious dominant module found | Good gap signal, but phrase carefully |
 
 ---
 
-## The GCP Deprecation: Risk and Opportunity
+## GCP Tooling: Risk and Opportunity
 
-Google deprecated Cloud Tools for PowerShell on **January 14, 2026** — six weeks before this talk. It can no longer be installed via the Google Cloud CLI.
+GCP remains the awkward provider in a PowerShell-first workflow. Even if Cloud Tools for PowerShell still exists, it is much less central than `Az` and `AWS.Tools.*`, and many practitioners will already be reaching for the `gcloud` CLI or REST APIs.
 
-**What this means for the module:** There is no first-party GCP PowerShell SDK to wrap. The GCP layer must either call GCP REST APIs directly or wrap `gcloud` CLI output into PowerShell objects. This raises the implementation bar slightly but also increases the value proposition.
+**What this means for the module:** the GCP layer should be treated as an adapter boundary. For Summit scope, wrapping `gcloud` JSON output is probably the fastest honest path. Direct REST calls are possible, but they introduce auth, pagination, and schema work you do not need for a 25-minute talk.
 
-**What this means for the talk:** It's a gift. Use it.
+**What this means for the talk:** it strengthens the story that PowerShell is your stable lens even when the provider-specific experience is uneven.
 
-> *"Google deprecated their PowerShell module two months ago. Which is peak multi-cloud chaos. And also exactly why something like this needs to exist."*
+> *"Azure and AWS both have mature PowerShell stories. GCP is where the seams show fastest. That friction is exactly why I wanted one familiar lens in front of all three."*
 
-That line belongs in the talk. It makes the module feel timely rather than academic, and it validates the audience's frustration in real time.
+That framing is safer than citing a specific deprecation claim you may need to defend live.
 
 ---
 
@@ -350,7 +389,7 @@ That line belongs in the talk. It makes the module feel timely rather than acade
 
 ### The talk is not a mistake
 
-The research strengthens it. The gap being empty is itself a story beat. Nobody expects a production-grade multi-cloud framework in a 25-minute 100-level Fast Focus. The module exists to prove a point and tell a story, not to ship to prod.
+The research strengthens it. The point is not "nobody has ever tried this," it's "this remains a messy enough problem that the audience will recognize it immediately." Nobody expects a production-grade multi-cloud framework in a 25-minute 100-level Fast Focus. The module exists to prove a point and tell a story, not to ship to prod.
 
 ### The module has two versions — only one is a mistake
 
@@ -362,10 +401,11 @@ The research confirms Version B is a mistake. Build Version A.
 
 ### The real risks, named honestly
 
-1. **GCP has no SDK to wrap.** You're calling REST or wrapping CLI output. More work than Azure/AWS but doable at Summit scope.
+1. **GCP is the least straightforward backend.** Even if Google still ships PowerShell tooling, `gcloud` JSON wrapping is likely the fastest route to a reliable demo.
 2. **IAM/identity cannot be cleanly abstracted.** This is already the planned "where it breaks" section — lean into it rather than fighting it.
 3. **Maintenance compounds fast.** AWS has 300+ sub-modules. Az has 7,000+ cmdlets. Never try to wrap all of it.
 4. **The abstraction ceiling is real.** Networking has the same seams as IAM. Know your ceiling before you start.
+5. **Live credibility depends on accuracy.** Avoid claims like "this does not exist anywhere" or "Google killed the module" unless you have re-verified them that week.
 
 ### The right framing for Summit
 
@@ -377,9 +417,10 @@ The module is a proof of concept, not a launch. Three working commands. Honest s
 
 The module only needs to exist enough to demo 2-3 commands convincingly. Prioritize:
 
-1. `Connect-Cloud` — the credential abstraction. This is the demo that lands first. GCP auth wraps `gcloud auth print-access-token` or `gcloud auth application-default login`
-2. `Get-CloudInstance` — the poster child for the abstraction working. GCP backend wraps `gcloud compute instances list --format=json`
-3. One deliberate failure case — IAM — to support the "where it breaks" section
+1. `Connect-Cloud` — the credential abstraction. This is the demo that lands first. GCP should likely wrap `gcloud auth login`, `gcloud auth application-default login`, or a service-account path depending on audience reality.
+2. `Get-CloudInstance` — the poster child for the abstraction working. GCP backend can wrap `gcloud compute instances list --format=json`
+3. `Get-CloudStorage` or `Get-CloudTag` — pick one based on which produces the cleanest cross-cloud output with the least provider-specific weirdness
+4. One deliberate failure case — IAM — to support the "where it breaks" section
 
 Don't polish. Ship enough to be honest about.
 
@@ -387,15 +428,15 @@ Don't polish. Ship enough to be honest about.
 
 ## Open Questions / Next Steps
 
-- [ ] **Choose module name** — PSCirrus recommended, PSNimbus as runner-up (both confirmed unclaimed)
-- [ ] **Decide on GCP backend approach** — `gcloud` CLI wrapping vs REST API calls
+- [ ] **Choose module name** — PSCirrus still feels strong, but re-check availability before you commit publicly
+- [ ] **Decide on GCP backend approach** — default to `gcloud` CLI wrapping unless a REST requirement appears
 - [ ] Decide on Terraform: keep brief or cut entirely
 - [ ] Pick the third service category (tagging recommended over networking)
 - [ ] Write the opening 90 seconds word for word — this is the highest leverage writing in the talk
 - [ ] Build `Connect-Cloud` and `Get-CloudInstance` as working prototypes
 - [ ] Draft the "where it breaks" demo with the IAM example
 - [ ] Write the closing provocation and test it out loud
-- [ ] Add the GCP deprecation line to the talk — it's a gift, use it
+- [ ] Add one current-source fact check pass the week before Summit so your live claims stay fresh
 
 ---
 
@@ -408,4 +449,3 @@ This was planned as a **Fast Focus (25 min)**. If it gets moved to General Sessi
 - Deepen the module demo — show actual output objects being piped
 - Add a Q&A buffer at the end
 - The emotional arc and thesis do not change
-

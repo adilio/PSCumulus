@@ -17,6 +17,14 @@ It is **not** a general-purpose cloud management framework. It is a proof of con
 
 Mostly yes. [Except for IAM.](#where-it-breaks)
 
+Today, this repo contains:
+
+- a detailed talk plan in `PLAN.md`
+- a Marp slide skeleton in `slides/PSCumulus.md`
+- an early PowerShell module scaffold for the proof of concept
+
+If your focus is the module, start with `PSCumulus.psd1`, `PSCumulus.psm1`, `Public/`, `Private/`, and `docs/MODULE-ROADMAP.md`.
+
 ---
 
 ## Quick Start
@@ -104,6 +112,7 @@ PSCumulus/
 ├── PSCumulus.psd1
 ├── PSCumulus.psm1
 ├── Private/
+│   ├── ConvertTo-CloudRecord.ps1
 │   ├── Connect-AzureBackend.ps1
 │   ├── Connect-AWSBackend.ps1
 │   └── Connect-GCPBackend.ps1
@@ -119,6 +128,8 @@ PSCumulus/
 - Provider param on every public function — not baked into the noun
 - No hard dependencies beyond official SDKs; GCP wraps `gcloud` CLI output
 - Explicit over clever — when abstraction gets messy, write three clear functions
+
+The current scaffold is intentionally incomplete. Public commands exist, module loading works, and provider-specific implementations are still placeholders.
 
 ---
 
@@ -155,6 +166,8 @@ marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --pdf --allow-local-fil
 # Export to PPTX
 marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --pptx --allow-local-files --output .\dist\PSCumulus.pptx
 ```
+
+The deck skeleton follows the slide constraints captured in `PLAN.md` and the Death by PowerPoint review guidance referenced in the attribution section.
 
 ---
 
