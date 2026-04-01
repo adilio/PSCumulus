@@ -38,7 +38,7 @@ Install-Module Az -Scope CurrentUser
 # AWS
 Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 
-# GCP — requires gcloud CLI (no PowerShell SDK; Google deprecated it Jan 14, 2026)
+# GCP — requires gcloud CLI
 # https://cloud.google.com/sdk/docs/install
 ```
 
@@ -131,6 +131,8 @@ PSCumulus/
 
 The current scaffold is intentionally incomplete. Public commands exist, module loading works, and provider-specific implementations are still placeholders.
 
+Today, the first real backend path is Azure connection plus Azure instance inventory. The AWS and GCP backends are still placeholders.
+
 ---
 
 ## The Talk
@@ -193,3 +195,4 @@ MIT — see [LICENSE](./LICENSE).
 
 - **Slide theme:** [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026) — Marp theme for PowerShell + DevOps Global Summit 2026
 - **Slide review:** [Death by PowerPoint skill](https://github.com/HeyItsGilbert/marketplace/blob/main/plugins/presentation-review/skills/death-by-ppt/SKILL.md) by [@HeyItsGilbert](https://github.com/HeyItsGilbert), based on David JP Phillips' ["How to Avoid Death by PowerPoint"](https://www.youtube.com/watch?v=Iwpi1Lm6dFo)
+- **PowerShell module guidance:** [PoshCode/PowerShellPracticeAndStyle](https://github.com/PoshCode/PowerShellPracticeAndStyle) — used as a reference for function structure, help, output behavior, and packaging hygiene
