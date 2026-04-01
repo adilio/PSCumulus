@@ -1,7 +1,9 @@
 function ConvertTo-CloudRecord {
     [CmdletBinding()]
+    [OutputType([pscustomobject])]
     param(
         [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string]$Name,
 
         [Parameter(Mandatory)]
@@ -15,7 +17,7 @@ function ConvertTo-CloudRecord {
         [hashtable]$Metadata = @{}
     )
 
-    [pscustomobject]@{
+    $record = [pscustomobject]@{
         Name      = $Name
         Provider  = $Provider
         Region    = $Region
@@ -24,5 +26,8 @@ function ConvertTo-CloudRecord {
         CreatedAt = $CreatedAt
         Metadata  = $Metadata
     }
-}
 
+    $record.PSObject.TypeNames.Insert(0, 'PSCumulus.CloudRecord')
+
+    $record
+}

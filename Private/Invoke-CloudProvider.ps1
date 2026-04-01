@@ -14,15 +14,20 @@ function Invoke-CloudProvider {
     $commandName = $CommandMap[$Provider]
 
     if (-not $commandName) {
-        throw "No command mapping exists for provider '$Provider'."
+        throw [System.InvalidOperationException]::new(
+            "No command mapping exists for provider '$Provider'."
+        )
     }
 
-    $command = Get-Command -Name $commandName -ErrorAction SilentlyContinue
-
-    if (-not $command) {
-        throw "Mapped command '$commandName' was not found."
+    try {
+        $null = Get-Command -Name $commandName -ErrorAction Stop
+    } catch {
+        $errorRecord = $_
+        throw [System.Management.Automation.CommandNotFoundException]::new(
+            "Mapped command '$commandName' was not found for provider '$Provider'.",
+            $errorRecord.Exception
+        )
     }
 
-    & $command @ArgumentMap
+    & $commandName @ArgumentMap
 }
-

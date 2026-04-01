@@ -16,7 +16,7 @@
     )
 
     CmdletsToExport   = @()
-    VariablesToExport = '*'
+    VariablesToExport = @()
     AliasesToExport   = @()
 
     PrivateData = @{
@@ -28,4 +28,3 @@
         }
     }
 }
-
