@@ -129,9 +129,9 @@ PSCumulus/
 - No hard dependencies beyond official SDKs; GCP wraps `gcloud` CLI output
 - Explicit over clever — when abstraction gets messy, write three clear functions
 
-The current scaffold is intentionally incomplete. Public commands exist, module loading works, and provider-specific implementations are still placeholders.
+The current scaffold is intentionally incomplete. Public commands exist, module loading works, and provider-specific implementations are being added incrementally.
 
-Today, the first real backend path is Azure connection plus Azure instance inventory. The AWS and GCP backends are still placeholders.
+Today, the first real backend paths are Azure and AWS connection plus instance inventory. Storage, tags, and the GCP provider still need fuller implementations.
 
 ---
 
