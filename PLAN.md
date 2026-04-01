@@ -1,0 +1,411 @@
+# Cross-Cloud without Crossed Fingers: Talk Planning Document
+
+> PowerShell Summit 2026 | April 13-16, Bellevue, WA
+> Fast Focus | 25 Minutes | Level 100 (Beginner) | Session confirmed
+
+---
+
+## Session Details
+
+- **Full Title:** Cross-Cloud without Crossed Fingers: Surviving Azure, AWS, and GCP with PowerShell
+- **Format:** Fast Focus (25 minutes), also accepted as General Session (45 min)
+- **Level:** 100 (Beginner)
+- **Primary Category:** Cloud
+- **Additional Categories:** PowerShell, DevOps, Automation, Real-World Solutions
+- **Submitted:** 31 Aug 2025 | Accepted: 27 Oct 2025
+
+### Key Takeaways (as submitted)
+- How to connect to Azure, AWS, and GCP with PowerShell
+- The similarities and differences between common services in each cloud
+- Ways Terraform and PowerShell can complement each other
+- Lessons from building a PowerShell module for cross-cloud resource management
+
+---
+
+## What This Talk Is Actually About
+
+On the surface: PowerShell across three clouds.
+
+Underneath: **cognitive overload and the survival instinct to reach for familiar tools.**
+
+The clouds are the setting. PowerShell is the coping mechanism. The real subject is: *what do you do when the map doesn't match the territory?*
+
+This talk resonates beyond the PowerShell crowd because it speaks to a universal engineering experience: being handed responsibility you didn't ask for, in a system that wasn't designed to make sense.
+
+---
+
+## Core Thesis
+
+> **"Build on what doesn't move."**
+
+Extended version: *"Fluency is infrastructure. The tool you already trust is the one you should build on top of."*
+
+One-liner for the hallway: *"You don't need to master three clouds. You need one stable lens to see through all three."*
+
+---
+
+## The Philosophical Claim
+
+The industry has a bias toward "right tool for the job." Your talk is a **counter-argument to that orthodoxy** — not a rejection, but a complication.
+
+When operating in a high-uncertainty environment, the cognitive cost of context-switching tools is real and underestimated. Every time you pick up a tool you're less fluent in, you're spending working memory on syntax instead of the problem.
+
+PowerShell didn't make you faster because it's technically superior. It made you faster because **you already had the keystrokes in your hands.** Your fingers knew where things were. That freed your brain to think about cloud architecture instead of flag syntax.
+
+**Familiarity is an underrated engineering virtue.** Say that out loud in the talk.
+
+---
+
+## The Surface Story and The Deep Story
+
+Every great conference talk has two stories running in parallel.
+
+**Surface story:** Here's how I use PowerShell to manage Azure, AWS, and GCP.
+
+**Deep story:** Here's what I learned about myself and how I work when I was out of my depth.
+
+The deep story is what people remember a year later. The surface story is what makes it feel useful in the moment. Weave both threads through the entire talk. Don't abandon the human thread when the first slide appears.
+
+---
+
+## Who Is In That Room
+
+- Sysadmins and cloud engineers who've been handed multi-cloud responsibility they didn't ask for
+- People who know PowerShell well but feel lost once they leave Azure
+- People who feel like they're the only one who doesn't have it figured out
+
+The last group is the most important. **Imposter syndrome is rampant in multi-cloud work** because the surface area is enormous and everyone pretends to know more than they do. This talk has a chance to say: *"yeah, it's actually just as messy for everyone."* That's a gift. Lead with it.
+
+---
+
+## Emotional Architecture
+
+The technical content rides on top of an emotional arc. Map them together:
+
+| Time | Technical Beat | Emotional Beat |
+|---|---|---|
+| 0:00 - 3:00 | The chaos origin story | **Recognition** — audience sees themselves |
+| 3:00 - 6:00 | Why multi-cloud is genuinely hard | **Relief** — it's not their fault |
+| 6:00 - 14:00 | Comparative services section | **Curiosity** — discovery, not instruction |
+| 14:00 - 18:00 | The module and the abstraction | **Delight** — simplicity emerging from chaos |
+| 18:00 - 22:00 | Where the abstraction breaks | **Respect** — they see you as a peer |
+| 22:00 - 25:00 | Close and reframe | **Resonance** — they leave with a new lens |
+
+---
+
+## Structural Flow
+
+### 0:00 - 2:00 | The Wreck
+
+**Don't open with a slide. Open with a sensation.**
+
+Describe the specific physical and cognitive experience of being lost in unfamiliar tooling. Not a situation — a feeling.
+
+> *"You know that feeling when you're typing a command and you get halfway through and you can't remember if it's a dash or two dashes or if the flag even exists in this CLI? And you stop. And you look at the terminal. And you realize you've been staring at it for four seconds and you don't know what cloud you're even in right now. That's where I was."*
+
+This is not a situation. It's a feeling every person in that room has had. You've named something they've never heard named before. From this moment, they're with you.
+
+The toddler road trip metaphor lands here. End the opening with: *"So I reached for the one tool I already knew."*
+
+---
+
+### 2:00 - 5:00 | Why This Is Hard (And Not Your Fault)
+
+Multi-cloud is hard because **the clouds were not designed to coexist.** They have different opinions about identity, networking, regions, and even what counts as a "resource."
+
+Acknowledge this directly. Name it as a system problem, not a competence problem.
+
+- AWS IAM is a policy document model
+- Azure RBAC is a role assignment model
+- GCP IAM is a binding model
+
+These are not the same thing wearing different clothes. They're genuinely different philosophies.
+
+Release the audience from self-blame. Then pivot to: given that the system is incoherent, here's what I did.
+
+---
+
+### 5:00 - 10:00 | PowerShell as Cognitive Anchor
+
+How you started connecting to each cloud. Lead with credential chaos — that's the first wall everyone hits.
+
+Show the three auth models side by side:
+- `Connect-AzAccount`
+- `Set-AWSCredential`
+- `gcloud auth` via wrapper or `Invoke-Expression`
+
+Three CLIs, three auth models, three config file locations. Then show the moment you wrote your first wrapper function and how much smaller the problem felt.
+
+Key insight to surface here: **the verb-noun mental model is secretly a superpower.** It forces you to name the thing you're trying to do before you figure out how. That naming act is where clarity comes from.
+
+---
+
+### 10:00 - 18:00 | Same Same, But Different
+
+The comparative meat of the talk. Pick three service categories. Go deep enough to be useful, shallow enough to keep moving.
+
+**Recommended picks:**
+1. Compute
+2. Storage
+3. Tagging / Resource metadata (high practical value, often overlooked)
+
+| Concept | Azure | AWS | GCP |
+|---|---|---|---|
+| Compute | `Get-AzVM` | `Get-EC2Instance` | `gcloud compute instances list` |
+| Storage | `Get-AzStorageAccount` | `Get-S3Bucket` | `gsutil ls` |
+| Tags | `Get-AzTag` | `Get-EC2Tag` | Labels via REST |
+
+For each: show the raw provider command, then show your wrapper. Let the audience see the translation layer working.
+
+Frame this as **discovery, not instruction.** You're showing them the map you drew when you were lost.
+
+---
+
+### 18:00 - 21:00 | Terraform: Name the Relationship, Move On
+
+Terraform is an elephant in the room. Address it in under 3 minutes.
+
+One clear framing: *"PowerShell is the shell around the shell. Terraform provisions. PowerShell operates."*
+
+One concrete example: a post-deploy tagging compliance check, or drift detection piped into a report.
+
+**Do not demo the integration.** Name the relationship, show one real use, and move. Every minute spent on Terraform is a minute not spent on the human story.
+
+> **Consider cutting Terraform entirely** and using those minutes to go deeper on one service comparison. Depth over breadth in a Fast Focus. Always.
+
+---
+
+### 21:00 - 23:30 | Where the Abstraction Breaks
+
+**This is the best section and the most likely to get cut under time pressure. Do not cut it.**
+
+Every 100-level talk presents the solution. Yours will show the failure — and explain why the failure is okay.
+
+**The specific failure to show: IAM/identity.**
+
+You cannot write `Get-CloudPermission` and have it mean the same thing across all three providers. You tried. It became a mess. So you wrote three clearly named functions and stopped apologizing for it:
+
+```powershell
+Get-AzureRoleAssignment
+Get-AWSPolicyAttachment
+Get-GCPIAMBinding
+```
+
+The lesson: **knowing when not to abstract is the actual skill.** Premature abstraction is as dangerous as no abstraction. The module taught you where the real differences live. That's more valuable than a clean API.
+
+This is the moment where a 100-level talk transcends its label. A 400-level engineer would want to watch this section.
+
+---
+
+### 23:30 - 25:00 | Close: The Reframe
+
+**Do not summarize. They heard the talk.**
+
+End with a provocation. Something that opens a question rather than closing one.
+
+> *"We spend a lot of time asking 'what's the right tool for the job.' I think there's an underrated second question: 'what's the tool I'll still trust when the job gets weird?' Those aren't always the same answer. Knowing the difference is worth thinking about."*
+
+Then: repo link. Done.
+
+No "any questions?" No summary slide. Just that thought, hanging in the air, and your laptop closed.
+
+---
+
+## The Vulnerability Move
+
+If you want to go from "really good Fast Focus" to "the talk people remember from Summit 2026":
+
+**Be more vulnerable than feels comfortable.**
+
+> *"I didn't reach for PowerShell because it was the best choice. I reached for it because I was scared and it was familiar. And I think that's okay. I think we should talk more about the role of fear in technical decision-making, because it drives more of our choices than we admit."*
+
+You have the credibility to say this. Your career arc — neuroscience to sysadmin to package management to IAM to cloud security — is the source material. You've been perpetually at the edge of your competence. That's not a liability. Use it.
+
+---
+
+## The Module: Design and Role
+
+### Role in the Talk
+
+The module is **evidence, not conclusion.** Specifically: evidence that the cognitive anchor strategy works.
+
+Building `Get-CloudInstance` and making it work across three providers forces you to answer: *what is a compute instance, really?* Name, region, status, size. That's it. Everything else is provider-specific noise.
+
+**The abstraction is a learning tool.** The act of building it forced conceptual clarity. That's the real insight — not "use this module," but "building this taught me more about cloud infrastructure than any certification."
+
+### Module as Character
+
+Don't present it as a polished artifact. Tell its story:
+
+- Started as a desperate hack, written at 11pm
+- A single function because you were tired of looking up the AWS equivalent of `Get-AzVM`
+- It grew. It broke when you added GCP. You refactored it
+- You realized you'd accidentally documented your own mental model of cloud infrastructure
+
+That's a better story than "here's a module I built."
+
+### Repo Name Candidates
+
+Shortlisted from brainstorm (PSX-style, cloud noun pattern):
+
+- **PSCirrus** — cirrus clouds are high-altitude, span everything, sounds fast and light. Matches the thin abstraction layer design philosophy. Recommended.
+- **PSNimbus** — more substantial sounding, also unclaimed
+- **PSStratus** — layered clouds, layered abstraction
+- **PSXCloud** — explicit, the X implies cross/multi
+- **CloudShim** — honest about what it does, no PS prefix
+
+All of the above are **completely unclaimed** on PowerShell Gallery and GitHub (confirmed via research).
+
+---
+
+### Proposed Structure
+
+**Name candidates:** `PSCirrus` | `PSNimbus` | `CloudShim`
+
+```
+CrossCloud/
+  CrossCloud.psd1
+  CrossCloud.psm1
+  Private/
+    Connect-AzureBackend.ps1
+    Connect-AWSBackend.ps1
+    Connect-GCPBackend.ps1
+  Public/
+    Connect-Cloud.ps1
+    Get-CloudInstance.ps1
+    Get-CloudStorage.ps1
+    Get-CloudTag.ps1
+```
+
+### Design Principles
+
+- Consistent output objects: `PSCustomObject` with standard properties across all providers
+  - `Name`, `Provider`, `Region`, `Status`, `Size`, `CreatedAt`
+- Provider param on every public function, not baked into the noun
+- No hard dependencies beyond official SDKs: `Az`, `AWS.Tools.*` — GCP handled via `gcloud` CLI wrapping (see GCP deprecation note below)
+- Explicit over clever: when abstraction gets messy, write three clear functions
+
+### The Core API Pattern
+
+```powershell
+# Same verb, same output shape, swappable provider
+Get-CloudInstance -Provider Azure -ResourceGroup "prod-rg"
+Get-CloudInstance -Provider AWS -Region "us-east-1"
+Get-CloudInstance -Provider GCP -Project "my-project"
+
+# Where it breaks — and that's okay
+Get-AzureRoleAssignment -Scope "/subscriptions/..."
+Get-AWSPolicyAttachment -UserName "adil"
+Get-GCPIAMBinding -Project "my-project"
+```
+
+---
+
+## PS Gallery Research: The Space Is Wide Open
+
+Systematic searches across PowerShell Gallery (15,326+ packages) and GitHub found **zero modules** that provide a unified abstraction layer across Azure, AWS, and GCP. The niche is completely unoccupied.
+
+### What was searched and found
+
+**Names that don't exist at all on PS Gallery:** CloudShim, PSNimbus, PSCirrus, PSStratus, PolyCloud — all completely unclaimed.
+
+**Names that exist but serve different purposes:**
+- `PSCloudPC` — Windows 365 only (23,709 downloads)
+- `PSCloudFlare` — Cloudflare API wrapper
+- `PSCloudConnect` — Office 365/Azure credentials only
+- `CloudBridge` — Oracle OCI migration tool, not cross-cloud abstraction
+
+**GitHub near-miss worth noting:** `viciousviper/PowerShellCloudProvider` implements a unified PS filesystem provider across multiple clouds — but targets consumer storage (OneDrive, Google Drive, Box), not IaaS. Last updated 2015. The design pattern validates the technical approach even if the scope is different.
+
+**Cross-cloud abstraction exists in other languages** — Python's CloudBridge, C#'s FluentStorage, TypeScript's storage-abstraction — proving the pattern is viable and in demand. Nobody has done it in PowerShell.
+
+### The competitive landscape summary
+
+| Provider | PS Gallery module | Status |
+|---|---|---|
+| Azure | Az.\* | Actively maintained by Microsoft |
+| AWS | AWS.Tools.\* | Actively maintained by Amazon |
+| GCP | GoogleCloud | **Deprecated January 14, 2026** |
+| Cross-cloud abstraction | — | **Does not exist** |
+
+---
+
+## The GCP Deprecation: Risk and Opportunity
+
+Google deprecated Cloud Tools for PowerShell on **January 14, 2026** — six weeks before this talk. It can no longer be installed via the Google Cloud CLI.
+
+**What this means for the module:** There is no first-party GCP PowerShell SDK to wrap. The GCP layer must either call GCP REST APIs directly or wrap `gcloud` CLI output into PowerShell objects. This raises the implementation bar slightly but also increases the value proposition.
+
+**What this means for the talk:** It's a gift. Use it.
+
+> *"Google deprecated their PowerShell module two months ago. Which is peak multi-cloud chaos. And also exactly why something like this needs to exist."*
+
+That line belongs in the talk. It makes the module feel timely rather than academic, and it validates the audience's frustration in real time.
+
+---
+
+## Scope Risk Analysis: Is This a Mistake?
+
+**Short answer: No — if you treat the talk and the module as different bets.**
+
+### The talk is not a mistake
+
+The research strengthens it. The gap being empty is itself a story beat. Nobody expects a production-grade multi-cloud framework in a 25-minute 100-level Fast Focus. The module exists to prove a point and tell a story, not to ship to prod.
+
+### The module has two versions — only one is a mistake
+
+**Version A (right size):** A thin, opinionated abstraction over 5-6 operations you actually do repeatedly. Compute inventory. Storage listing. Tagging. Connection management. Intentionally narrow. Ships in a weekend. Honest about what it doesn't do. Good talk demo. This is not a mistake.
+
+**Version B (trap):** A general-purpose cloud management framework that tries to normalize everything across all three providers. Infinitely scoped. Never ships. Quietly abandoned six months after Summit. This is a mistake.
+
+The research confirms Version B is a mistake. Build Version A.
+
+### The real risks, named honestly
+
+1. **GCP has no SDK to wrap.** You're calling REST or wrapping CLI output. More work than Azure/AWS but doable at Summit scope.
+2. **IAM/identity cannot be cleanly abstracted.** This is already the planned "where it breaks" section — lean into it rather than fighting it.
+3. **Maintenance compounds fast.** AWS has 300+ sub-modules. Az has 7,000+ cmdlets. Never try to wrap all of it.
+4. **The abstraction ceiling is real.** Networking has the same seams as IAM. Know your ceiling before you start.
+
+### The right framing for Summit
+
+The module is a proof of concept, not a launch. Three working commands. Honest scope. The talk is the product; the module is the evidence.
+
+---
+
+## What to Build Before Summit (13 days)
+
+The module only needs to exist enough to demo 2-3 commands convincingly. Prioritize:
+
+1. `Connect-Cloud` — the credential abstraction. This is the demo that lands first. GCP auth wraps `gcloud auth print-access-token` or `gcloud auth application-default login`
+2. `Get-CloudInstance` — the poster child for the abstraction working. GCP backend wraps `gcloud compute instances list --format=json`
+3. One deliberate failure case — IAM — to support the "where it breaks" section
+
+Don't polish. Ship enough to be honest about.
+
+---
+
+## Open Questions / Next Steps
+
+- [ ] **Choose module name** — PSCirrus recommended, PSNimbus as runner-up (both confirmed unclaimed)
+- [ ] **Decide on GCP backend approach** — `gcloud` CLI wrapping vs REST API calls
+- [ ] Decide on Terraform: keep brief or cut entirely
+- [ ] Pick the third service category (tagging recommended over networking)
+- [ ] Write the opening 90 seconds word for word — this is the highest leverage writing in the talk
+- [ ] Build `Connect-Cloud` and `Get-CloudInstance` as working prototypes
+- [ ] Draft the "where it breaks" demo with the IAM example
+- [ ] Write the closing provocation and test it out loud
+- [ ] Add the GCP deprecation line to the talk — it's a gift, use it
+
+---
+
+## Notes on Format
+
+This was planned as a **Fast Focus (25 min)**. If it gets moved to General Session (45 min):
+
+- Expand the comparative section from 3 services to 4-5
+- Add a live demo loop instead of just showing code snippets
+- Deepen the module demo — show actual output objects being piped
+- Add a Q&A buffer at the end
+- The emotional arc and thesis do not change
+
