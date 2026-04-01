@@ -37,7 +37,8 @@ I was lost in:
 
 <!--
 Speaker notes:
-- Describe the terminal paralysis moment from the plan.
+- Describe the terminal paralysis moment in concrete physical terms.
+- "I felt like I was renting three different brains."
 - End with: "So I reached for the one tool I already knew."
 -->
 
@@ -49,6 +50,12 @@ Speaker notes:
   <h3>Multi-cloud is not hard because you are bad at it.</h3>
   <p>The systems disagree at a conceptual level.</p>
 </div>
+
+<!--
+Speaker notes:
+- Say: "This is a systems problem, not a competence problem."
+- The goal here is relief.
+-->
 
 ---
 
@@ -64,6 +71,7 @@ Speaker notes:
 Speaker notes:
 - Keep this verbal and short.
 - The point is relief, not a deep IAM lecture.
+- "These are not the same thing wearing different clothes."
 -->
 
 ---
@@ -78,6 +86,28 @@ Speaker notes:
 
 </div>
 
+<!--
+Speaker notes:
+- PowerShell was not "the best" in some abstract sense.
+- It was the tool I was most fluent in.
+- Familiarity reduced syntax overhead.
+-->
+
+---
+
+# Stable Lens
+
+<div class="callout primary">
+  <h3>Fluency is infrastructure.</h3>
+  <p>Build on what does not move.</p>
+</div>
+
+<!--
+Speaker notes:
+- This is the philosophical center of the talk.
+- Slow down here.
+-->
+
 ---
 
 # Credential Chaos
@@ -91,7 +121,26 @@ gcloud auth login
 <!--
 Speaker notes:
 - Explain that the wrapper started here.
+- The problem is not just three commands; it is three auth models.
 - Do not add more commands to this slide.
+-->
+
+---
+
+# Ask The Intent First
+
+<div class="secondary-list">
+
+- what am I trying to do?
+- what stays stable?
+- what is just provider naming?
+
+</div>
+
+<!--
+Speaker notes:
+- The verb-noun model forces the right question first.
+- This is the bridge into the module.
 -->
 
 ---
@@ -104,15 +153,26 @@ Speaker notes:
   PowerShell was the stable lens.
 </div>
 
+<!--
+Speaker notes:
+- The module is evidence, not the point.
+- The abstraction is there to reduce mental switching cost.
+-->
+
 ---
 
-# Compute
+# Compute, Native
 
 ```powershell
 Get-AzVM
 Get-EC2Instance
 gcloud compute instances list --format=json
 ```
+
+<!--
+Speaker notes:
+- Same operator intent, three different provider surfaces.
+-->
 
 ---
 
@@ -124,6 +184,12 @@ Get-CloudInstance -Provider AWS -Region "us-east-1"
 Get-CloudInstance -Provider GCP -Project "my-project"
 ```
 
+<!--
+Speaker notes:
+- This is the first payoff moment.
+- "I am not abstracting all cloud, I am abstracting repeated intent."
+-->
+
 ---
 
 # Shared Output Shape
@@ -131,18 +197,37 @@ Get-CloudInstance -Provider GCP -Project "my-project"
 | Name | Provider | Region | Status | Size | CreatedAt |
 |---|---|---|---|---|---|
 | web-01 | Azure | eastus | Running | Standard_B2s | 2026-03-01 |
-| api-01 | AWS | us-east-1 | running | t3.small | 2026-02-18 |
-| worker-01 | GCP | us-central1-a | RUNNING | e2-medium | 2026-03-10 |
+| api-01 | AWS | us-east-1 | Running | t3.small | 2026-02-18 |
+| worker-01 | GCP | us-central1-a | Running | e2-medium | 2026-03-10 |
 
 <!--
 Speaker notes:
-- This is the payoff slide.
-- Keep the table simple and legible.
+- This is the real value, not just prettier command names.
+- Same output shape means same human expectations and same scripting surface.
 -->
 
 ---
 
-# Storage
+# Why The Name Matters
+
+<div class="primary-list">
+
+- `Get-CloudInstance`
+- not `Get-VM`
+- not provider marketing names
+
+</div>
+
+<!--
+Speaker notes:
+- Hyper-V already owns Get-VM in the PowerShell ecosystem.
+- CloudInstance tells the truth about the public abstraction.
+- Native type still lives in metadata.
+-->
+
+---
+
+# Storage, Next
 
 ```powershell
 Get-AzStorageAccount
@@ -150,9 +235,15 @@ Get-S3Bucket
 gcloud storage ls
 ```
 
+<!--
+Speaker notes:
+- Storage is useful, but this is where the seams start to show more.
+- Keep it light here.
+-->
+
 ---
 
-# Metadata
+# Metadata, Next
 
 ```powershell
 Get-AzTag
@@ -160,9 +251,15 @@ Get-EC2Tag
 # GCP labels via API or CLI output
 ```
 
+<!--
+Speaker notes:
+- Metadata is operationally valuable and also slightly messy.
+- Good example of "shared enough" without claiming sameness.
+-->
+
 ---
 
-# Terraform, Briefly
+# Why Not Terraform?
 
 <div class="callout secondary">
   <h3>Terraform standardizes infrastructure.</h3>
@@ -172,8 +269,7 @@ Get-EC2Tag
 <!--
 Speaker notes:
 - Terraform is not the wrong tool.
-- It is the wrong layer for the exact problem this module is addressing.
-- "Terraform abstracts resources; PSCumulus abstracts intent."
+- It solves a different layer of the problem.
 -->
 
 ---
@@ -191,9 +287,27 @@ Speaker notes:
 
 <!--
 Speaker notes:
-- Say: "Terraform standardizes what exists; PSCumulus standardizes how I interact with what exists."
-- Say: "Terraform is a state engine. PSCumulus is closer to an operational shell."
-- Do not over-explain. This slide is here to make the distinction feel concrete.
+- "Terraform standardizes what exists."
+- "PSCumulus standardizes how I think about and interact with what exists."
+- "Terraform is not an operational shell. PSCumulus is intentionally behaving like one."
+-->
+
+---
+
+# Output Matters
+
+<div class="secondary-list">
+
+- same command shape
+- same output shape
+- same operator mental model
+
+</div>
+
+<!--
+Speaker notes:
+- Terraform does not try to solve this problem.
+- PSCumulus is about reducing cognitive switching cost during operations.
 -->
 
 ---
@@ -204,9 +318,8 @@ You cannot honestly unify IAM into one neat noun.
 
 <!--
 Speaker notes:
-- This is also part of the Terraform rebuttal.
-- The point is not "Terraform bad"; the point is that these clouds are genuinely different systems.
-- Abstraction is useful only until it becomes misleading.
+- This is the credibility section.
+- Good abstraction has edges.
 -->
 
 ---
@@ -223,11 +336,23 @@ Get-GCPIAMBinding
   Knowing when not to abstract is the actual skill.
 </div>
 
+<!--
+Speaker notes:
+- The module is useful because it refuses to lie.
+- The clouds are genuinely different systems.
+-->
+
 ---
 
 # The Reframe
 
 What is the tool you will still trust when the job gets weird?
+
+<!--
+Speaker notes:
+- Do not summarize the whole talk.
+- Leave them with the lens, not the table of contents.
+-->
 
 ---
 
@@ -240,3 +365,9 @@ What is the tool you will still trust when the job gets weird?
 - questions after
 
 </div>
+
+<!--
+Speaker notes:
+- Keep the finish simple.
+- End on the previous slide's thought, not on housekeeping.
+-->
