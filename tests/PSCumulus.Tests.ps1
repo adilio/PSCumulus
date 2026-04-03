@@ -20,12 +20,12 @@ Describe 'PSCumulus module' {
 
         It 'does not export variables' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.VariablesToExport | Should -BeEmpty
+            $manifest.VariablesToExport.Count | Should -Be 0
         }
 
         It 'does not export aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.AliasesToExport | Should -BeEmpty
+            $manifest.AliasesToExport.Count | Should -Be 0
         }
 
         It 'declares a module version' {

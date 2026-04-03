@@ -39,7 +39,7 @@ Describe 'Assert-GCloudAuthenticated' {
                 Mock Invoke-GCloudJson { @() }
 
                 { Assert-GCloudAuthenticated } |
-                    Should -Throw "No active gcloud account found."
+                    Should -Throw "*No active gcloud account found*"
             }
         }
 
@@ -51,7 +51,7 @@ Describe 'Assert-GCloudAuthenticated' {
                 Mock Invoke-GCloudJson { $inactiveAccounts }
 
                 { Assert-GCloudAuthenticated } |
-                    Should -Throw "No active gcloud account found."
+                    Should -Throw "*No active gcloud account found*"
             }
         }
 

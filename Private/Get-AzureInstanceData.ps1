@@ -21,7 +21,6 @@ function Get-AzureInstanceData {
             -Region $virtualMachine.Location `
             -Status (ConvertFrom-AzurePowerState -PowerState $powerStatus) `
             -Size $virtualMachine.HardwareProfile.VmSize `
-            -CreatedAt $null `
             -Metadata @{
                 ResourceGroup = $virtualMachine.ResourceGroupName
                 VmId          = $virtualMachine.VmId

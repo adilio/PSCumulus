@@ -64,7 +64,7 @@ Describe 'Get-GCloudProject' {
                 }
 
                 { Get-GCloudProject } |
-                    Should -Throw "No GCP project was supplied and no default gcloud project is configured."
+                    Should -Throw "*No GCP project was supplied and no default gcloud project is configured*"
             }
         }
 
