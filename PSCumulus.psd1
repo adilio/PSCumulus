@@ -2,7 +2,7 @@
     RootModule        = 'PSCumulus.psm1'
     ModuleVersion     = '0.1.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
-    Author            = 'Adil'
+    Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
     Copyright         = '(c) Adil. All rights reserved.'
     Description       = 'Thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.'
@@ -22,7 +22,7 @@
     PrivateData = @{
         PSData = @{
             Tags         = @('PowerShell', 'Cloud', 'Azure', 'AWS', 'GCP')
-            ProjectUri   = 'https://github.com/adil/PSCumulus'
+            ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = 'Initial scaffold for Summit talk proof of concept.'
         }
