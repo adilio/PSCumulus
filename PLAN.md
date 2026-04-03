@@ -453,10 +453,10 @@ Don't polish. Ship enough to be honest about.
 
 ## Open Questions / Next Steps
 
-- [ ] **Choose module name** — PSCirrus still feels strong, but re-check availability before you commit publicly
+- [x] **Choose module name** — PSCumulus. Final.
 - [x] **Decide on GCP backend approach** — use `gcloud` CLI wrapping for v1 unless a later REST requirement appears
-- [ ] Decide on Terraform: keep brief or cut entirely
-- [ ] Pick the third service category (tagging recommended over networking)
+- [x] Decide on Terraform: keep, brief (under 3 minutes), name the relationship and show one concrete use
+- [x] Pick the third service category — tagging. High practical value, consistent across all three clouds, avoids the IAM abstraction ceiling
 - [ ] Write the opening 90 seconds word for word — this is the highest leverage writing in the talk
 - [ ] Build `Connect-Cloud` and `Get-CloudInstance` as working prototypes
 - [ ] Draft the "where it breaks" demo with the IAM example
