@@ -6,7 +6,7 @@
 
 1. `Connect-Cloud`
 2. `Get-CloudInstance`
-3. `Get-CloudStorage` or `Get-CloudTag`
+3. `Get-CloudTag`
 4. One explicit non-abstraction example for IAM
 
 ## Current implementation state

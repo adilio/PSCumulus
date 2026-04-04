@@ -196,6 +196,34 @@ The working spoken argument is captured in `slides/TALK-TRACK.md`.
 
 ---
 
+## Testing
+
+Tests use [Pester](https://pester.dev) 5.x. No cloud credentials or SDKs required — all provider calls are mocked.
+
+```powershell
+# Install Pester if needed
+Install-Module Pester -MinimumVersion 5.6.0 -Scope CurrentUser
+
+# Run the full suite
+$config = New-PesterConfiguration
+$config.Run.Path = './tests'
+$config.Output.Verbosity = 'Detailed'
+Invoke-Pester -Configuration $config
+```
+
+Tests are structured to mirror the module layout:
+
+```
+tests/
+├── PSCumulus.Tests.ps1       # manifest and module-level checks
+├── Public/                   # one file per public function
+└── Private/                  # one file per private function
+```
+
+The GitHub Actions workflow (`.github/workflows/test-and-publish.yml`) runs the full suite on every push and PR to `main`, and publishes to the PowerShell Gallery on a passing push to `main` using the `PSGALLERY_KEY` repository secret.
+
+---
+
 ## Build the Slides
 
 This repo uses [Marp](https://marp.app/) for slides. Theme via [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026).
