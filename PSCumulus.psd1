@@ -12,7 +12,11 @@
         'Connect-Cloud',
         'Get-CloudInstance',
         'Get-CloudStorage',
-        'Get-CloudTag'
+        'Get-CloudTag',
+        'Get-CloudNetwork',
+        'Get-CloudDisk',
+        'Start-CloudInstance',
+        'Stop-CloudInstance'
     )
 
     CmdletsToExport   = @()

@@ -17,14 +17,6 @@ It is **not** a general-purpose cloud management framework. It is a proof of con
 
 Mostly yes. [Except for IAM.](#where-it-breaks)
 
-Today, this repo contains:
-
-- a detailed talk plan in `PLAN.md`
-- a Marp slide skeleton in `slides/PSCumulus.md`
-- an early PowerShell module scaffold for the proof of concept
-
-If your focus is the module, start with `PSCumulus.psd1`, `PSCumulus.psm1`, `Public/`, `Private/`, `docs/MODULE-ROADMAP.md`, and `docs/NORMALIZATION-STRATEGY.md`.
-
 ---
 
 ## Quick Start
@@ -48,8 +40,8 @@ Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 Import-Module PSCumulus
 
 Connect-Cloud -Provider Azure
-Connect-Cloud -Provider AWS    -Region "us-east-1"
-Connect-Cloud -Provider GCP    -Project "my-project"
+Connect-Cloud -Provider AWS  -Region "us-east-1"
+Connect-Cloud -Provider GCP  -Project "my-project"
 ```
 
 ---
@@ -59,36 +51,54 @@ Connect-Cloud -Provider GCP    -Project "my-project"
 Same verb. Same output shape. Swappable provider.
 
 ```powershell
-# List compute instances
+# Compute instances
 Get-CloudInstance -Provider Azure -ResourceGroup "prod-rg"
 Get-CloudInstance -Provider AWS   -Region "us-east-1"
 Get-CloudInstance -Provider GCP   -Project "my-project"
 
-# List storage
+# Storage resources
 Get-CloudStorage  -Provider Azure -ResourceGroup "prod-rg"
-Get-CloudStorage  -Provider AWS
+Get-CloudStorage  -Provider AWS   -Region "us-east-1"
 Get-CloudStorage  -Provider GCP   -Project "my-project"
 
-# Get resource tags
+# Tags and labels
 Get-CloudTag      -Provider Azure -ResourceId "/subscriptions/.../myVM"
 Get-CloudTag      -Provider AWS   -ResourceId "i-0abc123def456"
 Get-CloudTag      -Provider GCP   -Project "my-project" -Resource "instances/my-vm"
+
+# Virtual networks / VPCs
+Get-CloudNetwork  -Provider Azure -ResourceGroup "prod-rg"
+Get-CloudNetwork  -Provider AWS   -Region "us-east-1"
+Get-CloudNetwork  -Provider GCP   -Project "my-project"
+
+# Disks and volumes
+Get-CloudDisk     -Provider Azure -ResourceGroup "prod-rg"
+Get-CloudDisk     -Provider AWS   -Region "us-east-1"
+Get-CloudDisk     -Provider GCP   -Project "my-project"
+
+# Instance lifecycle
+Start-CloudInstance -Provider Azure -Name "web-01" -ResourceGroup "prod-rg"
+Start-CloudInstance -Provider AWS   -InstanceId "i-0abc123" -Region "us-east-1"
+Start-CloudInstance -Provider GCP   -Name "web-01" -Zone "us-central1-a" -Project "my-project"
+
+Stop-CloudInstance  -Provider Azure -Name "web-01" -ResourceGroup "prod-rg"
+Stop-CloudInstance  -Provider AWS   -InstanceId "i-0abc123" -Region "us-east-1"
+Stop-CloudInstance  -Provider GCP   -Name "web-01" -Zone "us-central1-a" -Project "my-project"
 ```
 
-All commands return a `PSCustomObject` with consistent properties:
+All commands return a `PSCumulus.CloudRecord` object with consistent properties:
 
-| Property    | Description                        |
-|-------------|-----------------------------------|
-| `Name`      | Resource name                      |
-| `Provider`  | `Azure` / `AWS` / `GCP`            |
-| `Region`    | Cloud region or zone               |
-| `Status`    | Running, Stopped, etc.             |
-| `Size`      | Instance type / SKU                |
-| `CreatedAt` | Timestamp (where available)        |
+| Property    | Description                               |
+|-------------|-------------------------------------------|
+| `Name`      | Resource name                             |
+| `Provider`  | `Azure` / `AWS` / `GCP`                   |
+| `Region`    | Cloud region or zone                      |
+| `Status`    | Normalized state (Running, Stopped, etc.) |
+| `Size`      | Instance type, SKU, or storage class      |
+| `CreatedAt` | Creation timestamp (where available)      |
+| `Metadata`  | Provider-native details                   |
 
 The design approach is documented in [`docs/NORMALIZATION-STRATEGY.md`](./docs/NORMALIZATION-STRATEGY.md): normalize by intent, preserve native details in `Metadata`, and stop abstracting when the underlying models are genuinely different.
-
-The `Cloud*` naming is intentional. `Get-CloudInstance` and `Get-CloudStorage` make the public abstraction explicit, avoid likely collisions with provider- or hypervisor-specific modules, and leave room for provider-native detail to live in `Metadata`.
 
 ---
 
@@ -103,9 +113,7 @@ Get-AWSPolicyAttachment  -UserName "adil"
 Get-GCPIAMBinding        -Project "my-project"
 ```
 
-The lesson: **knowing when not to abstract is the actual skill.**
-
-This is intentional — and it's a section of the talk.
+The lesson: **knowing when not to abstract is the actual skill.** This is intentional — and it's a section of the talk.
 
 ---
 
@@ -115,64 +123,47 @@ This is intentional — and it's a section of the talk.
 PSCumulus/
 ├── PSCumulus.psd1
 ├── PSCumulus.psm1
+├── Public/
+│   ├── Connect-Cloud.ps1
+│   ├── Get-CloudInstance.ps1
+│   ├── Get-CloudStorage.ps1
+│   ├── Get-CloudTag.ps1
+│   ├── Get-CloudNetwork.ps1
+│   ├── Get-CloudDisk.ps1
+│   ├── Start-CloudInstance.ps1
+│   └── Stop-CloudInstance.ps1
 ├── Private/
 │   ├── ConvertTo-CloudRecord.ps1
-│   ├── Connect-AzureBackend.ps1
-│   ├── Connect-AWSBackend.ps1
-│   └── Connect-GCPBackend.ps1
-└── Public/
-    ├── Connect-Cloud.ps1
-    ├── Get-CloudInstance.ps1
-    ├── Get-CloudStorage.ps1
-    └── Get-CloudTag.ps1
+│   ├── Invoke-CloudProvider.ps1
+│   ├── Invoke-GCloudJson.ps1
+│   ├── Assert-CommandAvailable.ps1
+│   ├── Assert-ProviderParameterSet.ps1
+│   ├── Assert-CloudTagArguments.ps1
+│   ├── Assert-GCloudAuthenticated.ps1
+│   ├── Connect-{Azure,AWS,GCP}Backend.ps1
+│   ├── Get-{Azure,AWS,GCP}InstanceData.ps1
+│   ├── Get-{Azure,AWS,GCP}StorageData.ps1
+│   ├── Get-{Azure,AWS,GCP}TagData.ps1
+│   ├── Get-{Azure,AWS,GCP}NetworkData.ps1
+│   ├── Get-{Azure,AWS,GCP}DiskData.ps1
+│   ├── Start-{Azure,AWS,GCP}Instance.ps1
+│   └── Stop-{Azure,AWS,GCP}Instance.ps1
+└── docs/
+    ├── NORMALIZATION-STRATEGY.md
+    └── MODULE-ROADMAP.md
 ```
 
 **Design principles:**
-- Consistent output objects across all providers
-- Provider param on every public function — not baked into the noun
+- Consistent `PSCumulus.CloudRecord` output across all providers
+- `-Provider` parameter on every public function — not baked into the noun
 - No hard dependencies beyond official SDKs; GCP wraps `gcloud` CLI output
 - Explicit over clever — when abstraction gets messy, write three clear functions
 
-The current scaffold is intentionally incomplete. Public commands exist, module loading works, and provider-specific implementations are being added incrementally.
-
-Today, the first real backend paths are Azure, AWS, and GCP connection plus instance inventory. Storage and tag backends are still scaffolded. GCP uses a `gcloud`-backed adapter rather than a direct REST or PowerShell-SDK implementation for v1.
-
-## GCP Strategy
-
-PSCumulus will implement GCP support through the `gcloud` CLI for v1.
-
-That choice is intentional:
-
-- it is the most practical and sustainable path for a narrow Summit demo module
-- Google's PowerShell tooling is less central and less actively evolved than the Azure and AWS PowerShell ecosystems
-- it keeps auth aligned with `gcloud auth login` / `gcloud auth application-default login`
-- it gives predictable machine-readable output via `--format=json`
-- it avoids building a custom Google auth and REST layer too early
-
-The planned first GCP slice is:
-
-1. `Connect-GCPBackend`
-2. `Get-GCPInstanceData`
-3. shared `gcloud` JSON invocation helper
+---
 
 ## Why Not Terraform?
 
-PSCumulus does not compete with Terraform. It operates at a different layer.
-
-Terraform standardizes how infrastructure is declared and provisioned.
-
-PSCumulus standardizes how infrastructure is queried and interacted with across clouds.
-
-PSCumulus focuses on:
-
-- consistent command patterns
-- normalized output objects
-- interactive operator workflows
-- reducing cognitive switching cost across clouds
-
-Terraform remains the right tool for provisioning. PSCumulus complements it by improving day-to-day cross-cloud usability.
-
-Short version:
+Terraform standardizes how infrastructure is declared and provisioned. PSCumulus standardizes how infrastructure is queried and interacted with.
 
 > Terraform standardizes infrastructure. PSCumulus standardizes how humans interact with infrastructure across clouds.
 
@@ -186,13 +177,7 @@ The surface story: here's how to use PowerShell across three clouds.
 
 The deep story: here's what happens to your brain when the map doesn't match the territory, and why reaching for a familiar tool is a legitimate engineering decision.
 
-The working spoken argument is captured in `slides/TALK-TRACK.md`.
-
-**Key takeaways:**
-- How to connect to Azure, AWS, and GCP with PowerShell
-- The similarities and differences between common services
-- How Terraform and PowerShell can complement each other
-- When to abstract — and when to stop
+The working spoken argument is in `slides/TALK-TRACK.md`.
 
 ---
 
@@ -201,60 +186,29 @@ The working spoken argument is captured in `slides/TALK-TRACK.md`.
 Tests use [Pester](https://pester.dev) 5.x. No cloud credentials or SDKs required — all provider calls are mocked.
 
 ```powershell
-# Install Pester if needed
 Install-Module Pester -MinimumVersion 5.6.0 -Scope CurrentUser
-
-# Run the full suite
-$config = New-PesterConfiguration
-$config.Run.Path = './tests'
-$config.Output.Verbosity = 'Detailed'
-Invoke-Pester -Configuration $config
+Invoke-Pester
 ```
 
-Tests are structured to mirror the module layout:
-
-```
-tests/
-├── PSCumulus.Tests.ps1       # manifest and module-level checks
-├── Public/                   # one file per public function
-└── Private/                  # one file per private function
-```
-
-The GitHub Actions workflow (`.github/workflows/test-and-publish.yml`) runs the full suite on every push and PR to `main`, and publishes to the PowerShell Gallery on a passing push to `main` using the `PSGALLERY_KEY` repository secret.
+The GitHub Actions workflow runs the full suite on every push and PR to `main`.
 
 ---
 
 ## Build the Slides
 
-This repo uses [Marp](https://marp.app/) for slides. Theme via [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026).
-
 ```powershell
-# Install Marp CLI
 npm i -g @marp-team/marp-cli
 
-# Export to HTML
-marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --html --output .\dist\PSCumulus.html
-
-# Export to PDF
-marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --pdf --allow-local-files --output .\dist\PSCumulus.pdf
-
-# Export to PPTX
-marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --pptx --allow-local-files --output .\dist\PSCumulus.pptx
+marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --html  --output .\dist\PSCumulus.html
+marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --pdf   --allow-local-files --output .\dist\PSCumulus.pdf
+marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --pptx  --allow-local-files --output .\dist\PSCumulus.pptx
 ```
-
-The deck skeleton follows the slide constraints captured in `PLAN.md` and the Death by PowerPoint review guidance referenced in the attribution section.
 
 ---
 
 ## Contributing
 
-This is a Summit demo — scope is intentionally narrow. PRs welcome for:
-
-- Bug fixes in the three core commands
-- GCP backend improvements (the `gcloud` wrapper is rough)
-- Corrections to the slides
-
-Please don't open PRs that expand scope. Version B is a trap.
+This is a Summit demo — scope is intentionally narrow. PRs welcome for bug fixes, GCP backend improvements, and slide corrections. Please don't open PRs that expand scope. Version B is a trap.
 
 ---
 
@@ -266,7 +220,6 @@ MIT — see [LICENSE](./LICENSE).
 
 ## Attribution
 
-- **Slide theme:** [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026) — Marp theme for PowerShell + DevOps Global Summit 2026
-- **Slide review:** [Death by PowerPoint skill](https://github.com/HeyItsGilbert/marketplace/blob/main/plugins/presentation-review/skills/death-by-ppt/SKILL.md) by [@HeyItsGilbert](https://github.com/HeyItsGilbert), based on David JP Phillips' ["How to Avoid Death by PowerPoint"](https://www.youtube.com/watch?v=Iwpi1Lm6dFo)
-- **PowerShell module guidance:** [PoshCode/PowerShellPracticeAndStyle](https://github.com/PoshCode/PowerShellPracticeAndStyle) — used as a reference for function structure, help, output behavior, and packaging hygiene
-- **Google Cloud implementation direction:** current Google Cloud CLI and authentication documentation informed the decision to use a `gcloud`-backed adapter for GCP in PSCumulus v1
+- **Slide theme:** [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026)
+- **Slide review:** [Death by PowerPoint skill](https://github.com/HeyItsGilbert/marketplace/blob/main/plugins/presentation-review/skills/death-by-ppt/SKILL.md) by [@HeyItsGilbert](https://github.com/HeyItsGilbert)
+- **PowerShell guidance:** [PoshCode/PowerShellPracticeAndStyle](https://github.com/PoshCode/PowerShellPracticeAndStyle)

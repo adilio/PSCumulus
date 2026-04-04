@@ -5,17 +5,21 @@ BeforeAll {
 Describe 'PSCumulus module' {
 
     Context 'manifest' {
-        It 'exports the four public functions' {
+        It 'exports all public functions' {
             $commands = Get-Command -Module PSCumulus | Select-Object -ExpandProperty Name
             $commands | Should -Contain 'Connect-Cloud'
             $commands | Should -Contain 'Get-CloudInstance'
             $commands | Should -Contain 'Get-CloudStorage'
             $commands | Should -Contain 'Get-CloudTag'
+            $commands | Should -Contain 'Get-CloudNetwork'
+            $commands | Should -Contain 'Get-CloudDisk'
+            $commands | Should -Contain 'Start-CloudInstance'
+            $commands | Should -Contain 'Stop-CloudInstance'
         }
 
-        It 'exports exactly four public functions' {
+        It 'exports exactly eight public functions' {
             $commands = Get-Command -Module PSCumulus
-            $commands.Count | Should -Be 4
+            $commands.Count | Should -Be 8
         }
 
         It 'does not export variables' {
@@ -69,6 +73,22 @@ Describe 'PSCumulus module' {
 
         It 'Get-CloudTag declares pscustomobject OutputType' {
             (Get-Command Get-CloudTag).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Get-CloudNetwork declares pscustomobject OutputType' {
+            (Get-Command Get-CloudNetwork).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Get-CloudDisk declares pscustomobject OutputType' {
+            (Get-Command Get-CloudDisk).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Start-CloudInstance declares pscustomobject OutputType' {
+            (Get-Command Start-CloudInstance).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Stop-CloudInstance declares pscustomobject OutputType' {
+            (Get-Command Stop-CloudInstance).OutputType | Should -Not -BeNullOrEmpty
         }
     }
 

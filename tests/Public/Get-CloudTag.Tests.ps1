@@ -40,23 +40,32 @@ Describe 'Get-CloudTag' {
     }
 
     Context 'Azure routing' {
-        It 'routes to Get-AzureTagData and throws not-implemented' {
-            { Get-CloudTag -Provider Azure -ResourceId '/subscriptions/abc/vm/vm01' } |
-                Should -Throw 'Get-AzureTagData is not implemented yet.'
+        It 'calls Get-AzureTagData for Azure provider' {
+            InModuleScope PSCumulus {
+                Mock Get-AzureTagData { }
+                Get-CloudTag -Provider Azure -ResourceId '/subscriptions/abc/vm/vm01'
+                Should -Invoke Get-AzureTagData -Times 1
+            }
         }
     }
 
     Context 'AWS routing' {
-        It 'routes to Get-AWSTagData and throws not-implemented' {
-            { Get-CloudTag -Provider AWS -ResourceId 'i-0123456789abcdef0' } |
-                Should -Throw 'Get-AWSTagData is not implemented yet.'
+        It 'calls Get-AWSTagData for AWS provider' {
+            InModuleScope PSCumulus {
+                Mock Get-AWSTagData { }
+                Get-CloudTag -Provider AWS -ResourceId 'i-0123456789abcdef0'
+                Should -Invoke Get-AWSTagData -Times 1
+            }
         }
     }
 
     Context 'GCP routing' {
-        It 'routes to Get-GCPTagData and throws not-implemented' {
-            { Get-CloudTag -Provider GCP -Project 'my-project' -Resource 'instances/vm-01' } |
-                Should -Throw 'Get-GCPTagData is not implemented yet.'
+        It 'calls Get-GCPTagData for GCP provider' {
+            InModuleScope PSCumulus {
+                Mock Get-GCPTagData { }
+                Get-CloudTag -Provider GCP -Project 'my-project' -Resource 'instances/vm-01'
+                Should -Invoke Get-GCPTagData -Times 1
+            }
         }
     }
 

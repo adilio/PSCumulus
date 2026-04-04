@@ -1,74 +1,50 @@
 # Module Roadmap
 
-`PSCumulus` is intentionally a thin abstraction, not a full cloud framework.
+`PSCumulus` is a thin cross-cloud abstraction, not a full cloud framework.
 
-## First implementation targets
+## Current state
 
-1. `Connect-Cloud`
-2. `Get-CloudInstance`
-3. `Get-CloudTag`
-4. One explicit non-abstraction example for IAM
+414/414 tests passing. All planned commands implemented across all three providers.
 
-## Current implementation state
-
-- Azure: `Connect-Cloud` and `Get-CloudInstance` backend path implemented via `Az.*`
-- AWS: `Connect-Cloud` and `Get-CloudInstance` backend path implemented via `AWS.Tools.*`
-- GCP: `Connect-Cloud` and `Get-CloudInstance` backend path implemented via `gcloud`
-- Storage and tag backends: still scaffolded
+| Command              | Azure                    | AWS                        | GCP                                    |
+|----------------------|--------------------------|----------------------------|----------------------------------------|
+| `Connect-Cloud`      | `Connect-AzAccount`      | `Set-AWSCredential`        | `gcloud auth`                          |
+| `Get-CloudInstance`  | `Get-AzVM`               | `Get-EC2Instance`          | `gcloud compute instances list`        |
+| `Get-CloudStorage`   | `Get-AzStorageAccount`   | `Get-S3Bucket`             | `gcloud storage buckets list`          |
+| `Get-CloudTag`       | `Get-AzTag`              | `Get-EC2Tag`               | `gcloud compute TYPE list --filter`    |
+| `Get-CloudNetwork`   | `Get-AzVirtualNetwork`   | `Get-EC2Vpc`               | `gcloud compute networks list`         |
+| `Get-CloudDisk`      | `Get-AzDisk`             | `Get-EC2Volume`            | `gcloud compute disks list`            |
+| `Start-CloudInstance`| `Start-AzVM`             | `Start-EC2Instance`        | `gcloud compute instances start`       |
+| `Stop-CloudInstance` | `Stop-AzVM`              | `Stop-EC2Instance`         | `gcloud compute instances stop`        |
 
 ## Output contract
 
-Public inventory-style commands should normalize results into a single object shape:
+All inventory commands normalize results into `PSCumulus.CloudRecord`:
 
-- `Name`
-- `Provider`
-- `Region`
-- `Status`
-- `Size`
-- `CreatedAt`
-- `Metadata`
+| Field       | Description                          |
+|-------------|--------------------------------------|
+| `Name`      | Resource name                        |
+| `Provider`  | `Azure` / `AWS` / `GCP`             |
+| `Region`    | Cloud region or zone                 |
+| `Status`    | Normalized state string              |
+| `Size`      | Instance type, SKU, or storage class |
+| `CreatedAt` | Creation timestamp (where available) |
+| `Metadata`  | Provider-native details              |
 
-See also: `docs/NORMALIZATION-STRATEGY.md`
-
-## Public naming
-
-The normalized public surface should continue using `Cloud*` nouns for now:
-
-- `Get-CloudInstance`
-- `Get-CloudStorage`
-- `Get-CloudTag`
-
-That naming keeps the abstraction explicit and avoids boxing the module into provider-native nouns too early.
+See [`NORMALIZATION-STRATEGY.md`](./NORMALIZATION-STRATEGY.md) for the decision guide.
 
 ## Provider strategy
 
-- Azure: wrap `Az.*`
-- AWS: wrap `AWS.Tools.*`
-- GCP: prefer `gcloud ... --format=json` for Summit scope
+- **Azure:** wrap `Az.*` SDK modules
+- **AWS:** wrap `AWS.Tools.*` SDK modules
+- **GCP:** `gcloud ... --format=json` via `Invoke-GCloudJson` helper
 
-## GCP implementation decision
-
-For PSCumulus v1, GCP support should use the `gcloud` CLI as an adapter boundary instead of Cloud Tools for PowerShell or direct REST calls.
-
-Why:
-
-- It matches Google's mainstream scripting story better than a PowerShell-specific SDK path.
-- It keeps authentication practical through `gcloud auth login` and `gcloud auth application-default login`.
-- It allows stable machine-readable output with `--format=json`.
-- It avoids pulling REST auth, pagination, and endpoint plumbing into a Summit-scoped proof of concept.
-
-Implementation approach:
-
-1. Add a shared helper that verifies `gcloud` is installed and invokes commands with `--format=json`.
-2. Prefer passing `--project` explicitly instead of mutating global `gcloud` configuration in the module.
-3. Keep `Connect-GCPBackend` focused on dependency and auth/context validation, not on owning the whole Google auth lifecycle.
-4. Implement `Get-GCPInstanceData` with `gcloud compute instances list --project <project> --format=json`.
-5. Leave storage and labels/tags for the next pass after instance inventory is solid.
+GCP uses the CLI adapter because Google's PowerShell SDK story is less central than Az or AWS.Tools. The `gcloud` path gives stable JSON output and keeps auth aligned with `gcloud auth login`.
 
 ## Non-goals
 
-- Full networking abstraction
-- Full IAM abstraction
-- Complete parity across providers
-- Production-ready orchestration surface
-- A custom OAuth or REST authentication stack for Google Cloud in v1
+- Full IAM / role / binding abstraction — models are too different; write three explicit functions instead
+- Provisioning (`New-Cloud*`, `Remove-Cloud*`) — that's Terraform's domain
+- Advanced networking (load balancers, firewalls, security groups) — models diverge too much
+- `Get-CloudCost` — billing schemas are too provider-specific; output would be mostly `Metadata`
+- Complete parity across every provider resource
