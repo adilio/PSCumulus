@@ -1,0 +1,96 @@
+TOPIC
+    about_PSCumulus
+
+SHORT DESCRIPTION
+    Introduces the PSCumulus cross-cloud PowerShell module.
+
+LONG DESCRIPTION
+    PSCumulus is a thin PowerShell abstraction for common cross-cloud tasks
+    across Azure, AWS, and GCP.
+
+    The module is intentionally narrow. It standardizes a small set of
+    high-value commands for interactive work and demos without pretending that
+    every provider concept maps cleanly to a universal object model.
+
+    PSCumulus focuses on:
+
+        - connecting to a provider
+        - querying common infrastructure categories
+        - starting and stopping compute instances
+        - returning a stable output shape for inventory-style commands
+
+    PSCumulus does not attempt to normalize every provider feature. When the
+    underlying models are genuinely different, the module prefers explicit
+    provider-specific commands over misleading abstractions.
+
+COMMANDS
+    Connect-Cloud
+    Get-CloudInstance
+    Get-CloudStorage
+    Get-CloudTag
+    Get-CloudNetwork
+    Get-CloudDisk
+    Get-CloudFunction
+    Start-CloudInstance
+    Stop-CloudInstance
+
+ALIASES
+    cc      Connect-Cloud
+    gcin    Get-CloudInstance
+    sci     Start-CloudInstance
+    tci     Stop-CloudInstance
+
+OUTPUT TYPES
+    Inventory commands return PSCumulus.CloudRecord objects with these common
+    properties:
+
+        - Name
+        - Provider
+        - Region
+        - Status
+        - Size
+        - CreatedAt
+        - Metadata
+
+    Connect-Cloud returns PSCumulus.ConnectionResult.
+
+PROVIDER CONTEXT
+    Connect-Cloud remembers the active provider for the current session. After
+    connecting, many public commands can omit -Provider when the remaining
+    parameters already imply the target cloud or when the active provider makes
+    the intent unambiguous.
+
+EXAMPLES
+    Connect to AWS and query instances:
+
+        Connect-Cloud -Provider AWS -Region 'us-east-1'
+        Get-CloudInstance -Region 'us-east-1'
+
+    Start an AWS instance using the current session provider:
+
+        Connect-Cloud -Provider AWS -Region 'us-east-1'
+        Start-CloudInstance -InstanceId 'i-0abc123' -Region 'us-east-1'
+
+    Query GCP labels explicitly:
+
+        Get-CloudTag -Provider GCP -Project 'my-project' -Resource 'instances/web-01'
+
+LIMITATIONS
+    PSCumulus does not attempt to unify domains such as IAM, RBAC, policy
+    documents, or billing. These models differ too much across providers to
+    support an honest shared command surface.
+
+NOTES
+    For command-level help, run:
+
+        Get-Help Connect-Cloud -Detailed
+        Get-Help Get-CloudInstance -Examples
+
+    For project rationale and design notes, see:
+
+        docs/concepts/strategy.md
+
+LINKS
+    Get-Help
+    Get-Help Connect-Cloud
+    Get-Help Get-CloudInstance

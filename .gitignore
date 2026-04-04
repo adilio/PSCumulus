@@ -4,4 +4,7 @@ dist/
 *.pdf
 *.pptx
 .vscode/
-
+site/
+.venv/
+test-results.xml
+testResults.xml
