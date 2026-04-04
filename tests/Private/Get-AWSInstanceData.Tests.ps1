@@ -20,108 +20,160 @@ Describe 'Get-AWSInstanceData' {
 
     Context 'when instances are returned' {
         BeforeAll {
-            InModuleScope PSCumulus {
-                $script:mockInstance = [pscustomobject]@{
-                    InstanceId       = 'i-0abc123def456789'
-                    Tags             = @([pscustomobject]@{ Key = 'Name'; Value = 'app-server-01' })
-                    State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
-                    InstanceType     = [pscustomobject]@{ Value = 't3.medium' }
-                    Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1a' }
-                    LaunchTime       = [datetime]'2026-01-15T10:00:00Z'
-                    PrivateIpAddress = '10.0.1.5'
-                    PublicIpAddress  = '52.1.2.3'
-                    VpcId            = 'vpc-0abc123'
-                    SubnetId         = 'subnet-0def456'
-                }
-                $script:mockResponse = [pscustomobject]@{
-                    Reservations = @([pscustomobject]@{
-                        Instances = @($script:mockInstance)
-                    })
-                }
-                $script:noTagResponse = [pscustomobject]@{
-                    Reservations = @([pscustomobject]@{
-                        Instances = @([pscustomobject]@{
-                            InstanceId       = 'i-noname'
-                            Tags             = @()
-                            State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
-                            InstanceType     = [pscustomobject]@{ Value = 't3.micro' }
-                            Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1b' }
-                            LaunchTime       = [datetime]'2026-01-01'
-                            PrivateIpAddress = '10.0.0.1'
-                            PublicIpAddress  = $null
-                            VpcId            = 'vpc-123'
-                            SubnetId         = 'subnet-123'
-                        })
-                    })
-                }
+            $script:mockInstance = [pscustomobject]@{
+                InstanceId       = 'i-0abc123def456789'
+                Tags             = @([pscustomobject]@{ Key = 'Name'; Value = 'app-server-01' })
+                State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
+                InstanceType     = [pscustomobject]@{ Value = 't3.medium' }
+                Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1a' }
+                LaunchTime       = [datetime]'2026-01-15T10:00:00Z'
+                PrivateIpAddress = '10.0.1.5'
+                PublicIpAddress  = '52.1.2.3'
+                VpcId            = 'vpc-0abc123'
+                SubnetId         = 'subnet-0def456'
             }
-        }
-
-        BeforeEach {
-            InModuleScope PSCumulus {
-                Mock Assert-CommandAvailable {}
-                Mock Get-EC2Instance { $script:mockResponse }
+            $script:mockResponse = [pscustomobject]@{
+                Reservations = @([pscustomobject]@{
+                    Instances = @($script:mockInstance)
+                })
+            }
+            $script:noTagResponse = [pscustomobject]@{
+                Reservations = @([pscustomobject]@{
+                    Instances = @([pscustomobject]@{
+                        InstanceId       = 'i-noname'
+                        Tags             = @()
+                        State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
+                        InstanceType     = [pscustomobject]@{ Value = 't3.micro' }
+                        Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1b' }
+                        LaunchTime       = [datetime]'2026-01-01'
+                        PrivateIpAddress = '10.0.0.1'
+                        PublicIpAddress  = $null
+                        VpcId            = 'vpc-123'
+                        SubnetId         = 'subnet-123'
+                    })
+                })
             }
         }
 
         It 'returns a CloudRecord for each instance' {
-            $results = @(InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' })
-            $results.Count | Should -Be 1
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $results = @(Get-AWSInstanceData -Region 'us-east-1')
+                $results.Count | Should -Be 1
+            }
         }
 
         It 'uses the Name tag as the record name' {
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.Name | Should -Be 'app-server-01'
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Name | Should -Be 'app-server-01'
+            }
         }
 
         It 'falls back to InstanceId when no Name tag exists' {
-            InModuleScope PSCumulus {
-                Mock Get-EC2Instance { $script:noTagResponse }
+            InModuleScope PSCumulus -Parameters @{ NoTagResponse = $script:noTagResponse } {
+                param($NoTagResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $NoTagResponse }
+
                 $result = Get-AWSInstanceData -Region 'us-east-1'
                 $result.Name | Should -Be 'i-noname'
             }
         }
 
         It 'sets Provider to AWS' {
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.Provider | Should -Be 'AWS'
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Provider | Should -Be 'AWS'
+            }
         }
 
         It 'maps AvailabilityZone to Region' {
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.Region | Should -Be 'us-east-1a'
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Region | Should -Be 'us-east-1a'
+            }
         }
 
         It 'title-cases the instance state' {
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.Status | Should -Be 'Running'
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Status | Should -Be 'Running'
+            }
         }
 
         It 'maps InstanceType to Size' {
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.Size | Should -Be 't3.medium'
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Size | Should -Be 't3.medium'
+            }
         }
 
         It 'maps LaunchTime to CreatedAt' {
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.CreatedAt | Should -Be ([datetime]'2026-01-15T10:00:00Z')
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.CreatedAt | Should -Be ([datetime]'2026-01-15T10:00:00Z')
+            }
         }
 
         It 'includes InstanceId in Metadata' {
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.Metadata.InstanceId | Should -Be 'i-0abc123def456789'
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Metadata.InstanceId | Should -Be 'i-0abc123def456789'
+            }
         }
 
         It 'calls Get-EC2Instance with Region when provided' {
-            $null = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'eu-west-1' }
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
 
-            Should -Invoke Get-EC2Instance -ModuleName PSCumulus -Times 1 -ParameterFilter { $Region -eq 'eu-west-1' }
+                $null = Get-AWSInstanceData -Region 'eu-west-1'
+                Should -Invoke Get-EC2Instance -Times 1 -ParameterFilter { $Region -eq 'eu-west-1' }
+            }
         }
 
         It 'calls Get-EC2Instance without Region when omitted' {
-            $null = InModuleScope PSCumulus { Get-AWSInstanceData }
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
 
-            Should -Invoke Get-EC2Instance -ModuleName PSCumulus -Times 1 -ParameterFilter { -not $Region }
+                $null = Get-AWSInstanceData
+                Should -Invoke Get-EC2Instance -Times 1 -ParameterFilter { -not $Region }
+            }
         }
     }
 }

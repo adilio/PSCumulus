@@ -19,52 +19,79 @@ Describe 'Connect-AWSBackend' {
     }
 
     Context 'successful connection' {
-        BeforeEach {
+        It 'returns a PSCumulus.ConnectionResult object' {
             InModuleScope PSCumulus {
                 Mock Assert-CommandAvailable {}
                 Mock Initialize-AWSDefaultConfiguration {
-                    [pscustomobject]@{
-                        Name            = 'default'
-                        Region          = 'us-east-1'
-                        ProfileLocation = $null
-                    }
+                    [pscustomobject]@{ Name = 'default'; Region = 'us-east-1'; ProfileLocation = $null }
+                }
+
+                $result = Connect-AWSBackend
+                $result.PSObject.TypeNames | Should -Contain 'PSCumulus.ConnectionResult'
+            }
+        }
+
+        It 'sets Provider to AWS' {
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Initialize-AWSDefaultConfiguration {
+                    [pscustomobject]@{ Name = 'default'; Region = 'us-east-1'; ProfileLocation = $null }
+                }
+
+                $result = Connect-AWSBackend
+                $result.Provider | Should -Be 'AWS'
+            }
+        }
+
+        It 'sets Connected to true' {
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Initialize-AWSDefaultConfiguration {
+                    [pscustomobject]@{ Name = 'default'; Region = 'us-east-1'; ProfileLocation = $null }
+                }
+
+                $result = Connect-AWSBackend
+                $result.Connected | Should -Be $true
+            }
+        }
+
+        It 'uses the supplied Region in the result' {
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Initialize-AWSDefaultConfiguration {
+                    [pscustomobject]@{ Name = 'default'; Region = 'us-east-1'; ProfileLocation = $null }
+                }
+
+                $result = Connect-AWSBackend -Region 'eu-west-1'
+                $result.Region | Should -Be 'eu-west-1'
+            }
+        }
+
+        It 'calls Initialize-AWSDefaultConfiguration with Region when provided' {
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Initialize-AWSDefaultConfiguration {
+                    [pscustomobject]@{ Name = 'default'; Region = 'us-east-1'; ProfileLocation = $null }
+                }
+
+                $null = Connect-AWSBackend -Region 'ap-southeast-1'
+                Should -Invoke Initialize-AWSDefaultConfiguration -Times 1 -ParameterFilter {
+                    $Region -eq 'ap-southeast-1'
                 }
             }
         }
 
-        It 'returns a PSCumulus.ConnectionResult object' {
-            $result = InModuleScope PSCumulus { Connect-AWSBackend }
-            $result.PSObject.TypeNames | Should -Contain 'PSCumulus.ConnectionResult'
-        }
-
-        It 'sets Provider to AWS' {
-            $result = InModuleScope PSCumulus { Connect-AWSBackend }
-            $result.Provider | Should -Be 'AWS'
-        }
-
-        It 'sets Connected to true' {
-            $result = InModuleScope PSCumulus { Connect-AWSBackend }
-            $result.Connected | Should -Be $true
-        }
-
-        It 'uses the supplied Region in the result' {
-            $result = InModuleScope PSCumulus { Connect-AWSBackend -Region 'eu-west-1' }
-            $result.Region | Should -Be 'eu-west-1'
-        }
-
-        It 'calls Initialize-AWSDefaultConfiguration with Region when provided' {
-            $null = InModuleScope PSCumulus { Connect-AWSBackend -Region 'ap-southeast-1' }
-
-            Should -Invoke Initialize-AWSDefaultConfiguration -ModuleName PSCumulus -Times 1 -ParameterFilter {
-                $Region -eq 'ap-southeast-1'
-            }
-        }
-
         It 'calls Initialize-AWSDefaultConfiguration without Region when omitted' {
-            $null = InModuleScope PSCumulus { Connect-AWSBackend }
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Initialize-AWSDefaultConfiguration {
+                    [pscustomobject]@{ Name = 'default'; Region = 'us-east-1'; ProfileLocation = $null }
+                }
 
-            Should -Invoke Initialize-AWSDefaultConfiguration -ModuleName PSCumulus -Times 1 -ParameterFilter {
-                -not $Region
+                $null = Connect-AWSBackend
+                Should -Invoke Initialize-AWSDefaultConfiguration -Times 1 -ParameterFilter {
+                    -not $Region
+                }
             }
         }
     }
