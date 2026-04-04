@@ -110,9 +110,9 @@ Describe 'PSCumulus module' {
             }
         }
 
-        It 'Assert-CloudTagArguments is loaded' {
+        It 'Assert-CloudTagArgument is loaded' {
             InModuleScope PSCumulus {
-                Get-Command -Name Assert-CloudTagArguments | Should -Not -BeNullOrEmpty
+                Get-Command -Name Assert-CloudTagArgument | Should -Not -BeNullOrEmpty
             }
         }
     }

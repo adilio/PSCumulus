@@ -1,4 +1,4 @@
-function Assert-CloudTagArguments {
+function Assert-CloudTagArgument {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
@@ -34,4 +34,3 @@ function Assert-CloudTagArguments {
         }
     }
 }
-

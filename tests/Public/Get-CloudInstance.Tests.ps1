@@ -1,24 +1,39 @@
 BeforeAll {
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
+    . (Join-Path $PSScriptRoot 'TestHelpers.ps1')
 }
 
 Describe 'Get-CloudInstance' {
 
     Context 'parameter validation' {
-        It 'requires -Provider' {
-            { Get-CloudInstance } | Should -Throw
+        It 'marks Provider as mandatory in every parameter set' {
+            foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
+                Should-HaveMandatoryParameter `
+                    -CommandName 'Get-CloudInstance' `
+                    -ParameterSetName $parameterSet `
+                    -ParameterName 'Provider'
+            }
         }
 
-        It 'requires -ResourceGroup for Azure' {
-            { Get-CloudInstance -Provider Azure } | Should -Throw
+        It 'requires -ResourceGroup in the Azure parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Get-CloudInstance' `
+                -ParameterSetName 'Azure' `
+                -ParameterName 'ResourceGroup'
         }
 
-        It 'requires -Region for AWS' {
-            { Get-CloudInstance -Provider AWS } | Should -Throw
+        It 'requires -Region in the AWS parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Get-CloudInstance' `
+                -ParameterSetName 'AWS' `
+                -ParameterName 'Region'
         }
 
-        It 'requires -Project for GCP' {
-            { Get-CloudInstance -Provider GCP } | Should -Throw
+        It 'requires -Project in the GCP parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Get-CloudInstance' `
+                -ParameterSetName 'GCP' `
+                -ParameterName 'Project'
         }
 
         It 'rejects an invalid provider name' {

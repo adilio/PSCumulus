@@ -1,4 +1,9 @@
 function Start-GCPInstance {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseShouldProcessForStateChangingFunctions',
+        '',
+        Justification = 'This internal helper is invoked only by Start-CloudInstance, which implements ShouldProcess.'
+    )]
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]

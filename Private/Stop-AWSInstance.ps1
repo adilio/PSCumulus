@@ -1,4 +1,9 @@
 function Stop-AWSInstance {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseShouldProcessForStateChangingFunctions',
+        '',
+        Justification = 'This internal helper is invoked only by Stop-CloudInstance, which implements ShouldProcess.'
+    )]
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]

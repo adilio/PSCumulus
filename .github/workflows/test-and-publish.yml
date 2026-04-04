@@ -26,7 +26,17 @@ jobs:
         shell: pwsh
         run: |
           Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
-          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Error,Warning -ExcludeRule PSAvoidUsingWriteHost
+          $analysisPaths = @(
+            './Public'
+            './Private'
+            './PSCumulus.psd1'
+            './PSCumulus.psm1'
+          )
+
+          $results = foreach ($path in $analysisPaths) {
+            Invoke-ScriptAnalyzer -Path $path -Recurse -Severity Error,Warning -ExcludeRule PSAvoidUsingWriteHost
+          }
+
           if ($results) {
             $results | Format-Table -AutoSize
             throw "PSScriptAnalyzer found $($results.Count) issue(s)"

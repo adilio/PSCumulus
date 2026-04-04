@@ -41,7 +41,7 @@ function Get-CloudTag {
     )
 
     process {
-        Assert-CloudTagArguments -Provider $Provider -ResourceId $ResourceId -Project $Project -Resource $Resource
+        Assert-CloudTagArgument -Provider $Provider -ResourceId $ResourceId -Project $Project -Resource $Resource
 
         $commandMap = @{
             Azure = 'Get-AzureTagData'

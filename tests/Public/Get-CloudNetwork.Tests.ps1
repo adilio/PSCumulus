@@ -1,24 +1,39 @@
 BeforeAll {
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
+    . (Join-Path $PSScriptRoot 'TestHelpers.ps1')
 }
 
 Describe 'Get-CloudNetwork' {
 
     Context 'parameter validation' {
-        It 'requires -Provider' {
-            { Get-CloudNetwork } | Should -Throw
+        It 'marks Provider as mandatory in every parameter set' {
+            foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
+                Should-HaveMandatoryParameter `
+                    -CommandName 'Get-CloudNetwork' `
+                    -ParameterSetName $parameterSet `
+                    -ParameterName 'Provider'
+            }
         }
 
-        It 'requires -ResourceGroup for Azure' {
-            { Get-CloudNetwork -Provider Azure } | Should -Throw
+        It 'requires -ResourceGroup in the Azure parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Get-CloudNetwork' `
+                -ParameterSetName 'Azure' `
+                -ParameterName 'ResourceGroup'
         }
 
-        It 'requires -Region for AWS' {
-            { Get-CloudNetwork -Provider AWS } | Should -Throw
+        It 'requires -Region in the AWS parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Get-CloudNetwork' `
+                -ParameterSetName 'AWS' `
+                -ParameterName 'Region'
         }
 
-        It 'requires -Project for GCP' {
-            { Get-CloudNetwork -Provider GCP } | Should -Throw
+        It 'requires -Project in the GCP parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Get-CloudNetwork' `
+                -ParameterSetName 'GCP' `
+                -ParameterName 'Project'
         }
 
         It 'rejects an invalid provider name' {

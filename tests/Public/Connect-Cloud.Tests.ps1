@@ -1,24 +1,36 @@
 BeforeAll {
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
+    . (Join-Path $PSScriptRoot 'TestHelpers.ps1')
 }
 
 Describe 'Connect-Cloud' {
 
     Context 'parameter validation' {
-        It 'requires -Provider' {
-            { Connect-Cloud } | Should -Throw
+        It 'marks Provider as mandatory in every parameter set' {
+            foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
+                Should-HaveMandatoryParameter `
+                    -CommandName 'Connect-Cloud' `
+                    -ParameterSetName $parameterSet `
+                    -ParameterName 'Provider'
+            }
         }
 
         It 'rejects an invalid provider name' {
             { Connect-Cloud -Provider Oracle } | Should -Throw
         }
 
-        It 'requires -Region when using AWS parameter set' {
-            { Connect-Cloud -Provider AWS } | Should -Throw
+        It 'requires -Region in the AWS parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Connect-Cloud' `
+                -ParameterSetName 'AWS' `
+                -ParameterName 'Region'
         }
 
-        It 'requires -Project when using GCP parameter set' {
-            { Connect-Cloud -Provider GCP } | Should -Throw
+        It 'requires -Project in the GCP parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Connect-Cloud' `
+                -ParameterSetName 'GCP' `
+                -ParameterName 'Project'
         }
     }
 

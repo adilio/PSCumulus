@@ -1,24 +1,39 @@
 BeforeAll {
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
+    . (Join-Path $PSScriptRoot 'TestHelpers.ps1')
 }
 
 Describe 'Start-CloudInstance' {
 
     Context 'parameter validation' {
-        It 'requires -Provider' {
-            { Start-CloudInstance } | Should -Throw
+        It 'marks Provider as mandatory in every parameter set' {
+            foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
+                Should-HaveMandatoryParameter `
+                    -CommandName 'Start-CloudInstance' `
+                    -ParameterSetName $parameterSet `
+                    -ParameterName 'Provider'
+            }
         }
 
-        It 'requires -Name and -ResourceGroup for Azure' {
-            { Start-CloudInstance -Provider Azure -Name 'vm01' } | Should -Throw
+        It 'requires -Name and -ResourceGroup in the Azure parameter set' {
+            Should-HaveMandatoryParameters `
+                -CommandName 'Start-CloudInstance' `
+                -ParameterSetName 'Azure' `
+                -ParameterNames @('Name', 'ResourceGroup')
         }
 
-        It 'requires -InstanceId for AWS' {
-            { Start-CloudInstance -Provider AWS } | Should -Throw
+        It 'requires -InstanceId in the AWS parameter set' {
+            Should-HaveMandatoryParameter `
+                -CommandName 'Start-CloudInstance' `
+                -ParameterSetName 'AWS' `
+                -ParameterName 'InstanceId'
         }
 
-        It 'requires -Name, -Zone, and -Project for GCP' {
-            { Start-CloudInstance -Provider GCP -Name 'vm01' -Zone 'us-central1-a' } | Should -Throw
+        It 'requires -Name, -Zone, and -Project in the GCP parameter set' {
+            Should-HaveMandatoryParameters `
+                -CommandName 'Start-CloudInstance' `
+                -ParameterSetName 'GCP' `
+                -ParameterNames @('Name', 'Zone', 'Project')
         }
 
         It 'rejects an invalid provider name' {

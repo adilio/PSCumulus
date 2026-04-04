@@ -144,7 +144,7 @@ PSCumulus/
 │   ├── Invoke-GCloudJson.ps1
 │   ├── Assert-CommandAvailable.ps1
 │   ├── Assert-ProviderParameterSet.ps1
-│   ├── Assert-CloudTagArguments.ps1
+│   ├── Assert-CloudTagArgument.ps1
 │   ├── Assert-GCloudAuthenticated.ps1
 │   ├── Connect-{Azure,AWS,GCP}Backend.ps1
 │   ├── Get-{Azure,AWS,GCP}InstanceData.ps1

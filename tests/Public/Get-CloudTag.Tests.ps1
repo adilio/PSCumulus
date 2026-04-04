@@ -1,12 +1,14 @@
 BeforeAll {
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
+    . (Join-Path $PSScriptRoot 'TestHelpers.ps1')
 }
 
 Describe 'Get-CloudTag' {
 
     Context 'parameter validation' {
-        It 'requires -Provider' {
-            { Get-CloudTag } | Should -Throw
+        It 'marks Provider as mandatory' {
+            (Get-Command Get-CloudTag).Parameters['Provider'].Attributes.Mandatory |
+                Should -Contain $true
         }
 
         It 'rejects an invalid provider name' {
