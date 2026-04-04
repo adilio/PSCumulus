@@ -2,7 +2,7 @@ BeforeAll {
     # Stub AWS commands so Pester can create mocks when AWS.Tools is not installed
     if (-not (Get-Command Initialize-AWSDefaultConfiguration -ErrorAction SilentlyContinue)) {
         $script:stubCreatedInitialize = $true
-        function global:Initialize-AWSDefaultConfiguration { }
+        function global:Initialize-AWSDefaultConfiguration { param([string]$Region) }
     }
 
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force

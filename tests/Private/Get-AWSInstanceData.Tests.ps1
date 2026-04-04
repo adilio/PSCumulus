@@ -2,7 +2,7 @@ BeforeAll {
     # Stub AWS commands so Pester can create mocks when AWS.Tools is not installed
     if (-not (Get-Command Get-EC2Instance -ErrorAction SilentlyContinue)) {
         $script:stubCreatedGetEC2 = $true
-        function global:Get-EC2Instance { }
+        function global:Get-EC2Instance { param([string]$Region) }
     }
 
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
