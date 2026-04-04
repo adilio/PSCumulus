@@ -5,7 +5,6 @@ HelpInfoUri:
 Locale: en-US
 Module Guid: 9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7
 Module Name: PSCumulus
-ms.date: 04-04-2026
 PlatyPS schema version: 2024-05-01
 title: PSCumulus Module Reference
 ---

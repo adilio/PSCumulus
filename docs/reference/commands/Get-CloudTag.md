@@ -4,7 +4,6 @@ external help file: PSCumulus-Help.xml
 HelpUri: ''
 Locale: en-US
 Module Name: PSCumulus
-ms.date: 04-04-2026
 PlatyPS schema version: 2024-05-01
 title: Get-CloudTag
 ---

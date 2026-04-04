@@ -26,6 +26,7 @@ function Set-AliasSection {
 
     $updated = $content -replace [regex]::Escape("This cmdlet has the following aliases,$([Environment]::NewLine)  {{Insert list of aliases}}"), "This cmdlet has the following aliases,$([Environment]::NewLine)$aliasText"
     $updated = $updated -replace 'Locale: .+', 'Locale: en-US'
+    $updated = $updated -replace '(?m)^ms\.date: .+\r?\n', ''
     Set-Content -Path $Path -Value $updated -Encoding utf8NoBOM
 }
 
@@ -73,6 +74,7 @@ try {
         $moduleContent = Get-Content -Path $targetModulePage -Raw
         $moduleContent = $moduleContent -replace 'title: PSCumulus Module', 'title: PSCumulus Module Reference'
         $moduleContent = $moduleContent -replace 'Locale: .+', 'Locale: en-US'
+        $moduleContent = $moduleContent -replace '(?m)^ms\.date: .+\r?\n', ''
         $moduleContent = $moduleContent -replace '\]\(([^)]+)\.md\)', '](commands/$1.md)'
         Set-Content -Path $targetModulePage -Value $moduleContent -Encoding utf8NoBOM
     }
