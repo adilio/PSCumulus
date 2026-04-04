@@ -13,13 +13,14 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Get-CloudTag'
             $commands | Should -Contain 'Get-CloudNetwork'
             $commands | Should -Contain 'Get-CloudDisk'
+            $commands | Should -Contain 'Get-CloudFunction'
             $commands | Should -Contain 'Start-CloudInstance'
             $commands | Should -Contain 'Stop-CloudInstance'
         }
 
-        It 'exports exactly eight public functions' {
+        It 'exports exactly nine public functions' {
             $commands = Get-Command -Module PSCumulus
-            $commands.Count | Should -Be 8
+            $commands.Count | Should -Be 9
         }
 
         It 'does not export variables' {
@@ -85,6 +86,10 @@ Describe 'PSCumulus module' {
 
         It 'Start-CloudInstance declares pscustomobject OutputType' {
             (Get-Command Start-CloudInstance).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Get-CloudFunction declares pscustomobject OutputType' {
+            (Get-Command Get-CloudFunction).OutputType | Should -Not -BeNullOrEmpty
         }
 
         It 'Stop-CloudInstance declares pscustomobject OutputType' {

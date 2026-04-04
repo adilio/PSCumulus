@@ -15,6 +15,7 @@
         'Get-CloudTag',
         'Get-CloudNetwork',
         'Get-CloudDisk',
+        'Get-CloudFunction',
         'Start-CloudInstance',
         'Stop-CloudInstance'
     )
