@@ -39,6 +39,10 @@ Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 # GCP
 # Requires the gcloud CLI:
 # https://cloud.google.com/sdk/docs/install
+
+# Note: GCP doesn't have a maintained PowerShell module, so there's no
+# Install-Module equivalent. Install the gcloud CLI for your platform
+# using the link above.
 ```
 
 ## Installation
