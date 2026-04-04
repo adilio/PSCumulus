@@ -57,6 +57,18 @@ Describe 'Connect-Cloud' {
                 $result.Provider | Should -Be 'Azure'
             }
         }
+
+        It 'stores Azure as the current provider' {
+            InModuleScope PSCumulus {
+                Mock Connect-AzureBackend {
+                    [pscustomobject]@{ PSTypeName = 'PSCumulus.ConnectionResult'; Provider = 'Azure'; Connected = $true }
+                }
+
+                $null = Connect-Cloud -Provider Azure
+
+                Get-CurrentCloudProvider | Should -Be 'Azure'
+            }
+        }
     }
 
     Context 'AWS routing' {
@@ -83,6 +95,18 @@ Describe 'Connect-Cloud' {
                 $result.Region | Should -Be 'eu-west-1'
             }
         }
+
+        It 'stores AWS as the current provider' {
+            InModuleScope PSCumulus {
+                Mock Connect-AWSBackend {
+                    [pscustomobject]@{ PSTypeName = 'PSCumulus.ConnectionResult'; Provider = 'AWS'; Connected = $true }
+                }
+
+                $null = Connect-Cloud -Provider AWS -Region 'us-east-1'
+
+                Get-CurrentCloudProvider | Should -Be 'AWS'
+            }
+        }
     }
 
     Context 'GCP routing' {
@@ -107,6 +131,18 @@ Describe 'Connect-Cloud' {
 
                 $result = Connect-Cloud -Provider GCP -Project 'prod-project'
                 $result.Project | Should -Be 'prod-project'
+            }
+        }
+
+        It 'stores GCP as the current provider' {
+            InModuleScope PSCumulus {
+                Mock Connect-GCPBackend {
+                    [pscustomobject]@{ PSTypeName = 'PSCumulus.ConnectionResult'; Provider = 'GCP'; Connected = $true }
+                }
+
+                $null = Connect-Cloud -Provider GCP -Project 'my-project'
+
+                Get-CurrentCloudProvider | Should -Be 'GCP'
             }
         }
     }

@@ -6,9 +6,9 @@ BeforeAll {
 Describe 'Get-CloudInstance' {
 
     Context 'parameter validation' {
-        It 'marks Provider as mandatory in every parameter set' {
+        It 'makes Provider optional in every parameter set' {
             foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
-                Should-HaveMandatoryParameter `
+                Should-HaveOptionalParameter `
                     -CommandName 'Get-CloudInstance' `
                     -ParameterSetName $parameterSet `
                     -ParameterName 'Provider'
@@ -66,6 +66,18 @@ Describe 'Get-CloudInstance' {
             }
         }
 
+        It 'infers Azure when Provider is omitted' {
+            InModuleScope PSCumulus {
+                Mock Get-AzureInstanceData {
+                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Region 'eastus'
+                }
+
+                Get-CloudInstance -ResourceGroup 'prod-rg'
+
+                Should -Invoke Get-AzureInstanceData -Times 1
+            }
+        }
+
         It 'returns CloudRecord objects' {
             InModuleScope PSCumulus {
                 Mock Get-AzureInstanceData {
@@ -100,6 +112,18 @@ Describe 'Get-CloudInstance' {
 
                 $result = Get-CloudInstance -Provider AWS -Region 'ap-southeast-1'
                 $result.Region | Should -Be 'ap-southeast-1'
+            }
+        }
+
+        It 'infers AWS when Provider is omitted' {
+            InModuleScope PSCumulus {
+                Mock Get-AWSInstanceData {
+                    ConvertTo-CloudRecord -Name 'i-abc' -Provider AWS -Region 'us-east-1a'
+                }
+
+                Get-CloudInstance -Region 'us-east-1'
+
+                Should -Invoke Get-AWSInstanceData -Times 1
             }
         }
     }

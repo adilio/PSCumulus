@@ -1,3 +1,7 @@
+$script:PSCumulusContext = @{
+    Provider = $null
+}
+
 $publicPath = Join-Path -Path $PSScriptRoot -ChildPath 'Public'
 $privatePath = Join-Path -Path $PSScriptRoot -ChildPath 'Private'
 
@@ -13,3 +17,7 @@ foreach ($path in @($privatePath, $publicPath)) {
         }
 }
 
+Set-Alias -Name cc   -Value Connect-Cloud -Scope Script
+Set-Alias -Name gcin -Value Get-CloudInstance -Scope Script
+Set-Alias -Name sci  -Value Start-CloudInstance -Scope Script
+Set-Alias -Name tci  -Value Stop-CloudInstance -Scope Script

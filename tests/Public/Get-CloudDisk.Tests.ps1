@@ -6,9 +6,9 @@ BeforeAll {
 Describe 'Get-CloudDisk' {
 
     Context 'parameter validation' {
-        It 'marks Provider as mandatory in every parameter set' {
+        It 'makes Provider optional in every parameter set' {
             foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
-                Should-HaveMandatoryParameter `
+                Should-HaveOptionalParameter `
                     -CommandName 'Get-CloudDisk' `
                     -ParameterSetName $parameterSet `
                     -ParameterName 'Provider'
@@ -49,6 +49,18 @@ Describe 'Get-CloudDisk' {
                 }
 
                 Get-CloudDisk -Provider Azure -ResourceGroup 'prod-rg'
+
+                Should -Invoke Get-AzureDiskData -Times 1
+            }
+        }
+
+        It 'infers Azure when Provider is omitted' {
+            InModuleScope PSCumulus {
+                Mock Get-AzureDiskData {
+                    ConvertTo-CloudRecord -Name 'os-disk-01' -Provider Azure -Region 'eastus'
+                }
+
+                Get-CloudDisk -ResourceGroup 'prod-rg'
 
                 Should -Invoke Get-AzureDiskData -Times 1
             }
@@ -100,6 +112,18 @@ Describe 'Get-CloudDisk' {
 
                 $result = Get-CloudDisk -Provider AWS -Region 'eu-west-1'
                 $result.Region | Should -Be 'eu-west-1'
+            }
+        }
+
+        It 'infers AWS when Provider is omitted' {
+            InModuleScope PSCumulus {
+                Mock Get-AWSDiskData {
+                    ConvertTo-CloudRecord -Name 'data-volume' -Provider AWS -Region 'us-east-1a'
+                }
+
+                Get-CloudDisk -Region 'us-east-1'
+
+                Should -Invoke Get-AWSDiskData -Times 1
             }
         }
     }

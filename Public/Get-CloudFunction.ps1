@@ -26,10 +26,9 @@ function Get-CloudFunction {
     [OutputType([pscustomobject])]
     param(
         # The cloud provider to query.
-        [Parameter(Mandatory, ParameterSetName = 'Azure')]
-        [Parameter(Mandatory, ParameterSetName = 'AWS')]
-        [Parameter(Mandatory, ParameterSetName = 'GCP')]
-        [ValidateSet('Azure', 'AWS', 'GCP')]
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
         [string]$Provider,
 
         # The Azure resource group containing the target Function Apps.
@@ -49,7 +48,7 @@ function Get-CloudFunction {
     )
 
     process {
-        Assert-ProviderParameterSet -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
+        $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
 
         $commandMap = @{
             Azure = 'Get-AzureFunctionData'
@@ -59,18 +58,18 @@ function Get-CloudFunction {
 
         $argumentMap = @{}
 
-        if ($Provider -eq 'Azure' -and $PSBoundParameters.ContainsKey('ResourceGroup')) {
+        if ($resolvedProvider -eq 'Azure' -and $PSBoundParameters.ContainsKey('ResourceGroup')) {
             $argumentMap.ResourceGroup = $ResourceGroup
         }
 
-        if ($Provider -eq 'AWS' -and $PSBoundParameters.ContainsKey('Region')) {
+        if ($resolvedProvider -eq 'AWS' -and $PSBoundParameters.ContainsKey('Region')) {
             $argumentMap.Region = $Region
         }
 
-        if ($Provider -eq 'GCP' -and $PSBoundParameters.ContainsKey('Project')) {
+        if ($resolvedProvider -eq 'GCP' -and $PSBoundParameters.ContainsKey('Project')) {
             $argumentMap.Project = $Project
         }
 
-        Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+        Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
     }
 }

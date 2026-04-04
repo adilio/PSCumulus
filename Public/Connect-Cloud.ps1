@@ -44,8 +44,6 @@ function Connect-Cloud {
     )
 
     process {
-        Assert-ProviderParameterSet -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
-
         $commandMap = @{
             Azure = 'Connect-AzureBackend'
             AWS   = 'Connect-AWSBackend'
@@ -62,6 +60,11 @@ function Connect-Cloud {
             $argumentMap.Project = $Project
         }
 
-        Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+        $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
+        $result = Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+
+        $script:PSCumulusContext.Provider = $resolvedProvider
+
+        $result
     }
 }

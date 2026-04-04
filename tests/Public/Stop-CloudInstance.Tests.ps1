@@ -6,9 +6,9 @@ BeforeAll {
 Describe 'Stop-CloudInstance' {
 
     Context 'parameter validation' {
-        It 'marks Provider as mandatory in every parameter set' {
+        It 'makes Provider optional in every parameter set' {
             foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
-                Should-HaveMandatoryParameter `
+                Should-HaveOptionalParameter `
                     -CommandName 'Stop-CloudInstance' `
                     -ParameterSetName $parameterSet `
                     -ParameterName 'Provider'
@@ -66,6 +66,18 @@ Describe 'Stop-CloudInstance' {
                 $result.Metadata.RG | Should -Be 'my-rg'
             }
         }
+
+        It 'infers Azure when Provider is omitted' {
+            InModuleScope PSCumulus {
+                Mock Stop-AzureInstance {
+                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Status 'Stopping'
+                }
+
+                Stop-CloudInstance -Name 'vm01' -ResourceGroup 'prod-rg'
+
+                Should -Invoke Stop-AzureInstance -Times 1
+            }
+        }
     }
 
     Context 'AWS routing' {
@@ -90,6 +102,18 @@ Describe 'Stop-CloudInstance' {
 
                 $result = Stop-CloudInstance -Provider AWS -InstanceId 'i-0abc123'
                 $result.Name | Should -Be 'i-0abc123'
+            }
+        }
+
+        It 'infers AWS when Provider is omitted' {
+            InModuleScope PSCumulus {
+                Mock Stop-AWSInstance {
+                    ConvertTo-CloudRecord -Name 'i-abc' -Provider AWS -Status 'Stopping'
+                }
+
+                Stop-CloudInstance -InstanceId 'i-abc' -Region 'us-east-1'
+
+                Should -Invoke Stop-AWSInstance -Times 1
             }
         }
     }

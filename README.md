@@ -44,6 +44,22 @@ Connect-Cloud -Provider AWS  -Region "us-east-1"
 Connect-Cloud -Provider GCP  -Project "my-project"
 ```
 
+`Connect-Cloud` also remembers the active provider for the current session, so once you've connected you can usually omit `-Provider` on later commands when the remaining parameters already imply the target cloud, or when the current provider makes the intent unambiguous.
+
+```powershell
+# Connect once
+Connect-Cloud -Provider AWS -Region "us-east-1"
+
+# Provider inferred from the parameter set
+Get-CloudInstance -Region "us-east-1"
+Start-CloudInstance -InstanceId "i-0abc123" -Region "us-east-1"
+
+# Provider inferred from the current session
+Get-CloudTag -ResourceId "i-0abc123"
+```
+
+If you want to override the remembered provider, just pass `-Provider` explicitly.
+
 ---
 
 ## Core API
@@ -90,6 +106,31 @@ Stop-CloudInstance  -Provider Azure -Name "web-01" -ResourceGroup "prod-rg"
 Stop-CloudInstance  -Provider AWS   -InstanceId "i-0abc123" -Region "us-east-1"
 Stop-CloudInstance  -Provider GCP   -Name "web-01" -Zone "us-central1-a" -Project "my-project"
 ```
+
+After `Connect-Cloud`, you can also use the same commands without `-Provider` in many interactive cases:
+
+```powershell
+Get-CloudInstance -ResourceGroup "prod-rg"
+Get-CloudInstance -Region "us-east-1"
+Get-CloudInstance -Project "my-project"
+
+Start-CloudInstance -InstanceId "i-0abc123" -Region "us-east-1"
+Stop-CloudInstance  -Name "web-01" -ResourceGroup "prod-rg"
+Get-CloudTag        -ResourceId "i-0abc123"
+```
+
+### Aliases
+
+For interactive use, PSCumulus also exports a few short aliases:
+
+| Alias  | Command               |
+|--------|-----------------------|
+| `cc`   | `Connect-Cloud`       |
+| `gcin` | `Get-CloudInstance`   |
+| `sci`  | `Start-CloudInstance` |
+| `tci`  | `Stop-CloudInstance`  |
+
+These are convenience shortcuts for terminal work. The full command names remain the recommended interface for scripts, docs, and shared examples.
 
 All commands return a `PSCumulus.CloudRecord` object with consistent properties:
 

@@ -26,8 +26,7 @@ function Get-CloudTag {
     [OutputType([pscustomobject])]
     param(
         # The cloud provider to query.
-        [Parameter(Mandatory)]
-        [ValidateSet('Azure', 'AWS', 'GCP')]
+        [Parameter()]
         [string]$Provider,
 
         # The provider resource identifier for Azure or AWS.
@@ -41,7 +40,9 @@ function Get-CloudTag {
     )
 
     process {
-        Assert-CloudTagArgument -Provider $Provider -ResourceId $ResourceId -Project $Project -Resource $Resource
+        $resolvedProvider = Resolve-CloudTagProvider -Provider $Provider -Project $Project -Resource $Resource
+
+        Assert-CloudTagArgument -Provider $resolvedProvider -ResourceId $ResourceId -Project $Project -Resource $Resource
 
         $commandMap = @{
             Azure = 'Get-AzureTagData'
@@ -51,15 +52,15 @@ function Get-CloudTag {
 
         $argumentMap = @{}
 
-        if ($Provider -eq 'Azure' -and $PSBoundParameters.ContainsKey('ResourceId')) {
+        if ($resolvedProvider -eq 'Azure' -and $PSBoundParameters.ContainsKey('ResourceId')) {
             $argumentMap.ResourceId = $ResourceId
         }
 
-        if ($Provider -eq 'AWS' -and $PSBoundParameters.ContainsKey('ResourceId')) {
+        if ($resolvedProvider -eq 'AWS' -and $PSBoundParameters.ContainsKey('ResourceId')) {
             $argumentMap.ResourceId = $ResourceId
         }
 
-        if ($Provider -eq 'GCP') {
+        if ($resolvedProvider -eq 'GCP') {
             if ($PSBoundParameters.ContainsKey('Project')) {
                 $argumentMap.Project = $Project
             }
@@ -69,6 +70,6 @@ function Get-CloudTag {
             }
         }
 
-        Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+        Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
     }
 }

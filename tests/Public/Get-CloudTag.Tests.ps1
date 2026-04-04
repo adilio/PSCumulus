@@ -1,14 +1,13 @@
 BeforeAll {
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
-    . (Join-Path $PSScriptRoot 'TestHelpers.ps1')
 }
 
 Describe 'Get-CloudTag' {
 
     Context 'parameter validation' {
-        It 'marks Provider as mandatory' {
+        It 'makes Provider optional' {
             (Get-Command Get-CloudTag).Parameters['Provider'].Attributes.Mandatory |
-                Should -Contain $true
+                Should -Not -Contain $true
         }
 
         It 'rejects an invalid provider name' {
@@ -38,6 +37,15 @@ Describe 'Get-CloudTag' {
         It 'throws when GCP is used without either Project or Resource' {
             { Get-CloudTag -Provider GCP } |
                 Should -Throw "Provider 'GCP' requires both -Project and -Resource."
+        }
+
+        It 'throws when neither Provider nor current provider is available for ResourceId lookups' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Provider = $null
+
+                { Get-CloudTag -ResourceId 'i-0123456789abcdef0' } |
+                    Should -Throw "*No provider was supplied for tag lookup and no current provider is set*"
+            }
         }
     }
 
@@ -104,6 +112,33 @@ Describe 'Get-CloudTag' {
                 }
 
                 $result = Get-CloudTag -Provider GCP -Project 'proj-x' -Resource 'instances/vm-a'
+                $result.Project | Should -Be 'proj-x'
+                $result.Resource | Should -Be 'instances/vm-a'
+            }
+        }
+
+        It 'uses the current provider when Provider is omitted for ResourceId lookups' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Provider = 'AWS'
+
+                Mock Get-AWSTagData {
+                    param([string]$ResourceId)
+                    [pscustomobject]@{ ResourceId = $ResourceId }
+                }
+
+                $result = Get-CloudTag -ResourceId 'i-abc123'
+                $result.ResourceId | Should -Be 'i-abc123'
+            }
+        }
+
+        It 'infers GCP when Project and Resource are supplied without Provider' {
+            InModuleScope PSCumulus {
+                Mock Get-GCPTagData {
+                    param([string]$Project, [string]$Resource)
+                    [pscustomobject]@{ Project = $Project; Resource = $Resource }
+                }
+
+                $result = Get-CloudTag -Project 'proj-x' -Resource 'instances/vm-a'
                 $result.Project | Should -Be 'proj-x'
                 $result.Resource | Should -Be 'instances/vm-a'
             }

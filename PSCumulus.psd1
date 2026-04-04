@@ -24,7 +24,12 @@
 
     CmdletsToExport   = @()
     VariablesToExport = @()
-    AliasesToExport   = @()
+    AliasesToExport   = @(
+        'cc',
+        'gcin',
+        'sci',
+        'tci'
+    )
 
     PrivateData = @{
         PSData = @{

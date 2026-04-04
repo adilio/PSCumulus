@@ -6,9 +6,9 @@ BeforeAll {
 Describe 'Get-CloudFunction' {
 
     Context 'parameter validation' {
-        It 'marks Provider as mandatory in every parameter set' {
+        It 'makes Provider optional in every parameter set' {
             foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
-                Should-HaveMandatoryParameter `
+                Should-HaveOptionalParameter `
                     -CommandName 'Get-CloudFunction' `
                     -ParameterSetName $parameterSet `
                     -ParameterName 'Provider'

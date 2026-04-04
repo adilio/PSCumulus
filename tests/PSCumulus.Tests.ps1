@@ -20,7 +20,7 @@ Describe 'PSCumulus module' {
 
         It 'exports exactly nine public functions' {
             $commands = Get-Command -Module PSCumulus
-            $commands.Count | Should -Be 9
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 9
         }
 
         It 'does not export variables' {
@@ -28,9 +28,9 @@ Describe 'PSCumulus module' {
             $manifest.VariablesToExport.Count | Should -Be 0
         }
 
-        It 'does not export aliases' {
+        It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.AliasesToExport.Count | Should -Be 0
+            $manifest.AliasesToExport | Should -Be @('cc', 'gcin', 'sci', 'tci')
         }
 
         It 'declares a module version' {
@@ -114,6 +114,19 @@ Describe 'PSCumulus module' {
             InModuleScope PSCumulus {
                 Get-Command -Name Assert-CloudTagArgument | Should -Not -BeNullOrEmpty
             }
+        }
+
+        It 'Resolve-CloudProvider is loaded' {
+            InModuleScope PSCumulus {
+                Get-Command -Name Resolve-CloudProvider | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
+
+    Context 'aliases' {
+        It 'exports the expected interactive aliases' {
+            (Get-Command -Module PSCumulus -CommandType Alias).Name |
+                Should -Be @('cc', 'gcin', 'sci', 'tci')
         }
     }
 

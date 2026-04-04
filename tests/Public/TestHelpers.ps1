@@ -18,6 +18,26 @@ function Should-HaveMandatoryParameter {
         Should -Be $true
 }
 
+function Should-HaveOptionalParameter {
+    param(
+        [Parameter(Mandatory)]
+        [string]$CommandName,
+
+        [Parameter(Mandatory)]
+        [string]$ParameterSetName,
+
+        [Parameter(Mandatory)]
+        [string]$ParameterName
+    )
+
+    (Get-Command $CommandName).ParameterSets |
+        Where-Object Name -eq $ParameterSetName |
+        Select-Object -ExpandProperty Parameters |
+        Where-Object Name -eq $ParameterName |
+        Select-Object -ExpandProperty IsMandatory |
+        Should -Be $false
+}
+
 function Should-HaveMandatoryParameters {
     param(
         [Parameter(Mandatory)]

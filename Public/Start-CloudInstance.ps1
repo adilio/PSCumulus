@@ -26,10 +26,9 @@ function Start-CloudInstance {
     [OutputType([pscustomobject])]
     param(
         # The cloud provider to target.
-        [Parameter(Mandatory, ParameterSetName = 'Azure')]
-        [Parameter(Mandatory, ParameterSetName = 'AWS')]
-        [Parameter(Mandatory, ParameterSetName = 'GCP')]
-        [ValidateSet('Azure', 'AWS', 'GCP')]
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
         [string]$Provider,
 
         # The instance name (Azure and GCP).
@@ -64,7 +63,7 @@ function Start-CloudInstance {
     )
 
     process {
-        Assert-ProviderParameterSet -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
+        $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
 
         $commandMap = @{
             Azure = 'Start-AzureInstance'
@@ -74,7 +73,7 @@ function Start-CloudInstance {
 
         $argumentMap = @{}
 
-        switch ($Provider) {
+        switch ($resolvedProvider) {
             'Azure' {
                 $argumentMap.Name          = $Name
                 $argumentMap.ResourceGroup = $ResourceGroup
@@ -92,14 +91,14 @@ function Start-CloudInstance {
             }
         }
 
-        $target = switch ($Provider) {
+        $target = switch ($resolvedProvider) {
             'Azure' { "$Name in resource group $ResourceGroup" }
             'AWS'   { $InstanceId }
             'GCP'   { "$Name in zone $Zone ($Project)" }
         }
 
         if ($PSCmdlet.ShouldProcess($target, 'Start-CloudInstance')) {
-            Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+            Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
         }
     }
 }
