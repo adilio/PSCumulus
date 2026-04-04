@@ -214,3 +214,48 @@ Planned as a **Fast Focus (25 min)**. If moved to General Session (45 min):
 - Deepen the module demo — show actual output objects being piped
 - Add Q&A buffer
 - The emotional arc and thesis do not change
+
+---
+
+## Code Quality Findings (External Audit)
+
+External LLM review conducted 2026-04-03. All findings verified against source.
+
+### Finding 1 — Missing ShouldProcess on Start/Stop-CloudInstance ✅ Fixed
+
+`Start-CloudInstance` and `Stop-CloudInstance` mutate real infrastructure but neither
+exposed `-WhatIf` or `-Confirm`. Fixed by adding `SupportsShouldProcess` to
+`[CmdletBinding()]` on both functions and wrapping `Invoke-CloudProvider` with
+`$PSCmdlet.ShouldProcess(...)`.
+
+### Finding 2 — Workflow publishes on every push to main ✅ Fixed
+
+`test-and-publish.yml` triggered `Publish-Module` on every `main` push. Fixed by gating
+the publish job on version tags (`v*.*.*`) and adding `workflow_dispatch` for manual
+releases. Tests still run on every push and PR.
+
+### Finding 3 — Build docs omit the CSS theme dependency ✅ Fixed
+
+The "Build the Slides" section referenced `.\summit-2026.css` without explaining where to
+get it. The file lives in [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026)
+and must be cloned locally before running the Marp commands. README updated to include
+that prerequisite step.
+
+### Finding 4 — No format/type data for PSCumulus.CloudRecord (deferred)
+
+`ConvertTo-CloudRecord` inserts the type name but no `.ps1xml` format file exists.
+Output works, but `Format-Table` uses default property selection. Worth addressing if the
+module graduates beyond a demo — add `PSCumulus.Format.ps1xml` with a `TableControl` for
+Name, Provider, Region, Status, Size and reference it in `FormatsToProcess`.
+
+### Finding 5 — DefaultParameterSetName drift on Get-CloudStorage (deferred)
+
+`Get-CloudStorage` uses `DefaultParameterSetName = 'AWS'` while all other commands use
+`'Azure'`. No functional impact (Provider is always mandatory), but inconsistent. Fix
+when touching that file for another reason.
+
+### Finding 6 — Repetitive test patterns (deferred)
+
+461/461 tests pass. Reviewer noted boilerplate validation/routing tests could be
+converted to data-driven Pester `TestCases`. Not urgent; address post-talk if the module
+sees wider use. Also consider adding a PSScriptAnalyzer lint step to CI at that point.

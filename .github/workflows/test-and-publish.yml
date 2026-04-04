@@ -3,8 +3,10 @@ name: Test and Publish
 on:
   push:
     branches: [main]
+    tags: ['v*.*.*']
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -19,6 +21,16 @@ jobs:
         shell: pwsh
         run: |
           Install-Module Pester -MinimumVersion 5.6.0 -MaximumVersion 5.99.99 -Force -Scope CurrentUser
+
+      - name: Lint with PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Error,Warning -ExcludeRule PSAvoidUsingWriteHost
+          if ($results) {
+            $results | Format-Table -AutoSize
+            throw "PSScriptAnalyzer found $($results.Count) issue(s)"
+          }
 
       - name: Run tests
         shell: pwsh
@@ -43,7 +55,7 @@ jobs:
     name: Publish to PowerShell Gallery
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout

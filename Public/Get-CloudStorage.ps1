@@ -22,7 +22,7 @@ function Get-CloudStorage {
 
             Gets GCP storage resources for a project.
     #>
-    [CmdletBinding(DefaultParameterSetName = 'AWS')]
+    [CmdletBinding(DefaultParameterSetName = 'Azure')]
     [OutputType([pscustomobject])]
     param(
         # The cloud provider to query.

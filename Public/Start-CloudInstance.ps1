@@ -22,7 +22,7 @@ function Start-CloudInstance {
 
             Starts a GCP compute instance.
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Azure')]
+    [CmdletBinding(DefaultParameterSetName = 'Azure', SupportsShouldProcess)]
     [OutputType([pscustomobject])]
     param(
         # The cloud provider to target.
@@ -92,6 +92,14 @@ function Start-CloudInstance {
             }
         }
 
-        Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+        $target = switch ($Provider) {
+            'Azure' { "$Name in resource group $ResourceGroup" }
+            'AWS'   { $InstanceId }
+            'GCP'   { "$Name in zone $Zone ($Project)" }
+        }
+
+        if ($PSCmdlet.ShouldProcess($target, 'Start-CloudInstance')) {
+            Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+        }
     }
 }

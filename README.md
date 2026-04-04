@@ -203,7 +203,15 @@ The GitHub Actions workflow runs the full suite on every push and PR to `main`.
 
 ## Build the Slides
 
+The slides use the Summit theme from [HeyItsGilbert/PSSummit2026](https://github.com/HeyItsGilbert/PSSummit2026).
+Clone that repo and copy `summit-2026.css` to the root of this repo before running the Marp commands.
+
 ```powershell
+# One-time: get the theme
+git clone https://github.com/HeyItsGilbert/PSSummit2026.git
+Copy-Item .\PSSummit2026\summit-2026.css .\summit-2026.css
+
+# Build
 npm i -g @marp-team/marp-cli
 
 marp .\slides\PSCumulus.md --theme-set .\summit-2026.css --html  --output .\dist\PSCumulus.html

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+
+    <!-- PSCumulus.CloudRecord -->
+    <View>
+      <Name>PSCumulus.CloudRecord</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.CloudRecord</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>30</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Provider</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Region</Label>
+            <Width>20</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Status</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Size</Label>
+            <Width>20</Width>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><PropertyName>Name</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Provider</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Region</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Status</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Size</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <!-- PSCumulus.ConnectionResult -->
+    <View>
+      <Name>PSCumulus.ConnectionResult</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.ConnectionResult</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Provider</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Connected</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Context</Label>
+            <Width>40</Width>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><PropertyName>Provider</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Connected</PropertyName></TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  switch ($_.Provider) {
+                    'Azure' { $_.ContextName }
+                    'AWS'   { if ($_.Region) { "$($_.ProfileName) ($($_.Region))" } else { $_.ProfileName } }
+                    'GCP'   { "$($_.Account) / $($_.Project)" }
+                    default { '' }
+                  }
+                </ScriptBlock>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+  </ViewDefinitions>
+</Configuration>

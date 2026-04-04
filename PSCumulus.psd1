@@ -8,6 +8,8 @@
     Description       = 'Thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.'
     PowerShellVersion = '7.4'
 
+    FormatsToProcess  = @('PSCumulus.Format.ps1xml')
+
     FunctionsToExport = @(
         'Connect-Cloud',
         'Get-CloudInstance',

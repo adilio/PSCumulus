@@ -22,7 +22,7 @@ function Stop-CloudInstance {
 
             Stops a GCP compute instance.
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Azure')]
+    [CmdletBinding(DefaultParameterSetName = 'Azure', SupportsShouldProcess)]
     [OutputType([pscustomobject])]
     param(
         # The cloud provider to target.
@@ -92,6 +92,14 @@ function Stop-CloudInstance {
             }
         }
 
-        Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+        $target = switch ($Provider) {
+            'Azure' { "$Name in resource group $ResourceGroup" }
+            'AWS'   { $InstanceId }
+            'GCP'   { "$Name in zone $Zone ($Project)" }
+        }
+
+        if ($PSCmdlet.ShouldProcess($target, 'Stop-CloudInstance')) {
+            Invoke-CloudProvider -Provider $Provider -CommandMap $commandMap -ArgumentMap $argumentMap
+        }
     }
 }
