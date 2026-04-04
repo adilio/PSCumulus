@@ -20,45 +20,48 @@ Describe 'Get-AWSInstanceData' {
 
     Context 'when instances are returned' {
         BeforeAll {
-            $script:mockInstance = [pscustomobject]@{
-                InstanceId       = 'i-0abc123def456789'
-                Tags             = @([pscustomobject]@{ Key = 'Name'; Value = 'app-server-01' })
-                State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
-                InstanceType     = [pscustomobject]@{ Value = 't3.medium' }
-                Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1a' }
-                LaunchTime       = [datetime]'2026-01-15T10:00:00Z'
-                PrivateIpAddress = '10.0.1.5'
-                PublicIpAddress  = '52.1.2.3'
-                VpcId            = 'vpc-0abc123'
-                SubnetId         = 'subnet-0def456'
-            }
-            $script:mockResponse = [pscustomobject]@{
-                Reservations = @([pscustomobject]@{
-                    Instances = @($script:mockInstance)
-                })
-            }
-            $script:noTagResponse = [pscustomobject]@{
-                Reservations = @([pscustomobject]@{
-                    Instances = @([pscustomobject]@{
-                        InstanceId       = 'i-noname'
-                        Tags             = @()
-                        State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
-                        InstanceType     = [pscustomobject]@{ Value = 't3.micro' }
-                        Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1b' }
-                        LaunchTime       = [datetime]'2026-01-01'
-                        PrivateIpAddress = '10.0.0.1'
-                        PublicIpAddress  = $null
-                        VpcId            = 'vpc-123'
-                        SubnetId         = 'subnet-123'
+            InModuleScope PSCumulus {
+                $script:mockInstance = [pscustomobject]@{
+                    InstanceId       = 'i-0abc123def456789'
+                    Tags             = @([pscustomobject]@{ Key = 'Name'; Value = 'app-server-01' })
+                    State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
+                    InstanceType     = [pscustomobject]@{ Value = 't3.medium' }
+                    Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1a' }
+                    LaunchTime       = [datetime]'2026-01-15T10:00:00Z'
+                    PrivateIpAddress = '10.0.1.5'
+                    PublicIpAddress  = '52.1.2.3'
+                    VpcId            = 'vpc-0abc123'
+                    SubnetId         = 'subnet-0def456'
+                }
+                $script:mockResponse = [pscustomobject]@{
+                    Reservations = @([pscustomobject]@{
+                        Instances = @($script:mockInstance)
                     })
-                })
+                }
+                $script:noTagResponse = [pscustomobject]@{
+                    Reservations = @([pscustomobject]@{
+                        Instances = @([pscustomobject]@{
+                            InstanceId       = 'i-noname'
+                            Tags             = @()
+                            State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
+                            InstanceType     = [pscustomobject]@{ Value = 't3.micro' }
+                            Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1b' }
+                            LaunchTime       = [datetime]'2026-01-01'
+                            PrivateIpAddress = '10.0.0.1'
+                            PublicIpAddress  = $null
+                            VpcId            = 'vpc-123'
+                            SubnetId         = 'subnet-123'
+                        })
+                    })
+                }
             }
         }
 
         BeforeEach {
-            # Mock from test-script scope so $script: resolves to this file, not the module
-            Mock -ModuleName PSCumulus Assert-CommandAvailable {}
-            Mock -ModuleName PSCumulus Get-EC2Instance { $script:mockResponse }
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $script:mockResponse }
+            }
         }
 
         It 'returns a CloudRecord for each instance' {
@@ -72,10 +75,11 @@ Describe 'Get-AWSInstanceData' {
         }
 
         It 'falls back to InstanceId when no Name tag exists' {
-            Mock -ModuleName PSCumulus Get-EC2Instance { $script:noTagResponse }
-
-            $result = InModuleScope PSCumulus { Get-AWSInstanceData -Region 'us-east-1' }
-            $result.Name | Should -Be 'i-noname'
+            InModuleScope PSCumulus {
+                Mock Get-EC2Instance { $script:noTagResponse }
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Name | Should -Be 'i-noname'
+            }
         }
 
         It 'sets Provider to AWS' {

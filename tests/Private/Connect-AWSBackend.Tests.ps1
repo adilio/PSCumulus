@@ -20,13 +20,14 @@ Describe 'Connect-AWSBackend' {
 
     Context 'successful connection' {
         BeforeEach {
-            # Mock from test-script scope so $script: resolves to this file, not the module
-            Mock -ModuleName PSCumulus Assert-CommandAvailable {}
-            Mock -ModuleName PSCumulus Initialize-AWSDefaultConfiguration {
-                [pscustomobject]@{
-                    Name            = 'default'
-                    Region          = 'us-east-1'
-                    ProfileLocation = $null
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Initialize-AWSDefaultConfiguration {
+                    [pscustomobject]@{
+                        Name            = 'default'
+                        Region          = 'us-east-1'
+                        ProfileLocation = $null
+                    }
                 }
             }
         }
