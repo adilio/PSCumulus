@@ -151,7 +151,7 @@ Your career arc — neuroscience to sysadmin to package management to IAM to clo
 
 ## Module Status
 
-**414/414 tests passing.** All commands implemented.
+**461/461 tests passing.** All commands implemented.
 
 | Command | Providers | Notes |
 |---|---|---|
@@ -161,6 +161,7 @@ Your career arc — neuroscience to sysadmin to package management to IAM to clo
 | `Get-CloudTag` | Azure, AWS, GCP | Tags and labels on any resource |
 | `Get-CloudNetwork` | Azure, AWS, GCP | VNets / VPCs / GCP Networks |
 | `Get-CloudDisk` | Azure, AWS, GCP | Managed Disks / EBS / Persistent Disks |
+| `Get-CloudFunction` | Azure, AWS, GCP | Function Apps / Lambda / Cloud Functions |
 | `Start-CloudInstance` | Azure, AWS, GCP | Instance lifecycle |
 | `Stop-CloudInstance` | Azure, AWS, GCP | Instance lifecycle |
 

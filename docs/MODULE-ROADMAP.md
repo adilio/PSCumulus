@@ -4,7 +4,7 @@
 
 ## Current state
 
-414/414 tests passing. All planned commands implemented across all three providers.
+461/461 tests passing. All planned commands implemented across all three providers.
 
 | Command              | Azure                    | AWS                        | GCP                                    |
 |----------------------|--------------------------|----------------------------|----------------------------------------|
@@ -14,6 +14,7 @@
 | `Get-CloudTag`       | `Get-AzTag`              | `Get-EC2Tag`               | `gcloud compute TYPE list --filter`    |
 | `Get-CloudNetwork`   | `Get-AzVirtualNetwork`   | `Get-EC2Vpc`               | `gcloud compute networks list`         |
 | `Get-CloudDisk`      | `Get-AzDisk`             | `Get-EC2Volume`            | `gcloud compute disks list`            |
+| `Get-CloudFunction`  | `Get-AzFunctionApp`      | `Get-LMFunctionList`       | `gcloud functions list`                |
 | `Start-CloudInstance`| `Start-AzVM`             | `Start-EC2Instance`        | `gcloud compute instances start`       |
 | `Stop-CloudInstance` | `Stop-AzVM`              | `Stop-EC2Instance`         | `gcloud compute instances stop`        |
 

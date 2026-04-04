@@ -76,6 +76,11 @@ Get-CloudDisk     -Provider Azure -ResourceGroup "prod-rg"
 Get-CloudDisk     -Provider AWS   -Region "us-east-1"
 Get-CloudDisk     -Provider GCP   -Project "my-project"
 
+# Serverless functions
+Get-CloudFunction -Provider Azure -ResourceGroup "prod-rg"
+Get-CloudFunction -Provider AWS   -Region "us-east-1"
+Get-CloudFunction -Provider GCP   -Project "my-project"
+
 # Instance lifecycle
 Start-CloudInstance -Provider Azure -Name "web-01" -ResourceGroup "prod-rg"
 Start-CloudInstance -Provider AWS   -InstanceId "i-0abc123" -Region "us-east-1"
@@ -130,6 +135,7 @@ PSCumulus/
 │   ├── Get-CloudTag.ps1
 │   ├── Get-CloudNetwork.ps1
 │   ├── Get-CloudDisk.ps1
+│   ├── Get-CloudFunction.ps1
 │   ├── Start-CloudInstance.ps1
 │   └── Stop-CloudInstance.ps1
 ├── Private/
@@ -146,6 +152,7 @@ PSCumulus/
 │   ├── Get-{Azure,AWS,GCP}TagData.ps1
 │   ├── Get-{Azure,AWS,GCP}NetworkData.ps1
 │   ├── Get-{Azure,AWS,GCP}DiskData.ps1
+│   ├── Get-{Azure,AWS,GCP}FunctionData.ps1
 │   ├── Start-{Azure,AWS,GCP}Instance.ps1
 │   └── Stop-{Azure,AWS,GCP}Instance.ps1
 └── docs/
