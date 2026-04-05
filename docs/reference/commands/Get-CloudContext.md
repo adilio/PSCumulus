@@ -25,7 +25,7 @@ Get-CloudContext [<CommonParameters>]
 ## ALIASES
 
 This cmdlet has the following aliases,
-  None
+  gcont
 
 ## DESCRIPTION
 

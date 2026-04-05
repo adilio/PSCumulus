@@ -31,7 +31,7 @@ Describe 'PSCumulus module' {
 
         It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.AliasesToExport | Should -Be @('cc', 'gcin', 'sci', 'tci')
+            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci')
         }
 
         It 'declares a module version' {
@@ -127,7 +127,7 @@ Describe 'PSCumulus module' {
     Context 'aliases' {
         It 'exports the expected interactive aliases' {
             (Get-Command -Module PSCumulus -CommandType Alias).Name |
-                Should -Be @('cc', 'gcin', 'sci', 'tci')
+                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci')
         }
     }
 

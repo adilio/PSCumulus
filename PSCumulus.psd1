@@ -26,7 +26,8 @@
     CmdletsToExport   = @()
     VariablesToExport = @()
     AliasesToExport   = @(
-        'cc',
+        'conc',
+        'gcont',
         'gcin',
         'sci',
         'tci'

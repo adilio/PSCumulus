@@ -28,7 +28,8 @@ The module standardizes a small set of high-value commands for interactive work 
 
 | Alias | Command |
 |---|---|
-| `cc` | `Connect-Cloud` |
+| `conc` | `Connect-Cloud` |
+| `gcont` | `Get-CloudContext` |
 | `gcin` | `Get-CloudInstance` |
 | `sci` | `Start-CloudInstance` |
 | `tci` | `Stop-CloudInstance` |

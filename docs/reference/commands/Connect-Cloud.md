@@ -37,7 +37,7 @@ Connect-Cloud -Provider <string> -Region <string> [<CommonParameters>]
 ## ALIASES
 
 This cmdlet has the following aliases,
-  cc
+  conc
 
 ## DESCRIPTION
 

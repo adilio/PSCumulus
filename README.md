@@ -134,7 +134,8 @@ These aliases are exported for terminal convenience:
 
 | Alias | Command |
 |---|---|
-| `cc` | `Connect-Cloud` |
+| `conc` | `Connect-Cloud` |
+| `gcont` | `Get-CloudContext` |
 | `gcin` | `Get-CloudInstance` |
 | `sci` | `Start-CloudInstance` |
 | `tci` | `Stop-CloudInstance` |

@@ -22,7 +22,8 @@ foreach ($path in @($privatePath, $publicPath)) {
         }
 }
 
-Set-Alias -Name cc   -Value Connect-Cloud -Scope Script
-Set-Alias -Name gcin -Value Get-CloudInstance -Scope Script
-Set-Alias -Name sci  -Value Start-CloudInstance -Scope Script
-Set-Alias -Name tci  -Value Stop-CloudInstance -Scope Script
+Set-Alias -Name conc  -Value Connect-Cloud -Scope Script
+Set-Alias -Name gcont -Value Get-CloudContext -Scope Script
+Set-Alias -Name gcin  -Value Get-CloudInstance -Scope Script
+Set-Alias -Name sci   -Value Start-CloudInstance -Scope Script
+Set-Alias -Name tci   -Value Stop-CloudInstance -Scope Script
