@@ -1,26 +1,39 @@
 function Connect-Cloud {
     <#
         .SYNOPSIS
-            Connects to a cloud provider using the PSCumulus abstraction.
+            Prepares a ready-to-use cloud session for the specified provider.
 
         .DESCRIPTION
-            Routes a provider-specific connection request to the matching backend
-            implementation for Azure, AWS, or GCP.
+            Connect-Cloud is the session readiness command for PSCumulus. It does more
+            than route a connection request: it checks whether the provider tools are
+            installed, detects whether an active authentication session already exists,
+            triggers the provider-native login flow if one is needed, and stores a
+            normalized session context for the current PowerShell session.
+
+            After Connect-Cloud completes, the active provider is remembered so that
+            later commands can omit -Provider when the intent is unambiguous.
+
+            Per-provider context (account identity, scope, region, and connection time)
+            is stored separately for each provider. Use Get-CloudContext to inspect all
+            established sessions.
 
         .EXAMPLE
             Connect-Cloud -Provider Azure
 
-            Connects to Azure using the Azure backend.
+            Checks for an existing Azure session. If none is found, triggers
+            Connect-AzAccount interactively, then stores the session context.
 
         .EXAMPLE
             Connect-Cloud -Provider AWS -Region 'us-east-1'
 
-            Connects to AWS using the region-aware backend path.
+            Checks for existing AWS credentials. If none are found, triggers
+            the AWS configuration flow, then stores the session context.
 
         .EXAMPLE
             Connect-Cloud -Provider GCP -Project 'my-project'
 
-            Connects to GCP using the project-aware backend path.
+            Checks for an active gcloud account. If none is found, triggers
+            gcloud auth application-default login, then stores the session context.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure')]
     [OutputType([pscustomobject])]

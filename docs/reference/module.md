@@ -19,7 +19,7 @@ Thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.
 
 ### [Connect-Cloud](commands/Connect-Cloud.md)
 
-Connects to a cloud provider using the PSCumulus abstraction.
+Prepares a ready-to-use cloud session for the specified provider.
 
 ### [Get-CloudContext](commands/Get-CloudContext.md)
 

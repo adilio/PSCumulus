@@ -14,6 +14,7 @@ It keeps a small set of high-value cloud tasks consistent in the shell without p
 ## Public Commands
 
 - `Connect-Cloud`
+- `Get-CloudContext`
 - `Get-CloudInstance`
 - `Get-CloudStorage`
 - `Get-CloudTag`

@@ -23,7 +23,8 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 
 | Command | Intent |
 |---|---|
-| `Connect-Cloud` | Establish and validate provider context |
+| `Connect-Cloud` | Prepare a ready-to-use cloud session, including auth if needed |
+| `Get-CloudContext` | Inspect established provider sessions for the current shell |
 | `Get-CloudInstance` | Enumerate compute instances |
 | `Get-CloudStorage` | Enumerate storage resources |
 | `Get-CloudTag` | Enumerate tags or labels |
@@ -84,6 +85,24 @@ Explicit non-goals:
 - Perfect feature parity across all providers
 
 Rule of thumb: if the normalized object would be mostly `Metadata`, the abstraction is too weak to deserve a first-class public command.
+
+## Connection Lifecycle
+
+`Connect-Cloud` is not just a dispatcher. It owns the full session readiness workflow:
+
+1. Verify the required provider tools are installed
+2. Detect whether an active authentication session exists
+3. If not authenticated, trigger the provider-native login flow automatically
+4. Store a normalized per-provider context (account identity, scope, region)
+5. Set the active provider for the current session
+
+The per-provider detection works differently for each provider because the providers are genuinely different:
+
+- **Azure**: checks `Get-AzContext`; calls `Connect-AzAccount` if no session exists
+- **AWS**: checks environment variables and `~/.aws` credential files; proceeds through `Initialize-AWSDefaultConfiguration`
+- **GCP**: checks `gcloud auth list` for an active account; calls `gcloud auth application-default login` if none is found
+
+Session context is stored per provider, not as a single active slot. This means connecting to Azure, then AWS, then GCP leaves all three contexts available. `Get-CloudContext` surfaces all of them.
 
 ## Ergonomics
 

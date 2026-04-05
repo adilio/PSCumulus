@@ -14,6 +14,8 @@ Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 # https://cloud.google.com/sdk/docs/install
 ```
 
+> **Note:** GCP doesn't have a maintained PowerShell module, so there's no `Install-Module` equivalent. Install the `gcloud` CLI for your platform using the link above.
+
 ## Import The Module
 
 ```powershell
@@ -28,6 +30,8 @@ Connect-Cloud -Provider AWS -Region "us-east-1"
 Connect-Cloud -Provider GCP -Project "my-project"
 ```
 
+`Connect-Cloud` does more than set a provider — it checks whether you are already authenticated and triggers the provider-native login flow automatically if not. If you are already logged in, it skips login and stores the session context directly.
+
 `Connect-Cloud` remembers the active provider for the current session. In interactive use, many later commands can omit `-Provider` when the remaining parameters already imply the target cloud or when the current provider makes the intent clear.
 
 ```powershell
@@ -39,6 +43,24 @@ Get-CloudTag -ResourceId "i-0abc123"
 ```
 
 Pass `-Provider` explicitly whenever you want to override the remembered provider.
+
+## Check Your Session
+
+After connecting to one or more providers, use `Get-CloudContext` to see all established sessions:
+
+```powershell
+Get-CloudContext
+```
+
+```
+Provider IsActive Account            Scope        Region
+-------- -------- -------            -----        ------
+Azure    False    adil@contoso.com   my-sub
+AWS      True     default            default      us-east-1
+GCP      False    adil@example.com   my-project
+```
+
+`IsActive` marks the provider that was connected most recently. Providers not yet connected are omitted from the output.
 
 ## Common Examples
 
