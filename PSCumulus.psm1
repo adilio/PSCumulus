@@ -1,5 +1,10 @@
 $script:PSCumulusContext = @{
-    Provider = $null
+    ActiveProvider = $null
+    Providers      = @{
+        Azure = $null
+        AWS   = $null
+        GCP   = $null
+    }
 }
 
 $publicPath = Join-Path -Path $PSScriptRoot -ChildPath 'Public'

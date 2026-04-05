@@ -12,6 +12,7 @@
 
     FunctionsToExport = @(
         'Connect-Cloud',
+        'Get-CloudContext',
         'Get-CloudInstance',
         'Get-CloudStorage',
         'Get-CloudTag',

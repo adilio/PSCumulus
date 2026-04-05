@@ -63,7 +63,19 @@ function Connect-Cloud {
         $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
         $result = Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
 
-        $script:PSCumulusContext.Provider = $resolvedProvider
+        $scope = switch ($resolvedProvider) {
+            'Azure' { $result.Subscription }
+            'AWS'   { $result.ProfileName }
+            'GCP'   { $result.Project }
+        }
+
+        $script:PSCumulusContext.ActiveProvider = $resolvedProvider
+        $script:PSCumulusContext.Providers[$resolvedProvider] = @{
+            Account     = $result.Account
+            Scope       = $scope
+            Region      = $result.Region
+            ConnectedAt = Get-Date
+        }
 
         $result
     }

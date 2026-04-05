@@ -41,7 +41,7 @@ Describe 'Get-CloudTag' {
 
         It 'throws when neither Provider nor current provider is available for ResourceId lookups' {
             InModuleScope PSCumulus {
-                $script:PSCumulusContext.Provider = $null
+                $script:PSCumulusContext.ActiveProvider = $null
 
                 { Get-CloudTag -ResourceId 'i-0123456789abcdef0' } |
                     Should -Throw "*No provider was supplied for tag lookup and no current provider is set*"
@@ -119,7 +119,7 @@ Describe 'Get-CloudTag' {
 
         It 'uses the current provider when Provider is omitted for ResourceId lookups' {
             InModuleScope PSCumulus {
-                $script:PSCumulusContext.Provider = 'AWS'
+                $script:PSCumulusContext.ActiveProvider = 'AWS'
 
                 Mock Get-AWSTagData {
                     param([string]$ResourceId)

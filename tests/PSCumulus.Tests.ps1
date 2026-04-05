@@ -8,6 +8,7 @@ Describe 'PSCumulus module' {
         It 'exports all public functions' {
             $commands = Get-Command -Module PSCumulus | Select-Object -ExpandProperty Name
             $commands | Should -Contain 'Connect-Cloud'
+            $commands | Should -Contain 'Get-CloudContext'
             $commands | Should -Contain 'Get-CloudInstance'
             $commands | Should -Contain 'Get-CloudStorage'
             $commands | Should -Contain 'Get-CloudTag'
@@ -18,9 +19,9 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Stop-CloudInstance'
         }
 
-        It 'exports exactly nine public functions' {
+        It 'exports exactly ten public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 9
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 10
         }
 
         It 'does not export variables' {

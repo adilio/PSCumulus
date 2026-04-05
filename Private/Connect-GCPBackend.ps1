@@ -4,7 +4,14 @@ function Connect-GCPBackend {
         [string]$Project
     )
 
-    $activeAccount = Assert-GCloudAuthenticated
+    try {
+        $activeAccount = Assert-GCloudAuthenticated
+    } catch [System.InvalidOperationException] {
+        Write-Host "No active GCP session found. Starting login..."
+        Invoke-GCloudLogin
+        $activeAccount = Assert-GCloudAuthenticated
+    }
+
     $resolvedProject = Get-GCloudProject -Project $Project
 
     [pscustomobject]@{

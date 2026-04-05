@@ -69,6 +69,28 @@ Describe 'Connect-Cloud' {
                 Get-CurrentCloudProvider | Should -Be 'Azure'
             }
         }
+
+        It 'stores per-provider context after Azure connection' {
+            InModuleScope PSCumulus {
+                Mock Connect-AzureBackend {
+                    [pscustomobject]@{
+                        PSTypeName   = 'PSCumulus.ConnectionResult'
+                        Provider     = 'Azure'
+                        Connected    = $true
+                        Account      = 'adil@contoso.com'
+                        Subscription = 'my-sub'
+                        Region       = $null
+                    }
+                }
+
+                $null = Connect-Cloud -Provider Azure
+
+                $ctx = $script:PSCumulusContext.Providers['Azure']
+                $ctx | Should -Not -BeNullOrEmpty
+                $ctx.Account | Should -Be 'adil@contoso.com'
+                $ctx.Scope | Should -Be 'my-sub'
+            }
+        }
     }
 
     Context 'AWS routing' {
@@ -107,6 +129,28 @@ Describe 'Connect-Cloud' {
                 Get-CurrentCloudProvider | Should -Be 'AWS'
             }
         }
+
+        It 'stores per-provider context after AWS connection' {
+            InModuleScope PSCumulus {
+                Mock Connect-AWSBackend {
+                    [pscustomobject]@{
+                        PSTypeName  = 'PSCumulus.ConnectionResult'
+                        Provider    = 'AWS'
+                        Connected   = $true
+                        Account     = 'default'
+                        ProfileName = 'default'
+                        Region      = 'us-east-1'
+                    }
+                }
+
+                $null = Connect-Cloud -Provider AWS -Region 'us-east-1'
+
+                $ctx = $script:PSCumulusContext.Providers['AWS']
+                $ctx | Should -Not -BeNullOrEmpty
+                $ctx.Region | Should -Be 'us-east-1'
+                $ctx.Scope | Should -Be 'default'
+            }
+        }
     }
 
     Context 'GCP routing' {
@@ -143,6 +187,28 @@ Describe 'Connect-Cloud' {
                 $null = Connect-Cloud -Provider GCP -Project 'my-project'
 
                 Get-CurrentCloudProvider | Should -Be 'GCP'
+            }
+        }
+
+        It 'stores per-provider context after GCP connection' {
+            InModuleScope PSCumulus {
+                Mock Connect-GCPBackend {
+                    [pscustomobject]@{
+                        PSTypeName = 'PSCumulus.ConnectionResult'
+                        Provider   = 'GCP'
+                        Connected  = $true
+                        Account    = 'adil@example.com'
+                        Project    = 'my-project'
+                        Region     = $null
+                    }
+                }
+
+                $null = Connect-Cloud -Provider GCP -Project 'my-project'
+
+                $ctx = $script:PSCumulusContext.Providers['GCP']
+                $ctx | Should -Not -BeNullOrEmpty
+                $ctx.Account | Should -Be 'adil@example.com'
+                $ctx.Scope | Should -Be 'my-project'
             }
         }
     }

@@ -57,11 +57,24 @@ Describe 'Connect-GCPBackend' {
     }
 
     Context 'authentication failure' {
-        It 'throws when no active gcloud account exists' {
+        It 'triggers login when no active gcloud account is found' {
             InModuleScope PSCumulus {
                 Mock Assert-GCloudAuthenticated {
                     throw [System.InvalidOperationException]::new('No active gcloud account found.')
                 }
+                Mock Invoke-GCloudLogin {}
+
+                { Connect-GCPBackend -Project 'my-project' } | Should -Throw
+                Should -Invoke Invoke-GCloudLogin -Times 1
+            }
+        }
+
+        It 'throws when login succeeds but authentication still fails' {
+            InModuleScope PSCumulus {
+                Mock Assert-GCloudAuthenticated {
+                    throw [System.InvalidOperationException]::new('No active gcloud account found.')
+                }
+                Mock Invoke-GCloudLogin {}
 
                 { Connect-GCPBackend -Project 'my-project' } | Should -Throw
             }

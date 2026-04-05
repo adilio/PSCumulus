@@ -6,14 +6,23 @@ function Connect-AzureBackend {
         -CommandName 'Connect-AzAccount' `
         -InstallHint "Install the Az.Accounts module with: Install-Module Az.Accounts -Scope CurrentUser"
 
-    $context = Connect-AzAccount -ErrorAction Stop
+    $existingContext = Get-AzContext -ErrorAction SilentlyContinue
+
+    if (-not $existingContext) {
+        Write-Host "No active Azure session found. Starting login..."
+        $loginResult = Connect-AzAccount -ErrorAction Stop
+        $azContext = $loginResult.Context
+    } else {
+        $azContext = $existingContext
+    }
 
     [pscustomobject]@{
         PSTypeName    = 'PSCumulus.ConnectionResult'
         Provider      = 'Azure'
         Connected     = $true
-        ContextName   = $context.Context.Name
-        TenantId      = $context.Context.Tenant.Id
-        Subscription  = $context.Context.Subscription.Name
+        ContextName   = $azContext.Name
+        TenantId      = $azContext.Tenant.Id
+        Subscription  = $azContext.Subscription.Name
+        Account       = $azContext.Account.Id
     }
 }

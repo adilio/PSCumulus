@@ -87,5 +87,48 @@
       </TableControl>
     </View>
 
+    <!-- PSCumulus.CloudContext -->
+    <View>
+      <Name>PSCumulus.CloudContext</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.CloudContext</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Provider</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>IsActive</Label>
+            <Width>9</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Account</Label>
+            <Width>30</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Scope</Label>
+            <Width>25</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Region</Label>
+            <Width>20</Width>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><PropertyName>Provider</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>IsActive</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Account</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Scope</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Region</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
   </ViewDefinitions>
 </Configuration>
