@@ -21,6 +21,10 @@ Thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.
 
 Connects to a cloud provider using the PSCumulus abstraction.
 
+### [Get-CloudContext](commands/Get-CloudContext.md)
+
+Returns the current PSCumulus session context for all connected providers.
+
 ### [Get-CloudDisk](commands/Get-CloudDisk.md)
 
 Gets managed disks from a selected cloud provider.
