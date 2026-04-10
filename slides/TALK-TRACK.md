@@ -94,6 +94,10 @@ Then use IAM as the first proof:
 
 > AWS gives you policy documents. Azure gives you role assignments. GCP gives you bindings. Those are not the same thing wearing different clothes.
 
+Transition into PowerShell:
+
+> That's what makes multi-cloud disorienting in a way that's easy to mistake for personal failure. The systems aren't just named differently. They're built on different conceptual foundations. So giving yourself permission to find it hard is actually step one. And step two is finding a stable anchor.
+
 ## 5:00-9:00 PowerShell As Anchor
 
 Goal:
@@ -115,11 +119,15 @@ Suggested language:
 
 Then connect to auth:
 
-> The first wall everybody hits is auth. Three clouds, three login models, three places credentials can live. That's where the wrapper started.
+> The first wall everybody hits is auth. Three clouds, three login models, three places credentials can hide. That's where the wrapper started.
 
 Then connect to the naming insight:
 
 > The verb-noun model turns out to be a superpower here, because it makes you ask, "what am I actually trying to do?" before you ask, "what does this provider call it?"
+
+Transition into demo:
+
+> Let me show you what that looks like in practice.
 
 ## 9:00-15:00 Same Intent, Different Providers
 
@@ -136,17 +144,49 @@ Suggested transition:
 
 > The useful question stopped being, "what is the AWS equivalent of Get-AzVM?" and became, "what is the stable operator intent underneath all of this?"
 
-For compute:
+For the Compute Native slide:
 
-> Across all three clouds, I can ask for compute instances. The provider names differ, the APIs differ, the outputs differ, but the operator intent is stable.
+> This is what I was working with before PSCumulus. Three providers, three commands, three completely different output shapes, and one increasingly confused operator.
+>
+> The AWS command gives you a deeply nested object. The Azure one gives you something else. And GCP doesn't have a maintained PowerShell module, so you're calling gcloud directly with --format=json and piping the output. Which works. It's just not what anyone would design on purpose.
+>
+> None of this is wrong. These are different systems that were built by different teams with different design philosophies, and they're doing what makes sense given where they came from. The problem is just that they all live in your head at the same time.
 
-For storage:
+For the Compute Unified slide -- explain Connect-Cloud first, then the commands:
 
-> Same idea with storage, although this is already where the edges start to show a little more.
+> Before we look at the output, let me walk through what Connect-Cloud is actually doing.
+>
+> When you call Connect-Cloud -Provider Azure, the first thing it does is check whether you already have an authenticated session. It calls Get-AzContext under the hood. If there's an active context, it skips the login step entirely and stores the session. If not, it calls Connect-AzAccount and waits for the browser flow.
+>
+> For AWS, it checks your environment variables and your ~/.aws credential files. For GCP, it runs gcloud auth list to see whether there's an active account. If nothing shows up, it calls gcloud auth application-default login.
+>
+> So Connect-Cloud is not just dispatching a command. It's making a decision: are you already ready to work, or do we need to get you there first? Once it's done, it stores a normalized context for that provider -- account identity, scope, region -- and sets that provider as the active one for the session.
+>
+> That's why the subsequent commands can drop -Provider. If you've already called Connect-Cloud -Provider AWS, then Get-CloudInstance without a -Provider flag knows exactly what you mean. And if you've connected to all three clouds in the same session, you can call Get-CloudContext and see all of them -- each provider has its own stored context, and IsActive marks which one you last connected.
 
-For metadata:
+For the Shared Output Shape slide:
 
-> Tags and labels are another good example because they matter operationally, but they never line up quite as cleanly as you'd hope.
+> This is what comes back. Name, Provider, Region, Status, Size, CreatedAt. Same fields whether you asked Azure, AWS, or GCP.
+>
+> That sounds simple, and it is. But the payoff is that you can write one script that works with CloudRecord objects and it doesn't need to branch for each provider. The pipeline behavior is consistent. The field names are consistent. You stop translating and start just working.
+>
+> The native provider detail is still there. You haven't lost the Azure resource group or the AWS VPC ID or the GCP zone. Those live in the Metadata property. They're accessible. They just aren't in the first six columns because they don't normalize cleanly across providers, and pretending they do would be lying.
+
+For the Storage Next slide:
+
+> Storage is useful, but this is where you start to feel the seams a little more.
+>
+> An Azure storage account, an S3 bucket, and a GCP bucket are similar enough in operator intent that one command makes sense. You're asking the same question: what storage resources exist here, what are they called, where are they? That maps.
+>
+> But the billing models, the access control patterns, the lifecycle rules -- those don't map to each other, and I'm not going to force them to. The command is unified. The underlying systems are not, and the abstraction doesn't pretend otherwise.
+
+For the Metadata Next slide:
+
+> Tags are a good example because they matter operationally -- cost allocation, environment labeling, ownership -- and all three clouds support them. GCP calls them labels instead of tags, which is the least surprising divergence in this whole talk, but still. The query mechanics differ per provider.
+>
+> Get-CloudTag works across all three and returns a consistent shape. What I'm not claiming is that the providers work the same way. The abstraction covers the intent. It doesn't erase the implementation.
+>
+> This is actually the cleaner end of the trade-off. Tags are similar enough that normalizing them is genuinely useful. Not everything is, and the next section is about what happens when you try anyway.
 
 Important point to say out loud:
 
@@ -175,11 +215,15 @@ Then:
 >
 > One reason is conceptual: the public noun is a normalized cloud concept, not a provider-native name.
 >
-> The other reason is practical: PowerShell already has a `Get-VM` command in the Hyper-V world. I did not want this module pretending it owned that noun.
+> The other reason is practical: PowerShell already has a `Get-VM` command in the Hyper-V world. I did not want this module pretending it owned that noun. I had that argument with myself for about ten minutes and then called it Get-CloudInstance.
 
 Then:
 
 > The native provider detail still matters. I just keep it in metadata instead of forcing it into the public command name.
+
+Transition into Terraform:
+
+> That's the case for the module as it currently stands. But there's an obvious question that usually surfaces around here.
 
 ## 18:00-21:00 Why Not Terraform
 
@@ -222,6 +266,10 @@ Then avoid sounding oppositional:
 
 > This is not Terraform versus PowerShell. It's Terraform for provisioning, and PSCumulus for cross-cloud interaction once the infrastructure already exists.
 
+Transition into where it breaks:
+
+> That distinction matters, and it's also what makes the next part honest. Because even at the operational-shell level, there are places where the abstraction doesn't hold, and where PSCumulus has to step back and say: no, this one is too different. We're not going to pretend.
+
 ## 21:00-23:30 Where The Abstraction Breaks
 
 Goal:
@@ -239,23 +287,29 @@ Suggested language:
 >
 > IAM is where the module stopped me from pretending the clouds are the same.
 
-Then:
+Then make it concrete:
 
-> You cannot honestly write `Get-CloudPermission` and have it mean the same thing everywhere.
+> Think about what a fake Get-CloudPermission command would actually have to do to work.
 >
-> Not really.
+> In AWS, permissions are policy documents. They're JSON objects that describe what actions are allowed or denied on what resources, and they get attached to users, groups, or roles. In Azure, you have role assignments, which bind a named role to a principal at a particular scope in the resource hierarchy -- a subscription, a resource group, or a specific resource. In GCP, you have IAM bindings, which tie a member to a role on a project or resource, where a member can be a user, a service account, or a group.
+>
+> Those are not the same model. The concepts have different shapes, different scoping rules, different inheritance behaviors. A policy document is not an Azure role assignment with a different file format.
+>
+> So if I wrote Get-CloudPermission anyway, one of two things would happen. Either I'd flatten everything down to the least common denominator and you'd get a name and maybe a resource ID -- and lose all the detail that actually matters for doing anything useful. Or I'd put almost everything in Metadata, and then the normalized object on top is nearly empty, and you're basically just wrapping the native command in a PSCumulus costume with nothing useful showing through.
+>
+> There's a rule I use for this: if the normalized object would be mostly Metadata, the abstraction is too weak to deserve a first-class public command.
+>
+> That's why there's no Get-CloudPermission in PSCumulus.
 
 Then name the three explicit commands:
 
-> So instead of forcing one fake abstraction, I kept three clear ones: Azure role assignments, AWS policy attachments, GCP IAM bindings.
+> Instead there are three explicit commands that don't claim to be the same thing: Get-AzureRoleAssignment, Get-AWSPolicyAttachment, Get-GCPIAMBinding. Three seams, left visible.
 
 Then land the lesson:
 
-> Knowing when not to abstract is the actual skill.
-
-And tie it back to Terraform carefully:
-
-> Sometimes tools hide differences until those differences hurt you. I wanted this module to abstract the repeated intent but still respect the real seams.
+> The module is useful because it refuses to lie about the places where the providers are genuinely different. Adding Get-CloudPermission would have been easy to do and plausible-looking. It also would have been the thing that eventually burned the person who trusted the abstraction a little too far.
+>
+> Knowing when not to abstract is the actual skill. It's also, honestly, the harder one.
 
 ## 23:30-25:00 Close
 
@@ -265,13 +319,15 @@ Goal:
 
 Suggested language:
 
-> We spend a lot of time asking, "what's the right tool for the job?"
+> I want to leave you with something that isn't a summary.
 >
-> I think there's another question that's just as important:
+> We spend a lot of time in this field asking what the right tool is for a given job. And it's a good question. But there's another one I think about more now, and it's this: what is the tool you will still trust when the job gets weird?
 >
-> What's the tool you'll still trust when the job gets weird?
+> When you're on call and the environment is half-configured and you can't remember which cloud you're supposed to be in. When you need to move fast and you genuinely cannot afford a mistake and you need your hands to know what to do without looking it up.
 >
-> Those are not always the same answer.
+> Those are the moments where fluency matters more than optimality. And fluency is built over time, on tools you already know.
+>
+> For me, it was PowerShell. That's the map I drew. I hope some of it is useful to you.
 
 Then finish simply:
 
@@ -321,4 +377,3 @@ By the next pass, the goal should be:
 - the Terraform section can be delivered confidently in under two minutes
 - the IAM section feels crisp, not apologetic
 - the close lands as a thought, not a summary
-
