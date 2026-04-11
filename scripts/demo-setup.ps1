@@ -30,6 +30,10 @@
 #   Find-OldestInstances     # oldest five instances across all clouds
 #   Invoke-AllDemoQueries    # run all of the above in sequence
 #
+#   # Cleanup
+#   Remove-DemoSetup            # unload module, remove demo functions
+#   Remove-DemoSetup -Uninstall # also uninstalls PSCumulus from the system
+#
 #   Get-CloudInstance -Provider Azure -ResourceGroup prod-rg
 #   Get-CloudInstance -Provider AWS   -Region us-east-1
 #   Get-CloudInstance -Provider GCP   -Project contoso-prod
@@ -300,6 +304,7 @@ $module.Invoke({
 
 Write-Host "PSCumulus demo mode active. All commands return simulated data." -ForegroundColor Cyan
 Write-Host "Demo queries: Find-UntaggedInstances, Find-StaleInstances, Show-FleetHealth, Show-CostCenterRollup, Find-OldestInstances, Invoke-AllDemoQueries" -ForegroundColor DarkCyan
+Write-Host "Cleanup: Remove-DemoSetup [-Uninstall]" -ForegroundColor DarkCyan
 
 # ── Demo query functions ───────────────────────────────────────────────────────
 # Pre-built queries for the talk. Each can be called individually or run all
@@ -344,6 +349,38 @@ function Find-OldestInstances {
         Sort-Object CreatedAt |
         Select-Object Name, Provider, Region, CreatedAt -First 5 |
         Format-Table -AutoSize
+}
+
+function Remove-DemoSetup {
+    # Removes all demo functions, unloads the module, and optionally uninstalls it.
+    param(
+        [switch]$Uninstall
+    )
+
+    $demoFunctions = @(
+        'Find-UntaggedInstances'
+        'Find-StaleInstances'
+        'Show-FleetHealth'
+        'Show-CostCenterRollup'
+        'Find-OldestInstances'
+        'Invoke-AllDemoQueries'
+        'Remove-DemoSetup'
+    )
+
+    foreach ($fn in $demoFunctions) {
+        if (Get-Item -Path "Function:$fn" -ErrorAction SilentlyContinue) {
+            Remove-Item -Path "Function:$fn"
+        }
+    }
+
+    Remove-Module PSCumulus -Force -ErrorAction SilentlyContinue
+
+    if ($Uninstall) {
+        Uninstall-Module PSCumulus -AllVersions -Force -ErrorAction SilentlyContinue
+        Write-Host "PSCumulus uninstalled." -ForegroundColor Yellow
+    } else {
+        Write-Host "PSCumulus unloaded. Run 'Uninstall-Module PSCumulus' to remove it fully." -ForegroundColor Yellow
+    }
 }
 
 function Invoke-AllDemoQueries {
