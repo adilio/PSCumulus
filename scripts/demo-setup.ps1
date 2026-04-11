@@ -1,6 +1,14 @@
 # demo-setup.ps1
 # Injects fake multi-cloud data into the PSCumulus module scope for demo purposes.
-# Run after importing the module:
+#
+# ── From PSGallery (talk demo) ────────────────────────────────────────────────
+#
+#   Install-Module PSCumulus -Scope CurrentUser
+#   Import-Module PSCumulus
+#   Invoke-WebRequest https://raw.githubusercontent.com/adilio/PSCumulus/main/scripts/demo-setup.ps1 -OutFile demo-setup.ps1
+#   . ./demo-setup.ps1
+#
+# ── From source (development) ─────────────────────────────────────────────────
 #
 #   Import-Module ./PSCumulus.psd1 -Force
 #   . ./scripts/demo-setup.ps1

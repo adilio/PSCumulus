@@ -5,7 +5,7 @@
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
     Copyright         = '(c) Adil. All rights reserved.'
-    Description       = 'Thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.'
+    Description       = 'Cross-cloud PowerShell module for Azure, AWS, and GCP. Unified commands (Get-CloudInstance, Get-CloudStorage, etc.) return normalized objects with a consistent output shape across all three providers.'
     PowerShellVersion = '7.4'
 
     FormatsToProcess  = @('PSCumulus.Format.ps1xml')
@@ -35,10 +35,18 @@
 
     PrivateData = @{
         PSData = @{
-            Tags         = @('PowerShell', 'Cloud', 'Azure', 'AWS', 'GCP')
+            Tags         = @('PowerShell', 'Cloud', 'Azure', 'AWS', 'GCP', 'MultiCloud', 'DevOps')
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
-            ReleaseNotes = 'Initial scaffold for Summit talk proof of concept.'
+            ReleaseNotes = @'
+0.1.0
+- Connect-Cloud: unified auth for Azure, AWS, and GCP; accepts array of providers
+- Get-CloudInstance -All: query all connected providers in one pipeline
+- Tags property on all CloudRecord objects, normalized across providers
+- Get-CloudStorage, Get-CloudDisk, Get-CloudNetwork, Get-CloudFunction
+- Start-CloudInstance, Stop-CloudInstance
+- Get-CloudContext, Get-CloudTag
+'@
         }
     }
 }
