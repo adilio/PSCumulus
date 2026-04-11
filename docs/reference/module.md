@@ -13,7 +13,7 @@ title: PSCumulus Module Reference
 
 ## Description
 
-Thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.
+Cross-cloud PowerShell module for Azure, AWS, and GCP. Unified commands (Get-CloudInstance, Get-CloudStorage, etc.) return normalized objects with a consistent output shape across all three providers.
 
 ## PSCumulus
 

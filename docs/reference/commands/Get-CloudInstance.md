@@ -34,6 +34,12 @@ Get-CloudInstance -Project <string> [-Provider <string>] [<CommonParameters>]
 Get-CloudInstance -Region <string> [-Provider <string>] [<CommonParameters>]
 ```
 
+### All
+
+```
+Get-CloudInstance -All [<CommonParameters>]
+```
+
 ## ALIASES
 
 This cmdlet has the following aliases,
@@ -43,6 +49,9 @@ This cmdlet has the following aliases,
 
 Routes instance inventory requests to the matching provider backend and
 returns normalized cloud record objects.
+
+Use -All to query every provider that has an established session context,
+returning instances from all connected clouds in one pipeline.
 
 ## EXAMPLES
 
@@ -64,7 +73,41 @@ Get-CloudInstance -Provider GCP -Project 'my-project'
 
 Gets GCP instances for a project.
 
+### EXAMPLE 4
+
+Get-CloudInstance -All
+
+Gets instances from all providers with an established session context.
+Use after Connect-Cloud -Provider AWS, Azure, GCP.
+
+### EXAMPLE 5
+
+Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
+
+Gets all prod-tagged instances across every connected cloud.
+
 ## PARAMETERS
+
+### -All
+
+Query all providers with an established session context.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
 
 ### -Project
 

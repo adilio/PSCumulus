@@ -19,19 +19,19 @@ Prepares a ready-to-use cloud session for the specified provider.
 ### Azure (Default)
 
 ```
-Connect-Cloud -Provider <string> [<CommonParameters>]
+Connect-Cloud -Provider <string[]> [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Connect-Cloud -Provider <string> -Project <string> [<CommonParameters>]
+Connect-Cloud -Provider <string[]> -Project <string> [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Connect-Cloud -Provider <string> -Region <string> [<CommonParameters>]
+Connect-Cloud -Provider <string[]> -Region <string> [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -42,19 +42,22 @@ This cmdlet has the following aliases,
 ## DESCRIPTION
 
 Connect-Cloud is the session readiness command for PSCumulus.
-It does more
-than route a connection request: it checks whether the provider tools are
-installed, detects whether an active authentication session already exists,
-triggers the provider-native login flow if one is needed, and stores a
-normalized session context for the current PowerShell session.
+It checks whether
+the provider tools are installed, detects whether an active authentication session
+already exists, triggers the provider-native login flow if one is needed, and stores
+a normalized session context for the current PowerShell session.
 
-After Connect-Cloud completes, the active provider is remembered so that
-later commands can omit -Provider when the intent is unambiguous.
+After Connect-Cloud completes, the active provider is remembered so that later
+commands can omit -Provider when the intent is unambiguous.
 
-Per-provider context (account identity, scope, region, and connection time)
-is stored separately for each provider.
-Use Get-CloudContext to inspect all
-established sessions.
+Pass an array to -Provider to connect multiple providers in one call:
+
+    Connect-Cloud -Provider AWS, Azure, GCP
+
+Per-provider context (account identity, scope, region, and connection time) is
+stored separately for each provider.
+Use Get-CloudContext to inspect all established
+sessions.
 
 ## EXAMPLES
 
@@ -82,6 +85,14 @@ Checks for an active gcloud account.
 If none is found, triggers
 gcloud auth application-default login, then stores the session context.
 
+### EXAMPLE 4
+
+Connect-Cloud -Provider AWS, Azure, GCP
+
+Connects all three providers in sequence.
+Each gets its own stored context.
+ActiveProvider is set to the last provider connected.
+
 ## PARAMETERS
 
 ### -Project
@@ -107,10 +118,10 @@ HelpMessage: ''
 
 ### -Provider
 
-The cloud provider to connect to.
+The cloud provider or providers to connect to.
 
 ```yaml
-Type: System.String
+Type: System.String[]
 DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
