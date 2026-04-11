@@ -315,7 +315,8 @@ function Find-StaleInstances {
     $cutoff = (Get-Date).AddDays(-30)
     Get-CloudInstance -All |
         Where-Object { $_.Status -ne 'Running' -and $_.CreatedAt -lt $cutoff } |
-        Select-Object Name, Provider, Status, CreatedAt
+        Select-Object Name, Provider, Status, CreatedAt |
+        Format-Table -AutoSize
 }
 
 function Show-FleetHealth {
@@ -323,7 +324,8 @@ function Show-FleetHealth {
     Get-CloudInstance -All |
         Group-Object Provider, Status |
         Select-Object Name, Count |
-        Sort-Object Count -Descending
+        Sort-Object Count -Descending |
+        Format-Table -AutoSize
 }
 
 function Show-CostCenterRollup {
@@ -331,7 +333,8 @@ function Show-CostCenterRollup {
     Get-CloudInstance -All |
         Group-Object { $_.Tags['cost-center'] } |
         Select-Object Name, Count |
-        Sort-Object Count -Descending
+        Sort-Object Count -Descending |
+        Format-Table -AutoSize
 }
 
 function Find-OldestInstances {
@@ -339,7 +342,8 @@ function Find-OldestInstances {
     Get-CloudInstance -All |
         Where-Object { $_.CreatedAt } |
         Sort-Object CreatedAt |
-        Select-Object Name, Provider, Region, CreatedAt -First 5
+        Select-Object Name, Provider, Region, CreatedAt -First 5 |
+        Format-Table -AutoSize
 }
 
 function Invoke-AllDemoQueries {
