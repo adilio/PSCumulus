@@ -130,6 +130,18 @@ Describe 'Get-GCPInstanceData' {
                 $results.Count | Should -Be 0
             }
         }
+
+        It 'populates Tags from instance labels' {
+            InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
+                param($Account, $Instance)
+                Mock Assert-GCloudAuthenticated { $Account }
+                Mock Get-GCloudProject { 'my-project' }
+                Mock Invoke-GCloudJson { @($Instance) }
+
+                $result = Get-GCPInstanceData -Project 'my-project'
+                $result.Tags['env'] | Should -Be 'prod'
+            }
+        }
     }
 
     Context 'authentication' {

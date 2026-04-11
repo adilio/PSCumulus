@@ -32,6 +32,13 @@ function Get-GCPInstanceData {
         $accessConfigs = @($primaryInterface.accessConfigs)
         $primaryAccessConfig = $accessConfigs | Select-Object -First 1
 
+        $tagHashtable = @{}
+        if ($instance.labels) {
+            $instance.labels.PSObject.Properties | ForEach-Object {
+                $tagHashtable[$_.Name] = $_.Value
+            }
+        }
+
         ConvertTo-CloudRecord `
             -Name $instance.name `
             -Provider GCP `
@@ -39,6 +46,7 @@ function Get-GCPInstanceData {
             -Status (ConvertFrom-GCPInstanceStatus -Status $instance.status) `
             -Size $machineType `
             -CreatedAt $createdAt `
+            -Tags $tagHashtable `
             -Metadata @{
                 Project          = $resolvedProject
                 Id               = $instance.id

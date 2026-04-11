@@ -89,10 +89,27 @@ Describe 'ConvertTo-CloudRecord' {
                 $result.Metadata.Count | Should -Be 0
             }
         }
+
+        It 'defaults Tags to an empty hashtable' {
+            InModuleScope PSCumulus {
+                $result = ConvertTo-CloudRecord -Name 'vm' -Provider GCP
+                $result.Tags | Should -BeOfType [hashtable]
+                $result.Tags.Count | Should -Be 0
+            }
+        }
+
+        It 'sets Tags when provided' {
+            InModuleScope PSCumulus {
+                $tags = @{ environment = 'prod'; team = 'platform' }
+                $result = ConvertTo-CloudRecord -Name 'vm' -Provider AWS -Tags $tags
+                $result.Tags['environment'] | Should -Be 'prod'
+                $result.Tags['team'] | Should -Be 'platform'
+            }
+        }
     }
 
     Context 'all standard properties are present' {
-        It 'has all six top-level properties' {
+        It 'has all seven top-level properties' {
             InModuleScope PSCumulus {
                 $result = ConvertTo-CloudRecord -Name 'vm' -Provider Azure
                 $result.PSObject.Properties.Name | Should -Contain 'Name'
@@ -101,6 +118,7 @@ Describe 'ConvertTo-CloudRecord' {
                 $result.PSObject.Properties.Name | Should -Contain 'Status'
                 $result.PSObject.Properties.Name | Should -Contain 'Size'
                 $result.PSObject.Properties.Name | Should -Contain 'CreatedAt'
+                $result.PSObject.Properties.Name | Should -Contain 'Tags'
                 $result.PSObject.Properties.Name | Should -Contain 'Metadata'
             }
         }

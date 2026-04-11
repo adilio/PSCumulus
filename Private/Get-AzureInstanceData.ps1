@@ -8,12 +8,21 @@ function Get-AzureInstanceData {
         -CommandName 'Get-AzVM' `
         -InstallHint "Install the Az.Compute module with: Install-Module Az.Compute -Scope CurrentUser"
 
-    $virtualMachines = Get-AzVM -ResourceGroupName $ResourceGroup -Status -ErrorAction Stop
+    $virtualMachines = if ([string]::IsNullOrWhiteSpace($ResourceGroup)) {
+        Get-AzVM -Status -ErrorAction Stop
+    } else {
+        Get-AzVM -ResourceGroupName $ResourceGroup -Status -ErrorAction Stop
+    }
 
     foreach ($virtualMachine in $virtualMachines) {
         $powerStatus = $virtualMachine.Statuses |
             Where-Object { $_.Code -like 'PowerState/*' } |
             Select-Object -First 1 -ExpandProperty DisplayStatus
+
+        $tagHashtable = @{}
+        if ($virtualMachine.Tags) {
+            $virtualMachine.Tags.GetEnumerator() | ForEach-Object { $tagHashtable[$_.Key] = $_.Value }
+        }
 
         ConvertTo-CloudRecord `
             -Name $virtualMachine.Name `
@@ -21,6 +30,7 @@ function Get-AzureInstanceData {
             -Region $virtualMachine.Location `
             -Status (ConvertFrom-AzurePowerState -PowerState $powerStatus) `
             -Size $virtualMachine.HardwareProfile.VmSize `
+            -Tags $tagHashtable `
             -Metadata @{
                 ResourceGroup = $virtualMachine.ResourceGroupName
                 VmId          = $virtualMachine.VmId

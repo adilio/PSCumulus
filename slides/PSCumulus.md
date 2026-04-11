@@ -192,6 +192,27 @@ Speaker notes:
 
 ---
 
+# Cross-Cloud in One Pipeline
+
+```powershell
+Connect-Cloud -Provider AWS, Azure, GCP
+
+Get-CloudInstance -All |
+  Where-Object { $_.Tags['environment'] -eq 'prod' } |
+  Group-Object Provider |
+  Select-Object Name, Count
+```
+
+<!--
+Speaker notes:
+- This is the use case that justified building the module.
+- One pipeline. Three clouds. One output shape to filter against.
+- The Tags property is normalized across providers. 'environment' works the same
+  whether the source was an AWS tag, an Azure tag, or a GCP label.
+-->
+
+---
+
 # Shared Output Shape
 
 | Name | Provider | Region | Status | Size | CreatedAt |

@@ -26,6 +26,11 @@ function Get-AWSInstanceData {
                 $nameTag
             }
 
+            $tagHashtable = @{}
+            foreach ($tag in $instance.Tags) {
+                $tagHashtable[$tag.Key] = $tag.Value
+            }
+
             ConvertTo-CloudRecord `
                 -Name $resolvedName `
                 -Provider AWS `
@@ -33,6 +38,7 @@ function Get-AWSInstanceData {
                 -Status (ConvertFrom-AWSInstanceState -StateName $instance.State.Name.Value) `
                 -Size $instance.InstanceType.Value `
                 -CreatedAt $instance.LaunchTime `
+                -Tags $tagHashtable `
                 -Metadata @{
                     InstanceId       = $instance.InstanceId
                     PrivateIpAddress = $instance.PrivateIpAddress

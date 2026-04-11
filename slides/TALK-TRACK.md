@@ -98,6 +98,10 @@ Transition into PowerShell:
 
 > That's what makes multi-cloud disorienting in a way that's easy to mistake for personal failure. The systems aren't just named differently. They're built on different conceptual foundations. So giving yourself permission to find it hard is actually step one. And step two is finding a stable anchor.
 
+And before you leave this section, name the on-call version of the opening feeling:
+
+> What I'm describing in the abstract has a very specific concrete form: it's 2am, a thing is broken, and you cannot remember whether the flag is --resource-group or -ResourceGroupName, and you do not know where you are. That is not hypothetical. That is the thing I was trying to solve.
+
 ## 5:00-9:00 PowerShell As Anchor
 
 Goal:
@@ -125,6 +129,8 @@ Then connect to the naming insight:
 
 > The verb-noun model turns out to be a superpower here, because it makes you ask, "what am I actually trying to do?" before you ask, "what does this provider call it?"
 
+And there's a third thing PowerShell gave me that I didn't expect to matter as much as it did: a starting point for someone new to cross-cloud work. If you're coming in fresh and you don't yet know which native CLI to trust, having a consistent verb-noun surface gives you something to reach for before you go native. It's a learning scaffold. You can graduate out of it when you know the platforms well enough, but it lowers the cost of the early days considerably.
+
 Transition into demo:
 
 > Let me show you what that looks like in practice.
@@ -143,6 +149,10 @@ Key message:
 Suggested transition:
 
 > The useful question stopped being, "what is the AWS equivalent of Get-AzVM?" and became, "what is the stable operator intent underneath all of this?"
+
+Before getting into the demo, name the three things this is actually going to prove:
+
+> There are three use cases I care most about here. First: on-call orientation -- you're in an unfamiliar environment, you need a list of what's running, and you don't want to context-switch between three CLIs to get it. Second: cross-cloud audit -- you want to filter across all your connected clouds in one pipeline, by tag, by status, by provider. Third: onboarding -- you need to bring someone new up to speed who hasn't memorized the native surface yet. The demo is going to show all three of these.
 
 For the Compute Native slide:
 
@@ -163,6 +173,22 @@ For the Compute Unified slide -- explain Connect-Cloud first, then the commands:
 > So Connect-Cloud is not just dispatching a command. It's making a decision: are you already ready to work, or do we need to get you there first? Once it's done, it stores a normalized context for that provider -- account identity, scope, region -- and sets that provider as the active one for the session.
 >
 > That's why the subsequent commands can drop -Provider. If you've already called Connect-Cloud -Provider AWS, then Get-CloudInstance without a -Provider flag knows exactly what you mean. And if you've connected to all three clouds in the same session, you can call Get-CloudContext and see all of them -- each provider has its own stored context, and IsActive marks which one you last connected.
+
+Now show the multi-provider connect and the cross-cloud audit:
+
+> Here's where it gets interesting. Instead of three separate Connect-Cloud calls, you can pass an array:
+>
+> `Connect-Cloud -Provider AWS, Azure, GCP`
+>
+> That goes through each provider in sequence, runs the auth check, stores the context. Now you have all three connected in one session.
+>
+> And then you can do this:
+>
+> `Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }`
+>
+> What -All does is iterate every provider that has stored context, call the backend for each one, and return all the results into one pipeline. You're not writing three loops. You're not managing three output shapes. You get one stream of CloudRecord objects, and you filter against it. Tags are normalized -- 'environment' works the same whether the source was an AWS tag, an Azure tag, or a GCP label.
+>
+> That's the cross-cloud audit use case. One pipeline, three clouds.
 
 For the Shared Output Shape slide:
 
@@ -305,6 +331,10 @@ Then name the three explicit commands:
 
 > Instead there are three explicit commands that don't claim to be the same thing: Get-AzureRoleAssignment, Get-AWSPolicyAttachment, Get-GCPIAMBinding. Three seams, left visible.
 
+Before landing the lesson, name the gaps directly:
+
+> Let me also name what this module does not do, because naming it is better than leaving you to find out later. There is no cost surface. There is no health or status surface. The output is read-oriented -- you can pipeline and filter but there are no corresponding write commands for most inventory queries. And there is no cross-cloud resource search by name. These are real gaps. I am naming them because the people most likely to ask about them deserve a straight answer.
+
 Then land the lesson:
 
 > The module is useful because it refuses to lie about the places where the providers are genuinely different. Adding Get-CloudPermission would have been easy to do and plausible-looking. It also would have been the thing that eventually burned the person who trusted the abstraction a little too far.
@@ -328,6 +358,10 @@ Suggested language:
 > Those are the moments where fluency matters more than optimality. And fluency is built over time, on tools you already know.
 >
 > For me, it was PowerShell. That's the map I drew. I hope some of it is useful to you.
+
+But building the module taught me something I didn't expect:
+
+> But building the module taught me something I didn't expect. Every command required me to ask: what IS this thing, actually, across all three clouds? What do they share? Where do they diverge? That question turned out to be more useful than the command. The module is evidence for an argument about where the clouds are genuinely the same and where they're not. The IAM section isn't where the module failed. It's where the thinking worked.
 
 Then finish simply:
 

@@ -153,4 +153,85 @@ Describe 'Get-CloudInstance' {
             }
         }
     }
+
+    Context '-All parameter' {
+        BeforeEach {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers = @{ Azure = $null; AWS = $null; GCP = $null }
+            }
+        }
+
+        It 'calls all backend functions when providers are connected' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = $null }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureInstanceData { ConvertTo-CloudRecord -Name 'az-vm' -Provider Azure }
+                Mock Get-AWSInstanceData   { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
+                Mock Get-GCPInstanceData   { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+
+                $null = Get-CloudInstance -All
+
+                Should -Invoke Get-AzureInstanceData -Times 1
+                Should -Invoke Get-AWSInstanceData   -Times 1
+                Should -Invoke Get-GCPInstanceData   -Times 1
+            }
+        }
+
+        It 'skips providers with no stored context' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['AWS'] = @{ Region = 'us-east-1'; Scope = $null }
+
+                Mock Get-AzureInstanceData { ConvertTo-CloudRecord -Name 'az-vm' -Provider Azure }
+                Mock Get-AWSInstanceData   { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
+                Mock Get-GCPInstanceData   { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+
+                $null = Get-CloudInstance -All
+
+                Should -Invoke Get-AWSInstanceData   -Times 1
+                Should -Invoke Get-AzureInstanceData -Times 0
+                Should -Invoke Get-GCPInstanceData   -Times 0
+            }
+        }
+
+        It 'passes stored Region to the AWS backend' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['AWS'] = @{ Region = 'eu-west-1'; Scope = $null }
+
+                Mock Get-AWSInstanceData { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
+
+                $null = Get-CloudInstance -All
+
+                Should -Invoke Get-AWSInstanceData -Times 1 -ParameterFilter { $Region -eq 'eu-west-1' }
+            }
+        }
+
+        It 'passes stored Scope as Project to the GCP backend' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['GCP'] = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-GCPInstanceData { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+
+                $null = Get-CloudInstance -All
+
+                Should -Invoke Get-GCPInstanceData -Times 1 -ParameterFilter { $Project -eq 'my-project' }
+            }
+        }
+
+        It 'returns CloudRecord objects from all connected providers' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = $null }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureInstanceData { ConvertTo-CloudRecord -Name 'az-vm'  -Provider Azure }
+                Mock Get-AWSInstanceData   { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
+                Mock Get-GCPInstanceData   { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+
+                $results = @(Get-CloudInstance -All)
+                $results.Count | Should -Be 3
+            }
+        }
+    }
 }

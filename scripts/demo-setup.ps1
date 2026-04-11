@@ -9,6 +9,11 @@
 #
 #   Get-CloudContext
 #
+#   Connect-Cloud -Provider AWS, Azure, GCP
+#   Get-CloudInstance -All
+#   Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
+#   Get-CloudInstance -All | Group-Object Provider | Select-Object Name, Count
+#
 #   Get-CloudInstance -Provider Azure -ResourceGroup prod-rg
 #   Get-CloudInstance -Provider AWS   -Region us-east-1
 #   Get-CloudInstance -Provider GCP   -Project contoso-prod
@@ -94,23 +99,23 @@ $module.Invoke({
 
     Set-Item -Path 'Function:Get-AzureInstanceData' -Value {
         param([string]$ResourceGroup)
-        ConvertTo-CloudRecord -Name 'web-server-01'  -Provider Azure -Region 'eastus'  -Status 'Running' -Size 'Standard_D2s_v3' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0001-0001-0001-aaaaaaaaaaaa'; OsType = 'Linux' }
-        ConvertTo-CloudRecord -Name 'api-server-01'  -Provider Azure -Region 'eastus'  -Status 'Running' -Size 'Standard_D4s_v3' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0002-0002-0002-aaaaaaaaaaaa'; OsType = 'Linux' }
-        ConvertTo-CloudRecord -Name 'db-server-01'   -Provider Azure -Region 'eastus2' -Status 'Stopped' -Size 'Standard_E8s_v3' -CreatedAt ([datetime]'2024-10-15') -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0003-0003-0003-aaaaaaaaaaaa'; OsType = 'Windows' }
+        ConvertTo-CloudRecord -Name 'web-server-01'  -Provider Azure -Region 'eastus'  -Status 'Running' -Size 'Standard_D2s_v3' -CreatedAt ([datetime]'2024-11-01') -Tags @{ environment = 'prod'; team = 'platform'; 'cost-center' = 'eng-001' } -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0001-0001-0001-aaaaaaaaaaaa'; OsType = 'Linux' }
+        ConvertTo-CloudRecord -Name 'api-server-01'  -Provider Azure -Region 'eastus'  -Status 'Running' -Size 'Standard_D4s_v3' -CreatedAt ([datetime]'2024-11-01') -Tags @{ environment = 'prod'; team = 'platform'; 'cost-center' = 'eng-001' } -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0002-0002-0002-aaaaaaaaaaaa'; OsType = 'Linux' }
+        ConvertTo-CloudRecord -Name 'db-server-01'   -Provider Azure -Region 'eastus2' -Status 'Stopped' -Size 'Standard_E8s_v3' -CreatedAt ([datetime]'2024-10-15') -Tags @{ environment = 'staging'; team = 'data'; 'cost-center' = 'eng-002' } -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0003-0003-0003-aaaaaaaaaaaa'; OsType = 'Windows' }
     }
 
     Set-Item -Path 'Function:Get-AWSInstanceData' -Value {
         param([string]$Region)
-        ConvertTo-CloudRecord -Name 'prod-web-01'    -Provider AWS -Region 'us-east-1a' -Status 'Running' -Size 't3.medium'  -CreatedAt ([datetime]'2024-11-01') -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00001'; PrivateIpAddress = '10.0.1.10';  PublicIpAddress = '54.210.10.1'; VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-0a1b2c3d' }
-        ConvertTo-CloudRecord -Name 'prod-api-01'    -Provider AWS -Region 'us-east-1b' -Status 'Running' -Size 't3.large'   -CreatedAt ([datetime]'2024-11-01') -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00002'; PrivateIpAddress = '10.0.2.10';  PublicIpAddress = '54.210.10.2'; VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-1a2b3c4d' }
-        ConvertTo-CloudRecord -Name 'prod-worker-01' -Provider AWS -Region 'us-east-1c' -Status 'Stopped' -Size 't3.xlarge'  -CreatedAt ([datetime]'2024-10-15') -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00003'; PrivateIpAddress = '10.0.3.10';  PublicIpAddress = $null;         VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-2a3b4c5d' }
+        ConvertTo-CloudRecord -Name 'prod-web-01'    -Provider AWS -Region 'us-east-1a' -Status 'Running' -Size 't3.medium'  -CreatedAt ([datetime]'2024-11-01') -Tags @{ environment = 'prod'; team = 'platform'; 'cost-center' = 'eng-001' } -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00001'; PrivateIpAddress = '10.0.1.10';  PublicIpAddress = '54.210.10.1'; VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-0a1b2c3d' }
+        ConvertTo-CloudRecord -Name 'prod-api-01'    -Provider AWS -Region 'us-east-1b' -Status 'Running' -Size 't3.large'   -CreatedAt ([datetime]'2024-11-01') -Tags @{ environment = 'prod'; team = 'platform'; 'cost-center' = 'eng-001' } -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00002'; PrivateIpAddress = '10.0.2.10';  PublicIpAddress = '54.210.10.2'; VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-1a2b3c4d' }
+        ConvertTo-CloudRecord -Name 'prod-worker-01' -Provider AWS -Region 'us-east-1c' -Status 'Stopped' -Size 't3.xlarge'  -CreatedAt ([datetime]'2024-10-15') -Tags @{ environment = 'staging'; team = 'workers'; 'cost-center' = 'eng-003' } -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00003'; PrivateIpAddress = '10.0.3.10';  PublicIpAddress = $null;         VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-2a3b4c5d' }
     }
 
     Set-Item -Path 'Function:Get-GCPInstanceData' -Value {
         param([string]$Project)
-        ConvertTo-CloudRecord -Name 'prod-web-01'    -Provider GCP -Region 'us-central1-a' -Status 'Running'    -Size 'n2-standard-2' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000001'; Zone = 'us-central1-a'; PrivateIpAddress = '10.128.0.10'; PublicIpAddress = '34.72.10.1'; Labels = @{ env = 'production'; team = 'platform' } }
-        ConvertTo-CloudRecord -Name 'prod-api-01'    -Provider GCP -Region 'us-central1-b' -Status 'Running'    -Size 'n2-standard-4' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000002'; Zone = 'us-central1-b'; PrivateIpAddress = '10.128.0.11'; PublicIpAddress = '34.72.10.2'; Labels = @{ env = 'production'; team = 'platform' } }
-        ConvertTo-CloudRecord -Name 'prod-worker-01' -Provider GCP -Region 'us-central1-c' -Status 'Terminated' -Size 'n2-standard-8' -CreatedAt ([datetime]'2024-10-15') -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000003'; Zone = 'us-central1-c'; PrivateIpAddress = '10.128.0.12'; PublicIpAddress = $null;        Labels = @{ env = 'production'; team = 'workers' } }
+        ConvertTo-CloudRecord -Name 'prod-web-01'    -Provider GCP -Region 'us-central1-a' -Status 'Running'    -Size 'n2-standard-2' -CreatedAt ([datetime]'2024-11-01') -Tags @{ environment = 'prod'; team = 'platform'; 'cost-center' = 'eng-001' } -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000001'; Zone = 'us-central1-a'; PrivateIpAddress = '10.128.0.10'; PublicIpAddress = '34.72.10.1'; Labels = @{ env = 'production'; team = 'platform' } }
+        ConvertTo-CloudRecord -Name 'prod-api-01'    -Provider GCP -Region 'us-central1-b' -Status 'Running'    -Size 'n2-standard-4' -CreatedAt ([datetime]'2024-11-01') -Tags @{ environment = 'prod'; team = 'platform'; 'cost-center' = 'eng-001' } -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000002'; Zone = 'us-central1-b'; PrivateIpAddress = '10.128.0.11'; PublicIpAddress = '34.72.10.2'; Labels = @{ env = 'production'; team = 'platform' } }
+        ConvertTo-CloudRecord -Name 'prod-worker-01' -Provider GCP -Region 'us-central1-c' -Status 'Terminated' -Size 'n2-standard-8' -CreatedAt ([datetime]'2024-10-15') -Tags @{ environment = 'staging'; team = 'workers'; 'cost-center' = 'eng-003' } -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000003'; Zone = 'us-central1-c'; PrivateIpAddress = '10.128.0.12'; PublicIpAddress = $null;        Labels = @{ env = 'production'; team = 'workers' } }
     }
 
     # ── Storage ───────────────────────────────────────────────────────────────

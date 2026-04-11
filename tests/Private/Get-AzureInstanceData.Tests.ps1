@@ -144,5 +144,42 @@ Describe 'Get-AzureInstanceData' {
                 $results.Count | Should -Be 0
             }
         }
+
+        It 'returns all VMs when ResourceGroup is empty' {
+            InModuleScope PSCumulus -Parameters @{ MockVm = $script:mockVm } {
+                param($MockVm)
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($MockVm) }
+
+                $results = @(Get-AzureInstanceData)
+                $results.Count | Should -Be 1
+                Should -Invoke Get-AzVM -Times 1 -ParameterFilter { -not $ResourceGroupName }
+            }
+        }
+
+        It 'includes VM tags in the Tags property' {
+            InModuleScope PSCumulus {
+                $vmWithTags = [pscustomobject]@{
+                    Name              = 'tagged-vm'
+                    Location          = 'eastus'
+                    ResourceGroupName = 'prod-rg'
+                    VmId              = 'vm-guid-tagged'
+                    HardwareProfile   = [pscustomobject]@{ VmSize = 'Standard_D2s_v3' }
+                    StorageProfile    = [pscustomobject]@{
+                        OsDisk = [pscustomobject]@{ OsType = 'Linux' }
+                    }
+                    Tags              = @{ environment = 'prod'; team = 'platform' }
+                    Statuses          = @(
+                        [pscustomobject]@{ Code = 'PowerState/running'; DisplayStatus = 'VM running' }
+                    )
+                }
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($vmWithTags) }
+
+                $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
+                $result.Tags['environment'] | Should -Be 'prod'
+                $result.Tags['team'] | Should -Be 'platform'
+            }
+        }
     }
 }

@@ -187,5 +187,34 @@ Describe 'Get-AWSInstanceData' {
                 Should -Invoke Get-EC2Instance -Times 1 -ParameterFilter { -not $Region }
             }
         }
+
+        It 'populates Tags from instance tags' {
+            InModuleScope PSCumulus {
+                $taggedResponse = [pscustomobject]@{
+                    Reservations = @([pscustomobject]@{
+                        Instances = @([pscustomobject]@{
+                            InstanceId       = 'i-tagged'
+                            Tags             = @(
+                                [pscustomobject]@{ Key = 'Name'; Value = 'tagged-server' }
+                                [pscustomobject]@{ Key = 'env';  Value = 'prod' }
+                            )
+                            State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
+                            InstanceType     = [pscustomobject]@{ Value = 't3.medium' }
+                            Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1a' }
+                            LaunchTime       = [datetime]'2026-01-01'
+                            PrivateIpAddress = '10.0.0.1'
+                            PublicIpAddress  = $null
+                            VpcId            = 'vpc-123'
+                            SubnetId         = 'subnet-123'
+                        })
+                    })
+                }
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $taggedResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Tags['env'] | Should -Be 'prod'
+            }
+        }
     }
 }

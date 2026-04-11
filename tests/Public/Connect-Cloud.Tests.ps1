@@ -212,4 +212,87 @@ Describe 'Connect-Cloud' {
             }
         }
     }
+
+    Context 'multi-provider' {
+        BeforeEach {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers = @{ Azure = $null; AWS = $null; GCP = $null }
+            }
+        }
+
+        It 'calls each backend when given an array of providers' {
+            InModuleScope PSCumulus {
+                Mock Connect-AzureBackend {
+                    [pscustomobject]@{ Provider = 'Azure'; Account = 'a@a.com'; Subscription = 'sub'; Region = $null }
+                }
+                Mock Connect-AWSBackend {
+                    [pscustomobject]@{ Provider = 'AWS'; Account = '123'; ProfileName = 'default'; Region = 'us-east-1' }
+                }
+                Mock Connect-GCPBackend {
+                    [pscustomobject]@{ Provider = 'GCP'; Account = 'g@g.com'; Project = 'proj'; Region = 'us-central1' }
+                }
+
+                $null = Connect-Cloud -Provider Azure, AWS, GCP
+
+                Should -Invoke Connect-AzureBackend -Times 1
+                Should -Invoke Connect-AWSBackend -Times 1
+                Should -Invoke Connect-GCPBackend -Times 1
+            }
+        }
+
+        It 'stores context for each provider after multi-connect' {
+            InModuleScope PSCumulus {
+                Mock Connect-AzureBackend {
+                    [pscustomobject]@{ Provider = 'Azure'; Account = 'a@a.com'; Subscription = 'sub'; Region = $null }
+                }
+                Mock Connect-AWSBackend {
+                    [pscustomobject]@{ Provider = 'AWS'; Account = '123'; ProfileName = 'default'; Region = 'us-east-1' }
+                }
+                Mock Connect-GCPBackend {
+                    [pscustomobject]@{ Provider = 'GCP'; Account = 'g@g.com'; Project = 'proj'; Region = 'us-central1' }
+                }
+
+                $null = Connect-Cloud -Provider Azure, AWS, GCP
+
+                $script:PSCumulusContext.Providers['Azure'] | Should -Not -BeNullOrEmpty
+                $script:PSCumulusContext.Providers['AWS']   | Should -Not -BeNullOrEmpty
+                $script:PSCumulusContext.Providers['GCP']   | Should -Not -BeNullOrEmpty
+            }
+        }
+
+        It 'sets ActiveProvider to the last provider in the array' {
+            InModuleScope PSCumulus {
+                Mock Connect-AzureBackend {
+                    [pscustomobject]@{ Provider = 'Azure'; Account = 'a@a.com'; Subscription = 'sub'; Region = $null }
+                }
+                Mock Connect-AWSBackend {
+                    [pscustomobject]@{ Provider = 'AWS'; Account = '123'; ProfileName = 'default'; Region = 'us-east-1' }
+                }
+                Mock Connect-GCPBackend {
+                    [pscustomobject]@{ Provider = 'GCP'; Account = 'g@g.com'; Project = 'proj'; Region = 'us-central1' }
+                }
+
+                $null = Connect-Cloud -Provider Azure, AWS, GCP
+
+                Get-CurrentCloudProvider | Should -Be 'GCP'
+            }
+        }
+
+        It 'returns a result for each provider' {
+            InModuleScope PSCumulus {
+                Mock Connect-AzureBackend {
+                    [pscustomobject]@{ Provider = 'Azure'; Account = 'a@a.com'; Subscription = 'sub'; Region = $null }
+                }
+                Mock Connect-AWSBackend {
+                    [pscustomobject]@{ Provider = 'AWS'; Account = '123'; ProfileName = 'default'; Region = 'us-east-1' }
+                }
+                Mock Connect-GCPBackend {
+                    [pscustomobject]@{ Provider = 'GCP'; Account = 'g@g.com'; Project = 'proj'; Region = 'us-central1' }
+                }
+
+                $results = @(Connect-Cloud -Provider Azure, AWS, GCP)
+                $results.Count | Should -Be 3
+            }
+        }
+    }
 }

@@ -4,18 +4,21 @@ function Connect-Cloud {
             Prepares a ready-to-use cloud session for the specified provider.
 
         .DESCRIPTION
-            Connect-Cloud is the session readiness command for PSCumulus. It does more
-            than route a connection request: it checks whether the provider tools are
-            installed, detects whether an active authentication session already exists,
-            triggers the provider-native login flow if one is needed, and stores a
-            normalized session context for the current PowerShell session.
+            Connect-Cloud is the session readiness command for PSCumulus. It checks whether
+            the provider tools are installed, detects whether an active authentication session
+            already exists, triggers the provider-native login flow if one is needed, and stores
+            a normalized session context for the current PowerShell session.
 
-            After Connect-Cloud completes, the active provider is remembered so that
-            later commands can omit -Provider when the intent is unambiguous.
+            After Connect-Cloud completes, the active provider is remembered so that later
+            commands can omit -Provider when the intent is unambiguous.
 
-            Per-provider context (account identity, scope, region, and connection time)
-            is stored separately for each provider. Use Get-CloudContext to inspect all
-            established sessions.
+            Pass an array to -Provider to connect multiple providers in one call:
+
+                Connect-Cloud -Provider AWS, Azure, GCP
+
+            Per-provider context (account identity, scope, region, and connection time) is
+            stored separately for each provider. Use Get-CloudContext to inspect all established
+            sessions.
 
         .EXAMPLE
             Connect-Cloud -Provider Azure
@@ -34,16 +37,22 @@ function Connect-Cloud {
 
             Checks for an active gcloud account. If none is found, triggers
             gcloud auth application-default login, then stores the session context.
+
+        .EXAMPLE
+            Connect-Cloud -Provider AWS, Azure, GCP
+
+            Connects all three providers in sequence. Each gets its own stored context.
+            ActiveProvider is set to the last provider connected.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure')]
     [OutputType([pscustomobject])]
     param(
-        # The cloud provider to connect to.
+        # The cloud provider or providers to connect to.
         [Parameter(Mandatory, ParameterSetName = 'Azure')]
         [Parameter(Mandatory, ParameterSetName = 'AWS')]
         [Parameter(Mandatory, ParameterSetName = 'GCP')]
         [ValidateSet('Azure', 'AWS', 'GCP')]
-        [string]$Provider,
+        [string[]]$Provider,
 
         # The AWS region to target for the connection context.
         [Parameter(Mandatory, ParameterSetName = 'AWS')]
@@ -63,33 +72,34 @@ function Connect-Cloud {
             GCP   = 'Connect-GCPBackend'
         }
 
-        $argumentMap = @{}
+        foreach ($p in $Provider) {
+            $argumentMap = @{}
 
-        if ($Provider -eq 'AWS' -and $PSBoundParameters.ContainsKey('Region')) {
-            $argumentMap.Region = $Region
+            if ($p -eq 'AWS' -and $PSBoundParameters.ContainsKey('Region')) {
+                $argumentMap.Region = $Region
+            }
+
+            if ($p -eq 'GCP' -and $PSBoundParameters.ContainsKey('Project')) {
+                $argumentMap.Project = $Project
+            }
+
+            $result = Invoke-CloudProvider -Provider $p -CommandMap $commandMap -ArgumentMap $argumentMap
+
+            $scope = switch ($p) {
+                'Azure' { $result.Subscription }
+                'AWS'   { $result.ProfileName }
+                'GCP'   { $result.Project }
+            }
+
+            $script:PSCumulusContext.ActiveProvider = $p
+            $script:PSCumulusContext.Providers[$p] = @{
+                Account     = $result.Account
+                Scope       = $scope
+                Region      = $result.Region
+                ConnectedAt = Get-Date
+            }
+
+            $result
         }
-
-        if ($Provider -eq 'GCP' -and $PSBoundParameters.ContainsKey('Project')) {
-            $argumentMap.Project = $Project
-        }
-
-        $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
-        $result = Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
-
-        $scope = switch ($resolvedProvider) {
-            'Azure' { $result.Subscription }
-            'AWS'   { $result.ProfileName }
-            'GCP'   { $result.Project }
-        }
-
-        $script:PSCumulusContext.ActiveProvider = $resolvedProvider
-        $script:PSCumulusContext.Providers[$resolvedProvider] = @{
-            Account     = $result.Account
-            Scope       = $scope
-            Region      = $result.Region
-            ConnectedAt = Get-Date
-        }
-
-        $result
     }
 }
