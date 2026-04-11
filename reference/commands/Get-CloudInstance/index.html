@@ -783,6 +783,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -855,6 +866,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 5
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -871,6 +904,17 @@
   
     <nav class="md-nav" aria-label="PARAMETERS">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -All
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#-project" class="md-nav__link">
@@ -1239,6 +1283,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        All
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1311,6 +1366,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 5
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1327,6 +1404,17 @@
   
     <nav class="md-nav" aria-label="PARAMETERS">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -All
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#-project" class="md-nav__link">
@@ -1482,12 +1570,17 @@
 <h3 id="aws">AWS<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>Get-CloudInstance -Region &lt;string&gt; [-Provider &lt;string&gt;] [&lt;CommonParameters&gt;]
 </code></pre></div>
+<h3 id="all">All<a class="headerlink" href="#all" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Get-CloudInstance -All [&lt;CommonParameters&gt;]
+</code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
   gcin</p>
 <h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
 <p>Routes instance inventory requests to the matching provider backend and
 returns normalized cloud record objects.</p>
+<p>Use -All to query every provider that has an established session context,
+returning instances from all connected clouds in one pipeline.</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
 <p>Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg'</p>
@@ -1498,7 +1591,31 @@ returns normalized cloud record objects.</p>
 <h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
 <p>Get-CloudInstance -Provider GCP -Project 'my-project'</p>
 <p>Gets GCP instances for a project.</p>
+<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
+<p>Get-CloudInstance -All</p>
+<p>Gets instances from all providers with an established session context.
+Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
+<h3 id="example-5">EXAMPLE 5<a class="headerlink" href="#example-5" title="Permanent link">&para;</a></h3>
+<p>Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }</p>
+<p>Gets all prod-tagged instances across every connected cloud.</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<h3 id="-all">-All<a class="headerlink" href="#-all" title="Permanent link">&para;</a></h3>
+<p>Query all providers with an established session context.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
 <h3 id="-project">-Project<a class="headerlink" href="#-project" title="Permanent link">&para;</a></h3>
 <p>The GCP project to query for instances.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>

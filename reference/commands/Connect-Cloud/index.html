@@ -743,6 +743,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1300,6 +1311,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1452,30 +1474,32 @@
 <p>Prepares a ready-to-use cloud session for the specified provider.</p>
 <h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <h3 id="azure-default">Azure (Default)<a class="headerlink" href="#azure-default" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string&gt; [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="gcp">GCP<a class="headerlink" href="#gcp" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string&gt; -Project &lt;string&gt; [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; -Project &lt;string&gt; [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="aws">AWS<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string&gt; -Region &lt;string&gt; [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; -Region &lt;string&gt; [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
   conc</p>
 <h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
 <p>Connect-Cloud is the session readiness command for PSCumulus.
-It does more
-than route a connection request: it checks whether the provider tools are
-installed, detects whether an active authentication session already exists,
-triggers the provider-native login flow if one is needed, and stores a
-normalized session context for the current PowerShell session.</p>
-<p>After Connect-Cloud completes, the active provider is remembered so that
-later commands can omit -Provider when the intent is unambiguous.</p>
-<p>Per-provider context (account identity, scope, region, and connection time)
-is stored separately for each provider.
-Use Get-CloudContext to inspect all
-established sessions.</p>
+It checks whether
+the provider tools are installed, detects whether an active authentication session
+already exists, triggers the provider-native login flow if one is needed, and stores
+a normalized session context for the current PowerShell session.</p>
+<p>After Connect-Cloud completes, the active provider is remembered so that later
+commands can omit -Provider when the intent is unambiguous.</p>
+<p>Pass an array to -Provider to connect multiple providers in one call:</p>
+<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider AWS, Azure, GCP
+</code></pre></div>
+<p>Per-provider context (account identity, scope, region, and connection time) is
+stored separately for each provider.
+Use Get-CloudContext to inspect all established
+sessions.</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
 <p>Connect-Cloud -Provider Azure</p>
@@ -1492,6 +1516,11 @@ the AWS configuration flow, then stores the session context.</p>
 <p>Checks for an active gcloud account.
 If none is found, triggers
 gcloud auth application-default login, then stores the session context.</p>
+<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
+<p>Connect-Cloud -Provider AWS, Azure, GCP</p>
+<p>Connects all three providers in sequence.
+Each gets its own stored context.
+ActiveProvider is set to the last provider connected.</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
 <h3 id="-project">-Project<a class="headerlink" href="#-project" title="Permanent link">&para;</a></h3>
 <p>The GCP project to target for the connection context.</p>
@@ -1511,8 +1540,8 @@ gcloud auth application-default login, then stores the session context.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-provider">-Provider<a class="headerlink" href="#-provider" title="Permanent link">&para;</a></h3>
-<p>The cloud provider to connect to.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<p>The cloud provider or providers to connect to.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String[]</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
