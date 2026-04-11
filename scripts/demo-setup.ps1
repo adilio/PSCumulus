@@ -275,30 +275,11 @@ $module.Invoke({
         ConvertTo-CloudRecord -Name $Name -Provider GCP -Region $Zone -Status 'Stopping' -Metadata @{ Project = $Project; Zone = $Zone }
     }
 
-    # ── Seed context ──────────────────────────────────────────────────────────
+    # ── Seed context via Connect-Cloud ───────────────────────────────────────────
+    # Call the real command so context is established the same way a user would.
+    # Suppress pipeline output -- the demo presenter calls it interactively.
 
-    $script:PSCumulusContext.ActiveProvider = 'Azure'
-
-    $script:PSCumulusContext.Providers['Azure'] = @{
-        Account     = 'adil@contoso.com'
-        Scope       = 'contoso-production'
-        Region      = 'eastus'
-        ConnectedAt = Get-Date
-    }
-
-    $script:PSCumulusContext.Providers['AWS'] = @{
-        Account     = '123456789012'
-        Scope       = 'default'
-        Region      = 'us-east-1'
-        ConnectedAt = Get-Date
-    }
-
-    $script:PSCumulusContext.Providers['GCP'] = @{
-        Account     = 'adil@contoso-prod.iam.gserviceaccount.com'
-        Scope       = 'contoso-prod'
-        Region      = 'us-central1'
-        ConnectedAt = Get-Date
-    }
+    $null = Connect-Cloud -Provider Azure, AWS, GCP
 })
 
 Write-Host "PSCumulus demo mode active. All commands return simulated data." -ForegroundColor Cyan
