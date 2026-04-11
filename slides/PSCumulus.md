@@ -248,6 +248,28 @@ Speaker notes:
 
 ---
 
+# What Earns a Unified Command
+
+| Resource | Azure | AWS | GCP | PSCumulus |
+|---|---|---|---|---|
+| Compute | `Get-AzVM` | `Get-EC2Instance` | `gcloud compute instances list` | `Get-CloudInstance` |
+| Storage | `Get-AzStorageAccount` | `Get-S3Bucket` | `gcloud storage ls` | `Get-CloudStorage` |
+| Disk | `Get-AzDisk` | `Get-EC2Volume` | `gcloud compute disks list` | `Get-CloudDisk` |
+| Network | `Get-AzVirtualNetwork` | `Get-EC2Vpc` | `gcloud compute networks list` | `Get-CloudNetwork` |
+| Functions | `Get-AzFunctionApp` | `Get-LMFunctionList` | `gcloud functions list` | `Get-CloudFunction` |
+| Tags | `Get-AzTag` | `Get-EC2Tag` | `gcloud resource-manager tags` | `Get-CloudTag` |
+| IAM | `Get-AzRoleAssignment` | `Get-IAMPolicy` | `gcloud projects get-iam-policy` | — |
+
+<!--
+Speaker notes:
+- The question behind every command: is the operator intent genuinely the same across all three clouds?
+- Six resource types passed that test. One didn't.
+- The dash on IAM is not an omission. It's a decision.
+- This table is the philosophy made visible.
+-->
+
+---
+
 # Storage, Next
 
 ```powershell

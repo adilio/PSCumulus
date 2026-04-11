@@ -247,6 +247,20 @@ Then:
 
 > The native provider detail still matters. I just keep it in metadata instead of forcing it into the public command name.
 
+Then show the table and state the philosophy explicitly:
+
+> Every command in this module started with the same question: is the operator intent genuinely the same across all three clouds? Not the implementation. Not the API shape. The intent. What is the person actually trying to find out?
+>
+> For compute, the answer is yes. You want to know what's running, where, and what state it's in. Azure, AWS, and GCP all have a concept that maps to that. So Get-CloudInstance exists.
+>
+> For storage -- buckets, accounts, whatever they call it -- the intent maps. For disks, for networks, for serverless functions. The intent is similar enough that a normalized command earns its place.
+>
+> And then there's IAM. Look at the last row. There's a dash where the PSCumulus command would be.
+>
+> That's not an omission. That's the test failing. AWS policy documents, Azure role assignments, GCP IAM bindings -- those are not the same operator intent wearing different clothes. The scoping is different, the inheritance model is different, the mental model you need to reason about them is different. Flattening them into one command would produce something that looks unified and lies about it.
+>
+> So the dash stays. The table is the philosophy made visible: normalization is only worth the cost when the thing you're normalizing is real.
+
 Transition into Terraform:
 
 > That's the case for the module as it currently stands. But there's an obvious question that usually surfaces around here.
@@ -309,19 +323,17 @@ Key message:
 
 Suggested language:
 
-> The best part of building this was not where it worked. It was where it broke.
+> You saw the table. You saw the dash on IAM. This is where we talk about what that actually cost.
 >
-> IAM is where the module stopped me from pretending the clouds are the same.
-
-Then make it concrete:
-
+> IAM is where the module stopped me from pretending the clouds are the same. And it's worth going one level deeper on why, because the temptation to paper over it was real.
+>
 > Think about what a fake Get-CloudPermission command would actually have to do to work.
 >
-> In AWS, permissions are policy documents. They're JSON objects that describe what actions are allowed or denied on what resources, and they get attached to users, groups, or roles. In Azure, you have role assignments, which bind a named role to a principal at a particular scope in the resource hierarchy -- a subscription, a resource group, or a specific resource. In GCP, you have IAM bindings, which tie a member to a role on a project or resource, where a member can be a user, a service account, or a group.
+> In AWS, permissions are policy documents. JSON objects describing what actions are allowed or denied on what resources, attached to users, groups, or roles. In Azure, you have role assignments, which bind a named role to a principal at a particular scope in the resource hierarchy. In GCP, you have IAM bindings, which tie a member to a role on a project or resource.
 >
-> Those are not the same model. The concepts have different shapes, different scoping rules, different inheritance behaviors. A policy document is not an Azure role assignment with a different file format.
+> Those are not the same model. Different shapes, different scoping rules, different inheritance behaviors.
 >
-> So if I wrote Get-CloudPermission anyway, one of two things would happen. Either I'd flatten everything down to the least common denominator and you'd get a name and maybe a resource ID -- and lose all the detail that actually matters for doing anything useful. Or I'd put almost everything in Metadata, and then the normalized object on top is nearly empty, and you're basically just wrapping the native command in a PSCumulus costume with nothing useful showing through.
+> So if I wrote Get-CloudPermission anyway, one of two things would happen. Either I'd flatten everything to the least common denominator and you'd lose the detail that actually matters. Or I'd put almost everything in Metadata, and the normalized object on top is nearly empty -- just a PSCumulus costume with nothing useful showing through.
 >
 > There's a rule I use for this: if the normalized object would be mostly Metadata, the abstraction is too weak to deserve a first-class public command.
 >
