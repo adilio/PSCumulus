@@ -14,32 +14,13 @@
 #   Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 #   Get-CloudInstance -All | Group-Object Provider | Select-Object Name, Count
 #
-#   # Tagging compliance -- instances missing a required owner tag
-#   Get-CloudInstance -All | Where-Object { -not $_.Tags['owner'] }
-#
-#   # Cost waste candidates -- stopped/terminated instances older than 30 days
-#   $cutoff = (Get-Date).AddDays(-30)
-#   Get-CloudInstance -All |
-#     Where-Object { $_.Status -ne 'Running' -and $_.CreatedAt -lt $cutoff } |
-#     Select-Object Name, Provider, Status, CreatedAt
-#
-#   # Fleet health -- running vs not-running breakdown by provider
-#   Get-CloudInstance -All |
-#     Group-Object Provider, Status |
-#     Select-Object Name, Count |
-#     Sort-Object Count -Descending
-#
-#   # Cost-center rollup -- instance count per cost center across all clouds
-#   Get-CloudInstance -All |
-#     Group-Object { $_.Tags['cost-center'] } |
-#     Select-Object Name, Count |
-#     Sort-Object Count -Descending
-#
-#   # Oldest instances -- potential legacy or forgotten VMs
-#   Get-CloudInstance -All |
-#     Where-Object { $_.CreatedAt } |
-#     Sort-Object CreatedAt |
-#     Select-Object Name, Provider, Region, CreatedAt -First 5
+#   # Pre-built query functions (tab-complete Find-* / Show-*)
+#   Find-UntaggedInstances   # tagging compliance: missing owner tag
+#   Find-StaleInstances      # cost waste: stopped/terminated > 30 days
+#   Show-FleetHealth         # running vs not-running by provider
+#   Show-CostCenterRollup    # instance count per cost-center tag
+#   Find-OldestInstances     # oldest five instances across all clouds
+#   Invoke-AllDemoQueries    # run all of the above in sequence
 #
 #   Get-CloudInstance -Provider Azure -ResourceGroup prod-rg
 #   Get-CloudInstance -Provider AWS   -Region us-east-1
@@ -310,3 +291,62 @@ $module.Invoke({
 })
 
 Write-Host "PSCumulus demo mode active. All commands return simulated data." -ForegroundColor Cyan
+Write-Host "Demo queries: Find-UntaggedInstances, Find-StaleInstances, Show-FleetHealth, Show-CostCenterRollup, Find-OldestInstances, Invoke-AllDemoQueries" -ForegroundColor DarkCyan
+
+# ── Demo query functions ───────────────────────────────────────────────────────
+# Pre-built queries for the talk. Each can be called individually or run all
+# at once with Invoke-AllDemoQueries.
+
+function Find-UntaggedInstances {
+    # Tagging compliance -- instances missing a required owner tag
+    Get-CloudInstance -All | Where-Object { -not $_.Tags['owner'] }
+}
+
+function Find-StaleInstances {
+    # Cost waste candidates -- stopped/terminated instances older than 30 days
+    $cutoff = (Get-Date).AddDays(-30)
+    Get-CloudInstance -All |
+        Where-Object { $_.Status -ne 'Running' -and $_.CreatedAt -lt $cutoff } |
+        Select-Object Name, Provider, Status, CreatedAt
+}
+
+function Show-FleetHealth {
+    # Fleet health -- running vs not-running breakdown by provider
+    Get-CloudInstance -All |
+        Group-Object Provider, Status |
+        Select-Object Name, Count |
+        Sort-Object Count -Descending
+}
+
+function Show-CostCenterRollup {
+    # Cost-center rollup -- instance count per cost center across all clouds
+    Get-CloudInstance -All |
+        Group-Object { $_.Tags['cost-center'] } |
+        Select-Object Name, Count |
+        Sort-Object Count -Descending
+}
+
+function Find-OldestInstances {
+    # Legacy/forgotten VM candidates -- oldest five instances across all clouds
+    Get-CloudInstance -All |
+        Where-Object { $_.CreatedAt } |
+        Sort-Object CreatedAt |
+        Select-Object Name, Provider, Region, CreatedAt -First 5
+}
+
+function Invoke-AllDemoQueries {
+    Write-Host "`n── Tagging compliance ──────────────────────────────────" -ForegroundColor Cyan
+    Find-UntaggedInstances
+
+    Write-Host "`n── Stale instances (stopped/terminated > 30 days) ─────" -ForegroundColor Cyan
+    Find-StaleInstances
+
+    Write-Host "`n── Fleet health ────────────────────────────────────────" -ForegroundColor Cyan
+    Show-FleetHealth
+
+    Write-Host "`n── Cost-center rollup ──────────────────────────────────" -ForegroundColor Cyan
+    Show-CostCenterRollup
+
+    Write-Host "`n── Oldest instances ────────────────────────────────────" -ForegroundColor Cyan
+    Find-OldestInstances
+}
