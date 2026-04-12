@@ -324,10 +324,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#import-the-module" class="md-nav__link">
+  <a href="#install-the-module" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Import The Module
+        Install The Module
       
     </span>
   </a>
@@ -991,10 +991,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#import-the-module" class="md-nav__link">
+  <a href="#install-the-module" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Import The Module
+        Install The Module
       
     </span>
   </a>
@@ -1080,8 +1080,9 @@
 <blockquote>
 <p><strong>Note:</strong> GCP doesn't have a maintained PowerShell module, so there's no <code>Install-Module</code> equivalent. Install the <code>gcloud</code> CLI for your platform using the link above.</p>
 </blockquote>
-<h2 id="import-the-module">Import The Module<a class="headerlink" href="#import-the-module" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="nb">Import-Module</span> <span class="n">PSCumulus</span>
+<h2 id="install-the-module">Install The Module<a class="headerlink" href="#install-the-module" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="nb">Install-Module</span> <span class="n">PSCumulus</span> <span class="n">-Scope</span> <span class="n">CurrentUser</span>
+<span class="nb">Import-Module</span> <span class="n">PSCumulus</span>
 </code></pre></div>
 <h2 id="connect-to-a-provider">Connect To A Provider<a class="headerlink" href="#connect-to-a-provider" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="nb">Connect-Cloud</span> <span class="n">-Provider</span> <span class="n">Azure</span>

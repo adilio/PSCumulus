@@ -1261,13 +1261,12 @@
 </ul>
 <p>GCP uses the CLI adapter path deliberately. It provides stable JSON output and aligns with the most common authentication flow users already have on hand.</p>
 <h2 id="normalization-strategy">Normalization Strategy<a class="headerlink" href="#normalization-strategy" title="Permanent link">&para;</a></h2>
-<p>Normalize by intent, not by provider naming.</p>
+<p>The test behind every unified command: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?</p>
 <ul>
-<li><code>Get-CloudInstance</code> means "show me compute instances"</li>
-<li><code>Get-CloudStorage</code> means "show me storage resources"</li>
-<li><code>Get-CloudNetwork</code> means "show me virtual networks"</li>
+<li>For compute, storage, disk, network, functions, and tags — yes. The question translates. The answer can be normalized.</li>
+<li>For IAM — the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Forcing a single surface over those would erase distinctions that matter in practice.</li>
 </ul>
-<p>Provider-native differences still matter, but they belong in <code>Metadata</code>, not in the public command noun.</p>
+<p>Provider-native differences that survive normalization belong in <code>Metadata</code>, not in the public command noun.</p>
 <h3 id="shared-output-contract">Shared Output Contract<a class="headerlink" href="#shared-output-contract" title="Permanent link">&para;</a></h3>
 <p>Inventory commands return <code>PSCumulus.CloudRecord</code> objects with a stable cross-cloud shape:</p>
 <table>
@@ -1303,6 +1302,10 @@
 <td>Creation time when available</td>
 </tr>
 <tr>
+<td><code>Tags</code></td>
+<td>Normalized hashtable — AWS tags, Azure tags, GCP labels all map here</td>
+</tr>
+<tr>
 <td><code>Metadata</code></td>
 <td>Provider-native details that do not normalize cleanly</td>
 </tr>
@@ -1315,7 +1318,11 @@
 <li>GCP: <code>Project</code>, <code>Zone</code>, <code>Labels</code>, <code>DiskType</code></li>
 </ul>
 <h3 id="what-not-to-normalize">What Not To Normalize<a class="headerlink" href="#what-not-to-normalize" title="Permanent link">&para;</a></h3>
-<p>Do not force a shared command when the providers express materially different models.</p>
+<p>Do not force a shared command when the providers express materially different models. IAM is the clearest example — the human question is the same ("who can do what?"), but the CSP answers are structured so differently that a normalized surface would be dishonest:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-AzRoleAssignment</span> <span class="n">-Scope</span> <span class="s2">&quot;/subscriptions/...&quot;</span>
+<span class="nb">Get-IAMPolicy</span> <span class="n">-UserName</span> <span class="s2">&quot;adil&quot;</span>
+<span class="n">gcloud</span> <span class="n">projects</span> <span class="nb">get-iam</span><span class="n">-policy</span> <span class="n">my-project</span>
+</code></pre></div>
 <p>Explicit non-goals:</p>
 <ul>
 <li>IAM, RBAC, policies, and bindings</li>
