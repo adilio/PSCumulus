@@ -1,35 +1,116 @@
 # PSCumulus
 
-A thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.
+A thin, honest PowerShell abstraction for Azure, AWS, and GCP.
 
-> Companion repo for the PowerShell + DevOps Global Summit 2026 session:
-> **"Cross-Cloud without Crossed Fingers: Surviving Azure, AWS, and GCP with PowerShell"**
+> Companion repo for the PowerShell + DevOps Global Summit 2026 session
+> **"Cross-Cloud without Crossed Fingers: Surviving Azure, AWS, and GCP with PowerShell."**
 
+**Talk:** `talk/presentation.md` (slides) · `talk/talk-track.md` (spoken track)
 **Docs:** https://adilio.github.io/PSCumulus/
 
-## Synopsis
+---
 
-`PSCumulus` provides a small, consistent PowerShell surface for common cross-cloud tasks such as connecting, inventorying compute and storage, inspecting tags, and starting or stopping instances.
+## What this is
 
-It is intentionally not a full cloud framework. The goal is to make a few high-value tasks feel consistent in the shell without hiding where the providers are genuinely different.
+`PSCumulus` is a small cross-cloud module with two ideas behind it:
 
-## Description
+1. **Build on what does not move.** PowerShell's verb-noun model is a stable cognitive anchor when you're drowning in three different cloud providers. Fluency is infrastructure.
+2. **Refuse to lie about the seams.** Every unified command in PSCumulus had to pass a test: *do the underlying provider philosophies overlap enough that a normalized answer is still honest?* For compute, storage, disks, networks, functions, and tags — yes. For IAM — no. That's why there is no `Get-CloudPermission`.
 
-The module uses a stable verb-noun pattern across Azure, AWS, and GCP:
+The module is evidence for an argument. The argument is that a deliberately narrow abstraction, with its seams left visible, is more useful than a comprehensive one that pretends the clouds are interchangeable.
 
-- `Connect-Cloud`
-- `Disconnect-Cloud`
-- `Get-CloudContext`
-- `Get-CloudInstance`
-- `Get-CloudStorage`
-- `Get-CloudTag`
-- `Get-CloudNetwork`
-- `Get-CloudDisk`
-- `Get-CloudFunction`
-- `Start-CloudInstance`
-- `Stop-CloudInstance`
+## The public surface
 
-Most inventory commands return a normalized `PSCumulus.CloudRecord` object. Provider-native detail is preserved in the `Metadata` property instead of being flattened away.
+Eleven commands. Verb-noun, normalized output, no provider marketing in the noun.
+
+| Command | Intent |
+|---|---|
+| `Connect-Cloud` | Detect or trigger a provider-native login and store a normalized session context |
+| `Disconnect-Cloud` | Clear stored session context for a selected provider |
+| `Get-CloudContext` | List established provider sessions for the current shell |
+| `Get-CloudInstance` | Compute instances (supports `-All` across every connected provider) |
+| `Get-CloudStorage` | Storage accounts / buckets |
+| `Get-CloudDisk` | Disks / volumes |
+| `Get-CloudNetwork` | Virtual networks / VPCs |
+| `Get-CloudFunction` | Serverless functions |
+| `Get-CloudTag` | Tags / labels |
+| `Start-CloudInstance` | Start a compute instance |
+| `Stop-CloudInstance` | Stop a compute instance |
+
+Read commands return a single normalized record type, `PSCumulus.CloudRecord`.
+
+## Quick start
+
+```powershell
+Install-Module PSCumulus -Scope CurrentUser
+Import-Module PSCumulus
+
+Connect-Cloud -Provider AWS, Azure, GCP
+Get-CloudContext
+Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
+```
+
+`Connect-Cloud` does more than set a flag: it verifies the required provider tools are present, detects whether an authenticated session already exists, triggers the provider-native login flow only if one is needed, and stores a normalized context for each provider. Per-provider context persists side by side so a single shell can talk to all three clouds without re-authenticating every time.
+
+## The shared shape
+
+Inventory commands return `PSCumulus.CloudRecord` objects with a stable shape:
+
+| Property | Description |
+|---|---|
+| `Name` | Resource name |
+| `Provider` | `Azure`, `AWS`, or `GCP` |
+| `Region` | Region or zone |
+| `Status` | Normalized state (e.g. `Running`, `Stopped`) |
+| `Size` | SKU, instance type, or storage class |
+| `CreatedAt` | Creation time when available |
+| `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
+| `Metadata` | Provider-native details that don't normalize cleanly |
+
+The first seven columns are what you can safely filter and group against across clouds. `Metadata` is where honest provider-native detail (Azure resource groups, AWS VPC IDs, GCP zones) lives without pretending to normalize.
+
+## Cross-cloud pipelines
+
+The demo beat of the Summit session is a single pipeline that queries every connected provider:
+
+```powershell
+# Untagged production assets across every cloud
+Get-CloudInstance -All |
+  Where-Object { -not $_.Tags['owner'] } |
+  Format-Table Name, Provider, Region -AutoSize
+
+# Fleet health by provider
+Get-CloudInstance -All |
+  Group-Object Provider, Status |
+  Select-Object Name, Count |
+  Sort-Object Count -Descending
+
+# Stale/forgotten instances across clouds
+$cutoff = (Get-Date).AddDays(-30)
+Get-CloudInstance -All |
+  Where-Object { $_.Status -ne 'Running' -and $_.CreatedAt -lt $cutoff }
+```
+
+`-All` iterates every provider with stored context, calls each backend in turn, and streams one pipeline of `CloudRecord` objects. Filters, grouping, and projection work exactly like they do on any other PowerShell pipeline.
+
+## Per-provider usage
+
+Connect explicitly when you want a specific region, project, or subscription:
+
+```powershell
+Connect-Cloud -Provider Azure -Tenant '00000000-…' -Subscription 'contoso-prod'
+Connect-Cloud -Provider AWS   -Region 'us-east-1'
+Connect-Cloud -Provider GCP   -Project 'contoso-prod'
+
+Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg'
+Get-CloudInstance -Provider AWS   -Region 'us-east-1'
+Get-CloudInstance -Provider GCP   -Project 'contoso-prod'
+
+Start-CloudInstance -Provider Azure -Name 'web-01' -ResourceGroup 'prod-rg'
+Stop-CloudInstance  -Provider AWS   -InstanceId 'i-0abc123' -Region 'us-east-1'
+```
+
+The active provider is remembered after `Connect-Cloud`, so subsequent commands can often omit `-Provider` when the intent is unambiguous.
 
 ## Requirements
 
@@ -40,191 +121,72 @@ Install-Module Az -Scope CurrentUser
 # AWS
 Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 
-# GCP
-# Requires the gcloud CLI:
+# GCP — no maintained PowerShell module; install the gcloud CLI
 # https://cloud.google.com/sdk/docs/install
 ```
 
-> **Note:** GCP doesn't have a maintained PowerShell module, so there's no `Install-Module` equivalent. Install the `gcloud` CLI for your platform using the link above.
+GCP is adapted via `gcloud … --format=json`. That's intentional: `Google.Cloud.PowerShell` is unmaintained, and the CLI is the honest adapter that matches the authentication flow most users already have.
 
-## Installation
+## Where this abstraction stops
 
-```powershell
-Install-Module PSCumulus -Scope CurrentUser
-Import-Module PSCumulus
-```
+This module is intentionally not a full cloud framework. It does not cover:
 
-## Quick Start
+- **IAM.** The underlying philosophies don't overlap. AWS thinks in policy documents, Azure in hierarchical role assignments, GCP in bindings. A unified `Get-CloudPermission` would either flatten the scoping that makes the answer useful or stuff the real answer into `Metadata` and hand you an empty wrapper. Use the provider-native commands.
+- **Cost.** Each cloud's billing model is structured differently enough that a shared surface would be more misleading than helpful.
+- **Provisioning.** Terraform exists and is the right tool. PSCumulus standardizes *interaction* with infrastructure; Terraform standardizes the infrastructure itself.
+- **Write commands for most inventory.** The read path landed first. `Start/Stop-CloudInstance` are the two lifecycle commands currently in the public surface.
+- **Cross-cloud search by name.** On the roadmap.
 
-### Connect to a provider
-
-```powershell
-Connect-Cloud -Provider Azure
-Connect-Cloud -Provider AWS -Region "us-east-1"
-Connect-Cloud -Provider GCP -Project "my-project"
-```
-
-`Connect-Cloud` does more than set a provider. It checks whether you are already authenticated and triggers the provider-native login flow automatically if not. If a session already exists, it skips login and stores the context directly. The active provider is remembered for the current session, so later commands can often omit `-Provider` when the intent is clear.
-
-```powershell
-Connect-Cloud -Provider AWS -Region "us-east-1"
-
-Get-CloudInstance -Region "us-east-1"
-Start-CloudInstance -InstanceId "i-0abc123" -Region "us-east-1"
-Get-CloudTag -ResourceId "i-0abc123"
-```
-
-Pass `-Provider` explicitly whenever you want to override the remembered session provider.
-
-Use `Disconnect-Cloud` to clear PSCumulus's remembered session state for a specific provider without signing out of the cloud provider itself:
-
-```powershell
-Disconnect-Cloud -Provider AWS -AccountId "123456789012"
-Disconnect-Cloud -Provider Azure -Subscription "my-subscription"
-Disconnect-Cloud -Provider GCP -Project "my-project"
-```
-
-## Commands
-
-### Session
-
-```powershell
-# Show all established provider sessions
-Get-CloudContext
-
-# Example output
-# Provider IsActive Account            Scope        Region
-# -------- -------- -------            -----        ------
-# Azure    False    adil@contoso.com   my-sub
-# AWS      True     default            default      us-east-1
-# GCP      False    adil@example.com   my-project
-```
-
-### Inventory
-
-```powershell
-Get-CloudInstance -Provider Azure -ResourceGroup "prod-rg"
-Get-CloudInstance -Provider AWS -Region "us-east-1"
-Get-CloudInstance -Provider GCP -Project "my-project"
-
-Get-CloudStorage -Provider Azure -ResourceGroup "prod-rg"
-Get-CloudStorage -Provider AWS -Region "us-east-1"
-Get-CloudStorage -Provider GCP -Project "my-project"
-
-Get-CloudTag -Provider Azure -ResourceId "/subscriptions/.../myVM"
-Get-CloudTag -Provider AWS -ResourceId "i-0abc123def456"
-Get-CloudTag -Provider GCP -Project "my-project" -Resource "instances/my-vm"
-
-Get-CloudNetwork -Provider Azure -ResourceGroup "prod-rg"
-Get-CloudNetwork -Provider AWS -Region "us-east-1"
-Get-CloudNetwork -Provider GCP -Project "my-project"
-
-Get-CloudDisk -Provider Azure -ResourceGroup "prod-rg"
-Get-CloudDisk -Provider AWS -Region "us-east-1"
-Get-CloudDisk -Provider GCP -Project "my-project"
-
-Get-CloudFunction -Provider Azure -ResourceGroup "prod-rg"
-Get-CloudFunction -Provider AWS -Region "us-east-1"
-Get-CloudFunction -Provider GCP -Project "my-project"
-```
-
-### Instance lifecycle
-
-```powershell
-Start-CloudInstance -Provider Azure -Name "web-01" -ResourceGroup "prod-rg"
-Start-CloudInstance -Provider AWS -InstanceId "i-0abc123" -Region "us-east-1"
-Start-CloudInstance -Provider GCP -Name "web-01" -Zone "us-central1-a" -Project "my-project"
-
-Stop-CloudInstance -Provider Azure -Name "web-01" -ResourceGroup "prod-rg"
-Stop-CloudInstance -Provider AWS -InstanceId "i-0abc123" -Region "us-east-1"
-Stop-CloudInstance -Provider GCP -Name "web-01" -Zone "us-central1-a" -Project "my-project"
-```
-
-### Interactive aliases
-
-These aliases are exported for terminal convenience:
-
-| Alias | Command |
-|---|---|
-| `conc` | `Connect-Cloud` |
-| `gcont` | `Get-CloudContext` |
-| `gcin` | `Get-CloudInstance` |
-| `sci` | `Start-CloudInstance` |
-| `tci` | `Stop-CloudInstance` |
-
-Use the full command names in scripts, examples, and shared documentation.
-
-## Output
-
-Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cloud shape:
-
-| Property | Description |
-|---|---|
-| `Name` | Resource name |
-| `Provider` | `Azure`, `AWS`, or `GCP` |
-| `Region` | Region or zone |
-| `Status` | Normalized state such as `Running` or `Stopped` |
-| `Size` | SKU, instance type, or storage class |
-| `CreatedAt` | Creation time when available |
-| `Tags` | Normalized hashtable of tags or labels across providers |
-| `Metadata` | Provider-native details |
-
-`Connect-Cloud` returns a `PSCumulus.ConnectionResult` object describing the validated provider context for the session.
-
-`Disconnect-Cloud` clears the stored PSCumulus context for the selected provider and returns a `PSCumulus.ConnectionResult` object with `Connected = False`.
-
-## Limits
-
-The test behind every unified command: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?
-
-For compute, storage, disk, network, functions, and tags — yes. The question and the answer both translate.
-
-For IAM, the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Those are not the same concept wearing different clothes, so PSCumulus does not try to unify them:
-
-```powershell
-Get-AzRoleAssignment -Scope "/subscriptions/..."
-Get-IAMPolicy -UserName "adil"
-gcloud projects get-iam-policy my-project
-```
-
-Knowing when not to abstract is the actual skill.
+The rule behind every decision above: *if the normalized object would be mostly `Metadata`, the abstraction is too weak to deserve a first-class public command.*
 
 ## Testing
-
-Tests use [Pester](https://pester.dev) 5.x. Cloud SDKs and credentials are not required because provider calls are mocked.
 
 ```powershell
 Install-Module Pester -MinimumVersion 5.6.0 -Scope CurrentUser
 Invoke-Pester
 ```
 
+Provider SDK calls are mocked in the test suite, so cloud credentials are not required to run tests.
+
+## Demo mode
+
+For the Summit talk — and for anyone who wants to try PSCumulus without real cloud accounts — `scripts/demo-setup.ps1` monkeypatches the provider backends inside the module scope and seeds realistic multi-cloud data:
+
+```powershell
+Import-Module ./PSCumulus.psd1 -Force
+. ./scripts/demo-setup.ps1
+
+Get-CloudContext
+Get-CloudInstance -All
+Find-UntaggedInstances
+Show-FleetHealth
+Show-CostCenterRollup
+Invoke-AllDemoQueries
+Remove-DemoSetup      # unload demo functions
+```
+
+See [`docs/talk-demo.md`](docs/talk-demo.md) for the curated query list used in the talk.
+
 ## Documentation
 
-Full documentation is at **https://adilio.github.io/PSCumulus/**
-
-- [Getting Started](https://adilio.github.io/PSCumulus/getting-started/) — installation and first commands
-- [Strategy](https://adilio.github.io/PSCumulus/concepts/strategy/) — project rationale and normalization philosophy
-- [Reference](https://adilio.github.io/PSCumulus/reference/) — generated command documentation
-
-Native PowerShell help is also available:
+- [Getting Started](https://adilio.github.io/PSCumulus/getting-started/)
+- [Strategy](https://adilio.github.io/PSCumulus/concepts/strategy/) — project rationale, normalization rules, roadmap
+- [Command reference](https://adilio.github.io/PSCumulus/reference/) — generated from PlatyPS
 
 ```powershell
 Get-Help about_PSCumulus
 Get-Help Get-CloudInstance -Examples
 ```
 
-To build docs locally:
+## Talk materials
 
-```powershell
-python -m pip install -r requirements-docs.txt
-./scripts/Update-Docs.ps1
-mkdocs serve
-```
+| File | Contents |
+|---|---|
+| [`talk/presentation.md`](talk/presentation.md) | 15-slide Marp deck with speaker notes |
+| [`talk/talk-track.md`](talk/talk-track.md) | Continuous 25-minute spoken track |
+| [`talk/summit-2026.css`](talk/summit-2026.css) | Summit 2026 Marp theme |
+| [`ANALYSIS.md`](ANALYSIS.md) | Critique of the talk and the reasoning behind the current structure |
 
-## Notes
+## License
 
-- Public command help is available through `Get-Help`.
-- The module overview is also available as `Get-Help about_PSCumulus`.
-- The consolidated project rationale, normalization rules, and roadmap live in [`docs/concepts/strategy.md`](./docs/concepts/strategy.md).
-- The generated command reference lives under [`docs/reference/`](./docs/reference/).
-- The talk draft, generated deck, theme assets, and speaker material remain under [`talk/`](./talk).
+MIT. See [`LICENSE`](LICENSE).

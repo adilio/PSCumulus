@@ -1,423 +1,270 @@
-# Talk Track
+# Talk Track — Cross-Cloud without Crossed Fingers
 
-This file is the working spoken draft for the Summit talk. It is intentionally more detailed than the slides. The slides should support this story, not duplicate it.
+Continuous 25-minute spoken track for the PowerShell + DevOps Global Summit 2026 session.
 
-## Throughline
+Written for speaking, not reading. Stage directions appear in [brackets]. Voice: direct, technically confident, dry where it helps. Not a script to read verbatim — a track that sounds natural when spoken.
 
-The talk has two stories happening at once.
-
-Surface story:
-
-- here is a PowerShell module that lets me move between Azure, AWS, and GCP with less friction
-
-Deep story:
-
-- here is what I learned about fear, fluency, and cognitive overload when I was responsible for systems that did not share a mental model
-
-The technical material makes the talk useful. The human story makes it memorable.
-
-## Tone
-
-The tone should be:
-
-- honest
-- calm
-- lightly funny
-- specific rather than dramatic
-- peer-level, not guru-level
-
-This talk should feel like:
-
-- "I got lost too, and here is the map I drew"
-
-Not like:
-
-- "I solved multi-cloud"
+---
 
 ## Timing map
 
-- 0:00-2:00 opening feeling and recognition
-- 2:00-5:00 why multi-cloud is hard and not a personal failure
-- 5:00-9:00 PowerShell as cognitive anchor
-- 9:00-15:00 same intent across providers
-- 15:00-18:00 output normalization and naming
-- 18:00-21:00 why not Terraform
-- 21:00-23:30 where the abstraction breaks
-- 23:30-25:00 close
+```
+0:00 – 1:30    Hook (Slides 1–2)
+1:30 – 3:30    Why multi-cloud breaks your head (Slide 3)
+3:30 – 5:00    PowerShell as anchor, PSCumulus as bet (Slides 4–5)
+5:00 – 9:00    DEMO A — connect once, inventory once per provider (Slide 6)
+9:00 – 13:30   DEMO B — -All, the shared pipeline, the shared shape (Slides 7–8)
+13:30 – 15:00  Why the name matters (Slide 9)
+15:00 – 17:00  What earns a unified command (Slide 10)
+17:00 – 19:30  Why the dash is the point (Slide 11)
+19:30 – 20:30  Not Terraform's job (Slide 12)
+20:30 – 22:30  What PSCumulus does not do (Slide 13)
+22:30 – 24:30  The lens (Slide 14)
+24:30 – 25:00  Close + repo (Slide 15)
+```
 
-## 0:00-2:00 Opening
+---
 
-Goal:
+## 0:00 – 1:30 · Hook
 
-- make the audience feel seen before teaching anything
+[Lights. Walk on. Slide 1 — Title.]
 
-Suggested opening:
-
-> You know that feeling when you're halfway through a command and you can't remember whether this CLI uses one dash or two, or whether the flag even exists in this cloud? And you just stop. You look at the terminal. You realize you've been staring at it for four seconds, and for a second you don't even know which cloud you're in anymore.
+> All right. Thanks for being here. This is a talk about three cloud providers, one keyboard, and what happens when you try to keep them all in your head at the same time.
 >
-> That was me.
+> I'm Adil. I work at Wiz, on the solutions engineering side. Before that I did a lot of PowerShell and sysadmin work, some of it in places where you don't find out until 2am that you were supposed to know all three of these clouds. That's the talk this was going to be, five years ago. Now it's a module, and it's this.
 
-Then:
+[Advance to Slide 2 — The Frozen Terminal.]
 
-> I was bouncing between Azure, AWS, and GCP, and I didn't feel like I was learning one big system. I felt like I was renting three different brains.
-
-Then land the pivot:
-
-> So I reached for the one tool I already trusted: PowerShell.
-
-Important note:
-
-- say this slowly
-- let the room laugh a little if they want to
-- do not rush to the technical slide
-
-## 2:00-5:00 Why This Is Hard
-
-Goal:
-
-- release the audience from the feeling that they are individually bad at multi-cloud
-
-Key message:
-
-- the clouds are not three brands of the same operating system
-- they are different systems with different philosophies
-
-Suggested language:
-
-> Multi-cloud is hard for a reason. These clouds were not designed to coexist in your head.
+> You know this moment. You're halfway through a command, you can't remember whether this CLI uses one dash or two, you can't remember whether the flag you want exists in this cloud, and for about four seconds, you just — stop. You look at the terminal. And for a beat, you don't know which cloud you're in anymore.
 >
-> AWS has one philosophy of identity. Azure has another. GCP has another. Networking is different. Regions are different. Resource hierarchies are different. Even what counts as a resource is different.
+> That was me. It's still me sometimes. I was bouncing between Azure, AWS, and GCP, and I didn't feel like I was learning one big system. I felt like I was renting three different brains.
+
+[Pause. Let the room laugh if it wants to.]
+
+> So I reached for the one tool I already trusted.
+
+---
+
+## 1:30 – 3:30 · Why this is hard
+
+[Advance to Slide 3 — It's Not You.]
+
+> Before we get into the module, one thing worth saying out loud: multi-cloud is hard for a reason, and the reason is not that you are bad at it. The clouds were not designed to coexist in your head. They have different philosophies of identity, different resource hierarchies, different regional models, different ideas of what a resource even is.
 >
-> So if you've ever felt slow or disoriented doing multi-cloud work, that is not a character flaw. That is a systems problem.
-
-Then use IAM as the first proof:
-
-> AWS gives you policy documents. Azure gives you role assignments. GCP gives you bindings. Those are not the same thing wearing different clothes.
-
-Transition into PowerShell:
-
-> That's what makes multi-cloud disorienting in a way that's easy to mistake for personal failure. The systems aren't just named differently. They're built on different conceptual foundations. So giving yourself permission to find it hard is actually step one. And step two is finding a stable anchor.
-
-And before you leave this section, name the on-call version of the opening feeling:
-
-> What I'm describing in the abstract has a very specific concrete form: it's 2am, a thing is broken, and you cannot remember whether the flag is --resource-group or -ResourceGroupName, and you do not know where you are. That is not hypothetical. That is the thing I was trying to solve.
-
-## 5:00-9:00 PowerShell As Anchor
-
-Goal:
-
-- explain why PowerShell was the tool, without making this a tribal language pitch
-
-Key message:
-
-- PowerShell was not "best" in the abstract
-- it was the most fluent tool available to you
-
-Suggested language:
-
-> PowerShell did not make me faster because it was magically superior.
+> The loudest example is IAM. AWS expresses access as policy documents. Azure expresses it as role assignments scoped to a hierarchy. GCP expresses it as bindings. Those are not the same thing wearing different clothes. Those are three different grammars.
 >
-> It made me faster because I already had the keystrokes in my hands.
+> Hold that example in your head. I'm going to come back to it at the end, because it turns out to be the most important slide in this talk.
+
+---
+
+## 3:30 – 5:00 · The anchor and the bet
+
+[Advance to Slide 4 — Build on What Does Not Move.]
+
+> So if the systems don't agree, I wanted an anchor that did. For me, the anchor was PowerShell. Not because PowerShell is objectively best — I don't believe in "objectively best" for any tool. It was the tool I was most fluent in. My hands already knew the shape. Verb-noun, pipeline, object out. The cognitive cost was close to zero.
 >
-> My brain could spend less time on syntax and more time on the actual cloud problem.
-
-Then connect to auth:
-
-> The first wall everybody hits is auth. Three clouds, three login models, three places credentials can hide. That's where the wrapper started.
-
-Then connect to the naming insight:
-
-> The verb-noun model turns out to be a superpower here, because it makes you ask, "what am I actually trying to do?" before you ask, "what does this provider call it?"
-
-And there's a third thing PowerShell gave me that I didn't expect to matter as much as it did: a starting point for someone new to cross-cloud work. If you're coming in fresh and you don't yet know which native CLI to trust, having a consistent verb-noun surface gives you something to reach for before you go native. It's a learning scaffold. You can graduate out of it when you know the platforms well enough, but it lowers the cost of the early days considerably.
-
-Transition into demo:
-
-> Let me show you what that looks like in practice.
-
-## 9:00-15:00 Same Intent, Different Providers
-
-Goal:
-
-- show the module doing something useful and legible
-
-Key message:
-
-- PSCumulus is not abstracting "all cloud"
-- it is abstracting repeated operator intent
-
-Suggested transition:
-
-> The useful question stopped being, "what is the AWS equivalent of Get-AzVM?" and became, "what is the stable operator intent underneath all of this?"
-
-Before getting into the demo, name the three things this is actually going to prove:
-
-> There are three use cases I care most about here. First: on-call orientation -- you're in an unfamiliar environment, you need a list of what's running, and you don't want to context-switch between three CLIs to get it. Second: cross-cloud audit -- you want to filter across all your connected clouds in one pipeline, by tag, by status, by provider. Third: onboarding -- you need to bring someone new up to speed who hasn't memorized the native surface yet. The demo is going to show all three of these.
-
-For the Compute Native slide:
-
-> This is what I was working with before PSCumulus. Three providers, three commands, three completely different output shapes, and one increasingly confused operator.
+> That's what I wanted for cross-cloud work. Not the best tool. The fluent tool.
 >
-> The AWS command gives you a deeply nested object. The Azure one gives you something else. And GCP doesn't have a maintained PowerShell module, so you're calling gcloud directly with --format=json and piping the output. Which works. It's just not what anyone would design on purpose.
+> And that's the bet the rest of this talk is about. You build on what doesn't move. Fluency is infrastructure.
+
+[Advance to Slide 5 — PSCumulus.]
+
+> This is PSCumulus. Eleven public commands. Verb-noun, normalized output, no pretending the providers are the same. Two things to call out before we look at code.
 >
-> None of this is wrong. These are different systems that were built by different teams with different design philosophies, and they're doing what makes sense given where they came from. The problem is just that they all live in your head at the same time.
-
-For the Compute Unified slide -- explain Connect-Cloud first, then the commands:
-
-> Before we look at the output, let me walk through what Connect-Cloud is actually doing.
+> First: the noun is always `Cloud<Thing>`. Never `Az`, never `EC2`, never `GCP`. The public noun is a normalized concept. The native type still lives in metadata.
 >
-> When you call Connect-Cloud -Provider Azure, the first thing it does is check whether you already have an authenticated session. It calls Get-AzContext under the hood. If there's an active context, it skips the login step entirely and stores the session. If not, it calls Connect-AzAccount and waits for the browser flow.
+> Second: every read command returns the same output shape, regardless of which cloud it hit.
 >
-> For AWS, it checks your environment variables and your ~/.aws credential files. For GCP, it runs gcloud auth list to see whether there's an active account. If nothing shows up, it calls gcloud auth application-default login.
+> That's the whole bet. Let's see what it looks like.
+
+---
+
+## 5:00 – 9:00 · DEMO A — native pain, unified relief
+
+[Advance to Slide 6 — Demo A. Switch to terminal.]
+
+> These three commands on the left, you already know. `Get-AzVM`. `Get-EC2Instance`. `gcloud compute instances list --format=json`. Three clouds, three surfaces, three output shapes. I'm not going to run them. You know what they do. You know what you *don't* know? What the same question looks like when it doesn't care which cloud it's in.
+
+[Run: `Connect-Cloud -Provider AWS, Azure, GCP`]
+
+> One call, three providers. This checks each provider for an existing session, triggers the native login if there isn't one, and stores a normalized context for each. The contexts live side by side — connecting to one doesn't disconnect the others.
+
+[Run: `Get-CloudContext`]
+
+> Three providers. Each with an account, a scope, a region. All active.
+
+[Run: `Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg'`]
+
+> Azure instances. Name, Provider, Region, Status, Size, CreatedAt. Notice the shape.
+
+[Run: `Get-CloudInstance -Provider AWS -Region 'us-east-1'`]
+
+> Same command, AWS. Same shape.
+
+[Run: `Get-CloudInstance -Provider GCP -Project 'contoso-prod'`]
+
+> GCP. Same shape. The output doesn't know which cloud it came from until you look at the Provider column.
+
+---
+
+## 9:00 – 13:30 · DEMO B — one pipe, three clouds
+
+[Advance to Slide 7 — Demo B.]
+
+> Now the thing that actually justified building the module.
+
+[Run: `Get-CloudInstance -All`]
+
+> That flag — `-All` — iterates every provider with stored context, calls each backend, and streams a single pipeline of CloudRecord objects. I'm not writing three loops. I'm not managing three output shapes. I'm just getting one stream of objects.
 >
-> So Connect-Cloud is not just dispatching a command. It's making a decision: are you already ready to work, or do we need to get you there first? Once it's done, it stores a normalized context for that provider -- account identity, scope, region -- and sets that provider as the active one for the session.
+> And once you have one stream, you can do this.
+
+[Run:
+```powershell
+Get-CloudInstance -All |
+  Where-Object { -not $_.Tags['owner'] } |
+  Format-Table Name, Provider, Region -AutoSize
+```
+]
+
+> Untagged production assets across every cloud I'm connected to. The tag key `owner` works the same whether the source was an AWS tag, an Azure tag, or a GCP label — that normalization is the point. Three different cloud APIs. One filter. One answer.
+
+[Run: `Show-FleetHealth`]
+
+> And this is the part I care about most. This isn't one trick. The CloudRecord shape composes into any pipeline you already know how to write. `Group-Object`, `Sort-Object`, `Where-Object`, `Select-Object`. The mental model is PowerShell. The data is multi-cloud.
+
+[Back to slides.]
+
+---
+
+## 13:30 – 15:00 · The shared shape & the name
+
+[Advance to Slide 8 — The Shared Shape.]
+
+> That shape has a name. `PSCumulus.CloudRecord`. Eight fields. Name, Provider, Region, Status, Size, CreatedAt, Tags, Metadata.
 >
-> That's why the subsequent commands can drop -Provider. If you've already called Connect-Cloud -Provider AWS, then Get-CloudInstance without a -Provider flag knows exactly what you mean. And if you've connected to all three clouds in the same session, you can call Get-CloudContext and see all of them -- each provider has its own stored context, and IsActive marks which one you last connected.
+> Seven of those are what you can safely filter and group against across clouds, because they exist cleanly in all three. The eighth — Metadata — is where the honest provider-native stuff lives. Your Azure resource group. Your AWS VPC ID. Your GCP zone. Those are real. They matter. They just don't belong in the first seven columns, because they don't exist across all three clouds. Putting them there would be a lie.
 
-Now show the multi-provider connect and the cross-cloud audit:
+[Advance to Slide 9 — Why the Name Matters.]
 
-> Here's where it gets interesting. Instead of three separate Connect-Cloud calls, you can pass an array:
+> Quick aside on the naming, because someone always asks.
 >
-> `Connect-Cloud -Provider AWS, Azure, GCP`
+> I picked `Get-CloudInstance`, not `Get-VM`. Two reasons. First, `Get-VM` is already owned by the Hyper-V world in PowerShell. I didn't want this module pretending it owned that noun. Second, the public noun is a normalized cloud concept, not a vendor name. `CloudInstance` tells the truth about what the abstraction is.
 >
-> That goes through each provider in sequence, runs the auth check, stores the context. Now you have all three connected in one session.
+> I had that argument with myself for about ten minutes. Then I called it `Get-CloudInstance`.
+
+---
+
+## 15:00 – 17:00 · What earns a unified command
+
+[Advance to Slide 10 — What Earns a Unified Command.]
+
+> OK. Here's the real content of the talk.
 >
-> And then you can do this:
+> Every command in PSCumulus had to pass a test. The test was this: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?
 >
-> `Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }`
+> For compute, yes. All three clouds define an instance as something that runs, has a name, a region, a status, a size. The philosophies align. `Get-CloudInstance` exists.
 >
-> What -All does is iterate every provider that has stored context, call the backend for each one, and return all the results into one pipeline. You're not writing three loops. You're not managing three output shapes. You get one stream of CloudRecord objects, and you filter against it. Tags are normalized -- 'environment' works the same whether the source was an AWS tag, an Azure tag, or a GCP label.
+> For storage — yes, with seams. The billing models and the lifecycle rules differ, but the operator intent — *what storage exists here* — maps. `Get-CloudStorage` exists.
 >
-> That's the cross-cloud audit use case. One pipeline, three clouds.
-
-For the Shared Output Shape slide:
-
-> This is what comes back. Name, Provider, Region, Status, Size, CreatedAt. Same fields whether you asked Azure, AWS, or GCP.
+> For disks, networks, functions, tags — same story. Increasing amounts of seam showing at the edges, but the core concept is close enough that normalization isn't lying. Those commands exist.
 >
-> That sounds simple, and it is. But the payoff is that you can write one script that works with CloudRecord objects and it doesn't need to branch for each provider. The pipeline behavior is consistent. The field names are consistent. You stop translating and start just working.
+> Now look at the last row. IAM. There's a dash where a PSCumulus command would be.
 >
-> The native provider detail is still there. You haven't lost the Azure resource group or the AWS VPC ID or the GCP zone. Those live in the Metadata property. They're accessible. They just aren't in the first six columns because they don't normalize cleanly across providers, and pretending they do would be lying.
+> The human question is the same — who has access, and what can they do? That doesn't change across clouds. But the answer can't be normalized, because the underlying philosophies don't overlap.
 
-For the Storage Next slide:
+---
 
-> Storage is useful, but this is where you start to feel the seams a little more.
+## 17:00 – 19:30 · Why the dash is the point
+
+[Advance to Slide 11 — Why the Dash Is the Point.]
+
+> Let me make that concrete.
 >
-> An Azure storage account, an S3 bucket, and a GCP bucket are similar enough in operator intent that one command makes sense. You're asking the same question: what storage resources exist here, what are they called, where are they? That maps.
+> AWS expresses access as policy documents — JSON objects that describe what actions are allowed or denied on what resources, attached to users, groups, or roles.
 >
-> But the billing models, the access control patterns, the lifecycle rules -- those don't map to each other, and I'm not going to force them to. The command is unified. The underlying systems are not, and the abstraction doesn't pretend otherwise.
-
-For the Metadata Next slide:
-
-> Tags are a good example because they matter operationally -- cost allocation, environment labeling, ownership -- and all three clouds support them. GCP calls them labels instead of tags, which is the least surprising divergence in this whole talk, but still. The query mechanics differ per provider.
+> Azure expresses access as role assignments — a principal bound to a named role at a specific scope in the resource hierarchy, inherited downward through subscriptions and resource groups.
 >
-> Get-CloudTag works across all three and returns a consistent shape. What I'm not claiming is that the providers work the same way. The abstraction covers the intent. It doesn't erase the implementation.
+> GCP expresses access as IAM bindings on a resource — member and role pairs, sometimes conditional.
 >
-> This is actually the cleaner end of the trade-off. Tags are similar enough that normalizing them is genuinely useful. Not everything is, and the next section is about what happens when you try anyway.
-
-Important point to say out loud:
-
-> I'm not claiming these things are identical. I'm claiming there is enough overlap in the operator intent to justify a thin normalized command.
-
-## 15:00-18:00 Output And Naming
-
-Goal:
-
-- explain why the output shape and command names matter
-
-Key message:
-
-- the value is not just fewer commands
-- the value is consistent output and a stable mental model
-
-Suggested language:
-
-> The real payoff isn't just that the commands rhyme. It's that the output shape is consistent.
+> The scoping is different. The inheritance behavior is different. The mental model you need to reason about them is different. If I wrote `Get-CloudPermission` anyway, one of two things would happen. Either I'd flatten everything to the least common denominator and lose the scoping and inheritance that make the answer useful. Or I'd stuff the real answer into Metadata, and the normalized object on top would be an empty wrapper.
 >
-> Same top-level fields. Same pipeline behavior. Same script expectations.
-
-Then:
-
-> That also explains the naming. I used `Get-CloudInstance`, not `Get-VM`, on purpose.
+> There's a rule I use. If the normalized object would be mostly Metadata, the abstraction is too weak to deserve a first-class command. That's why there's no `Get-CloudPermission`. Instead, three explicit provider-native commands — `Get-AzureRoleAssignment`, `Get-AWSPolicyAttachment`, `Get-GCPIAMBinding`. Three seams, left visible.
 >
-> One reason is conceptual: the public noun is a normalized cloud concept, not a provider-native name.
+> The module is useful because it refuses to lie about the places where the providers are genuinely different. Adding `Get-CloudPermission` would have been easy to do, and plausible-looking. It also would have been the thing that eventually burned the person who trusted the abstraction a little too far.
 >
-> The other reason is practical: PowerShell already has a `Get-VM` command in the Hyper-V world. I did not want this module pretending it owned that noun. I had that argument with myself for about ten minutes and then called it Get-CloudInstance.
+> Knowing when *not* to abstract is the actual skill. It's also, honestly, the harder one.
 
-Then:
+---
 
-> The native provider detail still matters. I just keep it in metadata instead of forcing it into the public command name.
+## 19:30 – 20:30 · Not Terraform
 
-Then show the table and state the philosophy explicitly:
+[Advance to Slide 12 — Not Terraform's Job.]
 
-> The question behind every command wasn't just "does this resource type exist in all three clouds?" It was more specific than that: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?
+> At this point somebody is usually thinking: why not Terraform? Terraform solves a different problem.
 >
-> For compute, the answer is yes. All three clouds define an instance as something that runs, has a name, a region, a status, a size. The philosophies align. The answer maps. So Get-CloudInstance exists.
+> Terraform standardizes *infrastructure*. PSCumulus standardizes *how a human interacts with* infrastructure once it exists. Terraform gives you desired state, provisioning, drift correction. PSCumulus gives you an operational shell with consistent ergonomics across three clouds.
 >
-> For storage, disks, networks, functions, tags -- same story, with varying degrees of seam showing at the edges. But the core concept is close enough that normalization isn't lying.
+> Terraform is not an operational shell. PSCumulus is intentionally behaving like one. Different layer. Not opposition.
+
+---
+
+## 20:30 – 22:30 · What this does not do
+
+[Advance to Slide 13 — What This Does Not Do.]
+
+> Before I land this, let me name what PSCumulus doesn't do — because the people most likely to ask deserve a straight answer.
 >
-> Then look at the last row. IAM. There's a dash where the PSCumulus command would be.
+> There's no cost surface. There's no unified health or status surface. The module is read-oriented; most inventory queries don't have corresponding write commands. There's no cross-cloud search-by-name. And there's no IAM, for the reason we just talked about.
 >
-> The human question is the same -- who has access, and what can they do? That question doesn't change across clouds. But the answer can't be normalized, because the underlying philosophies diverge. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy -- subscription, resource group, individual resource, inherited downward. GCP thinks in bindings. Those aren't the same concept. Normalizing them doesn't simplify the answer. It destroys it.
->
-> So the dash stays. The test isn't just "is the question the same?" It's whether the underlying concepts are close enough that one output shape can represent all three without losing what makes the answer useful.
+> Some of those are roadmap. Some are deliberate. None of them are hidden.
 
-Transition into Terraform:
+---
 
-> That's the case for the module as it currently stands. But there's an obvious question that usually surfaces around here.
+## 22:30 – 24:30 · The lens
 
-## 18:00-21:00 Why Not Terraform
-
-Goal:
-
-- answer the obvious objection directly and credibly
-
-Key message:
-
-- Terraform is the right tool for provisioning
-- PSCumulus is solving a different layer of the problem
-
-Suggested language:
-
-> At this point somebody is usually thinking, "why not just use Terraform?"
->
-> And the answer is: Terraform solves a different problem.
-
-Then make the distinction explicit:
-
-> Terraform standardizes infrastructure.
->
-> PSCumulus standardizes how humans interact with infrastructure across clouds.
-
-Then expand:
-
-> Terraform gives you desired state, provisioning, lifecycle management, drift correction.
->
-> PSCumulus gives you command ergonomics, output normalization, interactive querying, and less cognitive switching cost during day-to-day operations.
-
-Then the strongest line:
-
-> Terraform standardizes what exists. PSCumulus standardizes how I think about and interact with what exists.
-
-Then the shell line:
-
-> Terraform is not an operational shell. PSCumulus is intentionally behaving like one.
-
-Then avoid sounding oppositional:
-
-> This is not Terraform versus PowerShell. It's Terraform for provisioning, and PSCumulus for cross-cloud interaction once the infrastructure already exists.
-
-Transition into where it breaks:
-
-> That distinction matters, and it's also what makes the next part honest. Because even at the operational-shell level, there are places where the abstraction doesn't hold, and where PSCumulus has to step back and say: no, this one is too different. We're not going to pretend.
-
-## 21:00-23:30 Where The Abstraction Breaks
-
-Goal:
-
-- prove discipline
-- show that good abstraction has edges
-
-Key message:
-
-- the module is useful because it refuses to lie
-
-Suggested language:
-
-> You saw the table. You saw the dash. This is what it cost to put it there.
->
-> The temptation to write Get-CloudPermission was real. It would have been easy to do, and it would have looked complete. But the table already told you why it doesn't exist: the underlying CSP philosophies don't overlap enough for a normalized answer to be honest.
->
-> Let me make that concrete. In AWS, access is expressed as policy documents -- JSON objects that describe what actions are allowed or denied on what resources, attached to users, groups, or roles. In Azure, access is role assignments: a binding of a principal to a named role at a specific scope in the resource hierarchy, inherited downward through subscriptions and resource groups. In GCP, access is IAM bindings on a resource -- member and role pairs, potentially conditional.
->
-> Those aren't the same model. The scoping is different. The inheritance behavior is different. The mental model you need to reason about them is different. The question -- who has access? -- is the same. The answer can't be.
->
-> So if I wrote Get-CloudPermission anyway, one of two things would happen. Either I'd flatten everything to the least common denominator and lose the scoping and inheritance that make the answer useful. Or I'd put almost everything in Metadata, and the normalized object on top would be nearly empty -- just a wrapper with nothing honest showing through.
->
-> There's a rule I use for this: if the normalized object would be mostly Metadata, the abstraction is too weak to deserve a first-class public command.
->
-> That's why there's no Get-CloudPermission in PSCumulus.
-
-Then name the three explicit commands:
-
-> Instead there are three explicit commands that don't claim to be the same thing: Get-AzureRoleAssignment, Get-AWSPolicyAttachment, Get-GCPIAMBinding. Three seams, left visible.
-
-Before landing the lesson, name the gaps directly:
-
-> Let me also name what this module does not do, because naming it is better than leaving you to find out later. There is no cost surface. There is no health or status surface. The output is read-oriented -- you can pipeline and filter but there are no corresponding write commands for most inventory queries. And there is no cross-cloud resource search by name. These are real gaps. I am naming them because the people most likely to ask about them deserve a straight answer.
-
-Then land the lesson:
-
-> The module is useful because it refuses to lie about the places where the providers are genuinely different. Adding Get-CloudPermission would have been easy to do and plausible-looking. It also would have been the thing that eventually burned the person who trusted the abstraction a little too far.
->
-> Knowing when not to abstract is the actual skill. It's also, honestly, the harder one.
-
-## 23:30-25:00 Close
-
-Goal:
-
-- leave the room with a lens, not a recap
-
-Suggested language:
+[Advance to Slide 14 — The Lens.]
 
 > I want to leave you with something that isn't a summary.
 >
-> We spend a lot of time in this field asking what the right tool is for a given job. And it's a good question. But there's another one I think about more now, and it's this: what is the tool you will still trust when the job gets weird?
+> We spend a lot of time in this field asking what the right tool is for a given job. And it's a good question. But there's another one I think about more now.
 >
-> When you're on call and the environment is half-configured and you can't remember which cloud you're supposed to be in. When you need to move fast and you genuinely cannot afford a mistake and you need your hands to know what to do without looking it up.
+> What is the tool you will still trust when the job gets weird? When you're on call and the environment is half-configured and you cannot remember which cloud you're supposed to be in. When you need to move fast and you genuinely cannot afford a mistake, and you need your hands to know what to do without looking it up.
 >
 > Those are the moments where fluency matters more than optimality. And fluency is built over time, on tools you already know.
 >
-> For me, it was PowerShell. That's the map I drew. I hope some of it is useful to you.
+> For me, that tool was PowerShell. The module you just saw is just the map I drew. I hope some of it is useful to you.
 
-But building the module taught me something I didn't expect:
+---
 
-> But building the module taught me something I didn't expect. Every command required me to ask: what IS this thing, actually, across all three clouds? What do they share? Where do they diverge? That question turned out to be more useful than the command. The module is evidence for an argument about where the clouds are genuinely the same and where they're not. The IAM section isn't where the module failed. It's where the thinking worked.
+## 24:30 – 25:00 · Close
 
-Then finish simply:
+[Advance to Slide 15 — Repo.]
 
-- repo link
-- thank the audience
-- stop
+> Repo's at `github.com/adilio/PSCumulus`. Slides and the talk track are in there too. Thanks for listening.
 
-## Slides by job
+[End.]
 
-Each slide should have a clear purpose.
-
-- title: establish topic and tone
-- wreck: recognition
-- why hard: relief
-- IAM philosophy: proof that the systems differ
-- why PowerShell: emotional anchor
-- stable lens: thesis
-- credential chaos: the practical pain
-- ask the intent first: bridge into abstraction
-- abstraction bet: transition into the module
-- compute native: show translation problem
-- compute unified: show translation solution
-- shared output shape: show why the solution matters
-- why the name matters: explain noun choice and normalization
-- storage next: show second example and edge pressure
-- metadata next: show third example and increasing seams
-- why not Terraform: define different layer
-- different layer: make the distinction concrete
-- output matters: reinforce the operator experience argument
-- where it breaks: prime the limitation
-- failure is the lesson: show disciplined abstraction
-- reframe: closing idea
-
-## What to avoid
-
-- do not over-explain three cloud platforms in 25 minutes
-- do not become defensive about Terraform
-- do not promise production-grade completeness
-- do not let the module overshadow the human story
-- do not read bullets verbatim
+---
 
 ## Rehearsal goals
 
-By the next pass, the goal should be:
+- The first two minutes can be delivered nearly word-for-word without looking at notes.
+- The demo blocks run without hesitation — every command has been keyed in from muscle memory at least three times.
+- The IAM section (slides 10–11) feels confident, not apologetic. This is the credibility beat.
+- The close lands as a thought, not a summary. Resist the urge to recap.
 
-- the opening two minutes can be delivered nearly word-for-word
-- the Terraform section can be delivered confidently in under two minutes
-- the IAM section feels crisp, not apologetic
-- the close lands as a thought, not a summary
+## Pre-talk checklist
+
+- Terminal pre-staged: large font, dark theme, history clear, demo-setup loaded, context seeded.
+- Backup recording of the live demo queued up in a browser tab, ready to cut to if anything breaks.
+- Zoom/font size confirmed readable from the back row.
+- `$null = Connect-Cloud …` suppression decided (suppress or show — pick one and stick to it).
+- Slides advanced from 1 to 15 in a dry run; all `DEMO` hand-offs feel natural.
+
+## What to avoid
+
+- Reading the slides. The slides are a safety net for a live demo, not the canvas.
+- Explaining PowerShell to the Summit audience. They already use it.
+- Over-defending against Terraform. One slide, one beat, move on.
+- Closing on "thanks" housekeeping. The reframe line is the last thing in the room.
