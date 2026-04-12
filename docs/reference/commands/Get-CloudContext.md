@@ -30,10 +30,11 @@ This cmdlet has the following aliases,
 ## DESCRIPTION
 
 Shows all cloud providers that have been connected in this session, along with
-the active account, scope, and region for each. `ConnectionState` shows whether
-the provider is the current active session context or simply connected in the
-session. `IsActive` remains available for compatibility and is only populated
-for the current provider.
+the active account, scope, and region for each.
+ConnectionState shows whether a
+provider is the current active session context or simply connected in the session.
+IsActive is retained as a compatibility flag and is only populated for the current
+provider.
 
 ## EXAMPLES
 
@@ -65,4 +66,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
+
 
