@@ -6,13 +6,9 @@ BeforeAll {
 Describe 'Disconnect-Cloud' {
 
     Context 'parameter validation' {
-        It 'makes Provider mandatory in every parameter set' {
-            foreach ($parameterSet in 'Azure', 'AWS', 'GCP') {
-                Should-HaveMandatoryParameter `
-                    -CommandName 'Disconnect-Cloud' `
-                    -ParameterSetName $parameterSet `
-                    -ParameterName 'Provider'
-            }
+        It 'requires Provider' {
+            (Get-Command Disconnect-Cloud).Parameters['Provider'].Attributes.Mandatory |
+                Should -Contain $true
         }
     }
 

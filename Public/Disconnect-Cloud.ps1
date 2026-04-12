@@ -35,41 +35,31 @@ function Disconnect-Cloud {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([pscustomobject])]
     param(
-        [Parameter(Mandatory, ParameterSetName = 'Azure')]
-        [Parameter(Mandatory, ParameterSetName = 'AWS')]
-        [Parameter(Mandatory, ParameterSetName = 'GCP')]
+        [Parameter(Mandatory)]
         [ValidateSet('Azure', 'AWS', 'GCP')]
         [string]$Provider,
 
-        [Parameter(ParameterSetName = 'Azure')]
         [ValidateNotNullOrEmpty()]
         [string]$TenantId,
 
-        [Parameter(ParameterSetName = 'Azure')]
         [ValidateNotNullOrEmpty()]
         [string]$Subscription,
 
-        [Parameter(ParameterSetName = 'Azure')]
         [ValidateNotNullOrEmpty()]
         [string]$Account,
 
-        [Parameter(ParameterSetName = 'AWS')]
         [ValidateNotNullOrEmpty()]
         [string]$AccountId,
 
-        [Parameter(ParameterSetName = 'AWS')]
         [ValidateNotNullOrEmpty()]
         [string]$ProfileName,
 
-        [Parameter(ParameterSetName = 'AWS')]
         [ValidateNotNullOrEmpty()]
         [string]$Region,
 
-        [Parameter(ParameterSetName = 'GCP')]
         [ValidateNotNullOrEmpty()]
         [string]$Project,
 
-        [Parameter(ParameterSetName = 'GCP')]
         [ValidateNotNullOrEmpty()]
         [string]$AccountEmail
     )
@@ -83,6 +73,21 @@ function Disconnect-Cloud {
         }
 
         $matches = $true
+
+        $providerSpecificParams = switch ($Provider) {
+            'Azure' { @('TenantId', 'Subscription', 'Account') }
+            'AWS'   { @('AccountId', 'ProfileName', 'Region') }
+            'GCP'   { @('Project', 'AccountEmail') }
+        }
+
+        $unsupportedParams = $PSBoundParameters.Keys |
+            Where-Object { $_ -notin @('Provider', 'WhatIf', 'Confirm') -and $_ -notin $providerSpecificParams }
+
+        if ($unsupportedParams) {
+            throw [System.ArgumentException]::new(
+                "Provider '$Provider' does not accept the following disconnect filter(s): $($unsupportedParams -join ', ')."
+            )
+        }
 
         switch ($Provider) {
             'Azure' {
