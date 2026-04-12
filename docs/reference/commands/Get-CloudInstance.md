@@ -19,25 +19,28 @@ Gets compute instances from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudInstance -ResourceGroup <string> [-Name <string>] [-Provider <string>] [-Detailed] [<CommonParameters>]
+Get-CloudInstance -ResourceGroup <string> [-Provider <string>] [-Name <string>] [-Detailed]
+ [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudInstance -Project <string> [-Name <string>] [-Provider <string>] [-Detailed] [<CommonParameters>]
+Get-CloudInstance -Project <string> [-Provider <string>] [-Name <string>] [-Detailed]
+ [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudInstance -Region <string> [-Name <string>] [-Provider <string>] [-Detailed] [<CommonParameters>]
+Get-CloudInstance -Region <string> [-Provider <string>] [-Name <string>] [-Detailed]
+ [<CommonParameters>]
 ```
 
 ### All
 
 ```
-Get-CloudInstance -All [<CommonParameters>]
+Get-CloudInstance -All [-Detailed] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -93,22 +96,22 @@ Gets the GCP instance with the matching instance name.
 
 ### EXAMPLE 7
 
+Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01' -Detailed
+
+Gets the Azure instance with a richer, detail-focused view.
+
+### EXAMPLE 8
+
 Get-CloudInstance -All
 
 Gets instances from all providers with an established session context.
 Use after Connect-Cloud -Provider AWS, Azure, GCP.
 
-### EXAMPLE 8
+### EXAMPLE 9
 
 Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 
 Gets all prod-tagged instances across every connected cloud.
-
-### EXAMPLE 9
-
-Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01' -Detailed
-
-Gets the Azure instance with a richer, detail-focused view.
 
 ## PARAMETERS
 
@@ -182,7 +185,7 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: Azure
+- Name: GCP
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
@@ -194,7 +197,7 @@ ParameterSets:
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
-- Name: GCP
+- Name: Azure
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
@@ -321,3 +324,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
+
+

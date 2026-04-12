@@ -310,5 +310,25 @@ Describe 'Get-CloudInstance' {
                 $results.Count | Should -Be 3
             }
         }
+
+        It 'warns when a provider is skipped because it has no usable context' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['AWS'] = @{ Region = $null; Scope = $null }
+
+                Mock Write-Verbose {}
+                Mock Get-AzureInstanceData {}
+                Mock Get-AWSInstanceData {}
+                Mock Get-GCPInstanceData {}
+
+                $null = Get-CloudInstance -All -Verbose
+
+                Should -Invoke Get-AzureInstanceData -Times 0
+                Should -Invoke Get-AWSInstanceData -Times 0
+                Should -Invoke Get-GCPInstanceData -Times 0
+                Should -Invoke Write-Verbose -Times 1 -ParameterFilter {
+                    $Message -match 'AWS \(no stored region\)'
+                }
+            }
+        }
     }
 }

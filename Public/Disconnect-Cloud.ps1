@@ -72,7 +72,7 @@ function Disconnect-Cloud {
             )
         }
 
-        $matches = $true
+        $contextMatches = $true
 
         $providerSpecificParams = switch ($Provider) {
             'Azure' { @('TenantId', 'Subscription', 'Account') }
@@ -92,48 +92,48 @@ function Disconnect-Cloud {
         switch ($Provider) {
             'Azure' {
                 if ($PSBoundParameters.ContainsKey('TenantId') -and $context.TenantId -ne $TenantId) {
-                    $matches = $false
+                    $contextMatches = $false
                 }
 
                 if ($PSBoundParameters.ContainsKey('Subscription')) {
                     $subscriptionMatch = $context.Subscription -eq $Subscription -or $context.SubscriptionId -eq $Subscription
                     if (-not $subscriptionMatch) {
-                        $matches = $false
+                        $contextMatches = $false
                     }
                 }
 
                 if ($PSBoundParameters.ContainsKey('AccountEmail') -and $context.Account -ne $AccountEmail) {
-                    $matches = $false
+                    $contextMatches = $false
                 }
             }
             'AWS' {
                 if ($PSBoundParameters.ContainsKey('AccountId')) {
                     $accountMatch = $context.AccountId -eq $AccountId -or $context.Account -eq $AccountId
                     if (-not $accountMatch) {
-                        $matches = $false
+                        $contextMatches = $false
                     }
                 }
 
                 if ($PSBoundParameters.ContainsKey('ProfileName') -and $context.ProfileName -ne $ProfileName -and $context.Scope -ne $ProfileName) {
-                    $matches = $false
+                    $contextMatches = $false
                 }
 
                 if ($PSBoundParameters.ContainsKey('Region') -and $context.Region -ne $Region) {
-                    $matches = $false
+                    $contextMatches = $false
                 }
             }
             'GCP' {
                 if ($PSBoundParameters.ContainsKey('Project') -and $context.Project -ne $Project -and $context.Scope -ne $Project) {
-                    $matches = $false
+                    $contextMatches = $false
                 }
 
                 if ($PSBoundParameters.ContainsKey('Account') -and $context.Account -ne $Account) {
-                    $matches = $false
+                    $contextMatches = $false
                 }
             }
         }
 
-        if (-not $matches) {
+        if (-not $contextMatches) {
             throw [System.InvalidOperationException]::new(
                 "The stored $Provider context does not match the supplied disconnect filters."
             )

@@ -16,31 +16,30 @@ Clears PSCumulus session context for a specific cloud provider.
 
 ## SYNTAX
 
-### Azure (Default)
+### __AllParameterSets
 
 ```
-Disconnect-Cloud -Provider <string> [-TenantId <string>] [-Subscription <string>] [-Account <string>] [<CommonParameters>]
+Disconnect-Cloud [-Provider] <string> [[-TenantId] <string>] [[-Subscription] <string>]
+ [[-Account] <string>] [[-AccountId] <string>] [[-ProfileName] <string>] [[-Region] <string>]
+ [[-Project] <string>] [[-AccountEmail] <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
-### AWS
+## ALIASES
 
-```
-Disconnect-Cloud -Provider <string> [-AccountId <string>] [-ProfileName <string>] [-Region <string>] [<CommonParameters>]
-```
-
-### GCP
-
-```
-Disconnect-Cloud -Provider <string> [-Project <string>] [-Account <string>] [<CommonParameters>]
-```
+This cmdlet has the following aliases,
+  None
 
 ## DESCRIPTION
 
 Disconnect-Cloud removes the stored PSCumulus session context for one provider
 from the current PowerShell session.
+The command is scoped to the selected
+provider and can optionally verify account or scope details before clearing
+the stored context.
 
-This clears PSCumulus's remembered session state only. It does not sign you
-out of the cloud provider itself.
+This does not sign you out of the provider itself.
+It only clears PSCumulus's
+remembered session state.
 
 ## EXAMPLES
 
@@ -62,11 +61,17 @@ Disconnect-Cloud -Provider GCP -Project 'my-project'
 
 Clears the stored GCP context only if it matches the supplied project.
 
+### EXAMPLE 4
+
+Disconnect-Cloud -Provider GCP -AccountEmail 'adil@example.com'
+
+Clears the stored GCP context only if it matches the supplied account email.
+
 ## PARAMETERS
 
 ### -Account
 
-The Azure account to match.
+{{ Fill Account Description }}
 
 ```yaml
 Type: System.String
@@ -74,17 +79,20 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: Azure
-  Position: Named
+- Name: (All)
+  Position: 3
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
 ```
 
 ### -AccountEmail
 
-The GCP account email to match.
+{{ Fill AccountEmail Description }}
 
 ```yaml
 Type: System.String
@@ -92,8 +100,8 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: GCP
-  Position: Named
+- Name: (All)
+  Position: 8
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -105,7 +113,7 @@ HelpMessage: ''
 
 ### -AccountId
 
-The AWS account id to match.
+{{ Fill AccountId Description }}
 
 ```yaml
 Type: System.String
@@ -113,7 +121,29 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: AWS
+- Name: (All)
+  Position: 4
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Confirm
+
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: ''
+SupportsWildcards: false
+Aliases:
+- cf
+ParameterSets:
+- Name: (All)
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
@@ -126,7 +156,7 @@ HelpMessage: ''
 
 ### -ProfileName
 
-The AWS profile name to match.
+{{ Fill ProfileName Description }}
 
 ```yaml
 Type: System.String
@@ -134,8 +164,8 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: AWS
-  Position: Named
+- Name: (All)
+  Position: 5
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -147,7 +177,7 @@ HelpMessage: ''
 
 ### -Project
 
-The GCP project to match.
+{{ Fill Project Description }}
 
 ```yaml
 Type: System.String
@@ -155,8 +185,8 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: GCP
-  Position: Named
+- Name: (All)
+  Position: 7
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -168,7 +198,7 @@ HelpMessage: ''
 
 ### -Provider
 
-The cloud provider whose stored context should be cleared.
+{{ Fill Provider Description }}
 
 ```yaml
 Type: System.String
@@ -176,20 +206,8 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: GCP
-  Position: Named
-  IsRequired: true
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-- Name: AWS
-  Position: Named
-  IsRequired: true
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-- Name: Azure
-  Position: Named
+- Name: (All)
+  Position: 0
   IsRequired: true
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -201,7 +219,7 @@ HelpMessage: ''
 
 ### -Region
 
-The AWS region to match.
+{{ Fill Region Description }}
 
 ```yaml
 Type: System.String
@@ -209,8 +227,8 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: AWS
-  Position: Named
+- Name: (All)
+  Position: 6
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -222,7 +240,7 @@ HelpMessage: ''
 
 ### -Subscription
 
-The Azure subscription name or subscription id to match.
+{{ Fill Subscription Description }}
 
 ```yaml
 Type: System.String
@@ -230,8 +248,8 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: Azure
-  Position: Named
+- Name: (All)
+  Position: 2
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -243,7 +261,7 @@ HelpMessage: ''
 
 ### -TenantId
 
-The Azure tenant id to match.
+{{ Fill TenantId Description }}
 
 ```yaml
 Type: System.String
@@ -251,7 +269,29 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: Azure
+- Name: (All)
+  Position: 1
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -WhatIf
+
+Runs the command in a mode that only reports what would happen without performing the actions.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: ''
+SupportsWildcards: false
+Aliases:
+- wi
+ParameterSets:
+- Name: (All)
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
@@ -262,16 +302,25 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
-## INPUTS
+### CommonParameters
 
-### System.Management.Automation.PSObject
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable,
+-InformationAction, -InformationVariable, -OutBuffer, -OutVariable, -PipelineVariable,
+-ProgressAction, -Verbose, -WarningAction, and -WarningVariable. For more information, see
+[about_CommonParameters](https://go.microsoft.com/fwlink/?LinkID=113216).
+
+## INPUTS
 
 ## OUTPUTS
 
 ### System.Management.Automation.PSObject
+
+{{ Fill in the Description }}
 
 ## NOTES
 
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
+
+

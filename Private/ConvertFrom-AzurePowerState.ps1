@@ -9,9 +9,8 @@ function ConvertFrom-AzurePowerState {
     }
 
     if ($PowerState -like 'VM *') {
-        return $PowerState.Substring(3)
+        return (Get-Culture).TextInfo.ToTitleCase($PowerState.Substring(3).ToLowerInvariant())
     }
 
-    $PowerState
+    (Get-Culture).TextInfo.ToTitleCase($PowerState.ToLowerInvariant())
 }
-

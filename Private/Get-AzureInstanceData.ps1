@@ -26,6 +26,11 @@ function Get-AzureInstanceData {
             Where-Object { $_.Code -like 'PowerState/*' } |
             Select-Object -First 1 -ExpandProperty DisplayStatus
 
+        $normalizedStatus = ConvertFrom-AzurePowerState -PowerState $powerStatus
+        if ([string]::IsNullOrWhiteSpace($normalizedStatus)) {
+            $normalizedStatus = 'Unknown'
+        }
+
         $tagHashtable = @{}
         if ($virtualMachine.Tags) {
             $virtualMachine.Tags.GetEnumerator() | ForEach-Object { $tagHashtable[$_.Key] = $_.Value }
@@ -37,7 +42,7 @@ function Get-AzureInstanceData {
             -Name $virtualMachine.Name `
             -Provider Azure `
             -Region $virtualMachine.Location `
-            -Status (ConvertFrom-AzurePowerState -PowerState $powerStatus) `
+            -Status $normalizedStatus `
             -Size $virtualMachine.HardwareProfile.VmSize `
             -PrivateIpAddress $addressData.PrivateIpAddress `
             -PublicIpAddress $addressData.PublicIpAddress `
@@ -46,6 +51,7 @@ function Get-AzureInstanceData {
                 ResourceGroup = $virtualMachine.ResourceGroupName
                 VmId          = $virtualMachine.VmId
                 OsType        = $virtualMachine.StorageProfile.OsDisk.OsType.ToString()
+                PowerState    = $powerStatus
             }
     }
 }

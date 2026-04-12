@@ -21,6 +21,10 @@ Cross-cloud PowerShell module for Azure, AWS, and GCP. Unified commands (Get-Clo
 
 Prepares a ready-to-use cloud session for the specified provider.
 
+### [Disconnect-Cloud](commands/Disconnect-Cloud.md)
+
+Clears PSCumulus session context for a specific cloud provider.
+
 ### [Get-CloudContext](commands/Get-CloudContext.md)
 
 Returns the current PSCumulus session context for all connected providers.

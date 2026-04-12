@@ -121,9 +121,14 @@ function Get-CloudInstance {
         }
 
         if ($PSCmdlet.ParameterSetName -eq 'All') {
+            $skippedProviders = New-Object System.Collections.Generic.List[string]
+
             foreach ($providerName in 'Azure', 'AWS', 'GCP') {
                 $ctx = $script:PSCumulusContext.Providers[$providerName]
-                if ($null -eq $ctx) { continue }
+                if ($null -eq $ctx) {
+                    $skippedProviders.Add("$providerName (no active session context)")
+                    continue
+                }
 
                 $argumentMap = @{}
 
@@ -131,11 +136,25 @@ function Get-CloudInstance {
                     $argumentMap.Region = $ctx.Region
                 }
 
+                if ($providerName -eq 'AWS' -and [string]::IsNullOrWhiteSpace($ctx.Region)) {
+                    $skippedProviders.Add("$providerName (no stored region)")
+                    continue
+                }
+
                 if ($providerName -eq 'GCP' -and -not [string]::IsNullOrWhiteSpace($ctx.Scope)) {
                     $argumentMap.Project = $ctx.Scope
                 }
 
+                if ($providerName -eq 'GCP' -and [string]::IsNullOrWhiteSpace($ctx.Scope)) {
+                    $skippedProviders.Add("$providerName (no stored project)")
+                    continue
+                }
+
                 & $decorateRecord (Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap)
+            }
+
+            if ($skippedProviders.Count -gt 0) {
+                Write-Verbose ("Get-CloudInstance -All skipped: " + ($skippedProviders -join '; ') + '.')
             }
 
             return

@@ -15,8 +15,14 @@ function Get-AWSInstanceData {
         Get-EC2Instance -Region $Region -ErrorAction Stop
     }
 
-    foreach ($reservation in $instanceResponse.Reservations) {
-        foreach ($instance in $reservation.Instances) {
+    $reservations = if ($instanceResponse.PSObject.Properties.Match('Reservations').Count -gt 0) {
+        $instanceResponse.Reservations
+    } else {
+        $instanceResponse
+    }
+
+    foreach ($reservation in @($reservations)) {
+        foreach ($instance in @($reservation.Instances)) {
             $nameTag = $instance.Tags |
                 Where-Object { $_.Key -eq 'Name' } |
                 Select-Object -First 1 -ExpandProperty Value

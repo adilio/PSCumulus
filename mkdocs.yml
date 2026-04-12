@@ -36,6 +36,7 @@ nav:
       - Module: reference/module.md
       - Commands:
           - Connect-Cloud: reference/commands/Connect-Cloud.md
+          - Disconnect-Cloud: reference/commands/Disconnect-Cloud.md
           - Get-CloudContext: reference/commands/Get-CloudContext.md
           - Get-CloudDisk: reference/commands/Get-CloudDisk.md
           - Get-CloudFunction: reference/commands/Get-CloudFunction.md

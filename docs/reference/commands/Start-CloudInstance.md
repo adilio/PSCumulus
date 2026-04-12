@@ -23,6 +23,14 @@ Start-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] 
  [<CommonParameters>]
 ```
 
+### Piped
+
+```
+Start-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>]
+ [-ResourceGroup <string>] [-InstanceId <string>] [-Region <string>] [-Project <string>]
+ [-Zone <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
 ### GCP
 
 ```
@@ -57,21 +65,21 @@ Starts an Azure VM.
 
 ### EXAMPLE 2
 
-Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Start-CloudInstance
-
-Starts an Azure VM from piped PSCumulus instance output.
-
-### EXAMPLE 3
-
 Start-CloudInstance -Provider AWS -InstanceId 'i-0123456789abcdef0' -Region 'us-east-1'
 
 Starts an AWS EC2 instance.
 
-### EXAMPLE 4
+### EXAMPLE 3
 
 Start-CloudInstance -Provider GCP -Name 'gcp-vm-01' -Zone 'us-central1-a' -Project 'my-project'
 
 Starts a GCP compute instance.
+
+### EXAMPLE 4
+
+Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Start-CloudInstance
+
+Starts the Azure VM using piped PSCumulus instance output.
 
 ## PARAMETERS
 
@@ -128,11 +136,17 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: AWS
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -149,17 +163,23 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: GCP
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 - Name: Azure
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -176,11 +196,17 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: GCP
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -197,23 +223,29 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: GCP
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 - Name: AWS
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 - Name: Azure
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -230,11 +262,17 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: AWS
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -251,11 +289,17 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: Azure
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -294,11 +338,17 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: GCP
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
+  ValueFromPipelineByPropertyName: true
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -314,6 +364,14 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### System.Management.Automation.PSObject
+
+{{ Fill in the Description }}
+
+### System.String
+
+{{ Fill in the Description }}
+
 ## OUTPUTS
 
 ### System.Management.Automation.PSObject
@@ -325,4 +383,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
+
 

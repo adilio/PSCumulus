@@ -49,6 +49,14 @@ Describe 'Get-AWSInstanceData' {
                     Instances = @($script:mockInstance)
                 })
             }
+            $script:directReservationResponse = [pscustomobject]@{
+                GroupNames    = @()
+                Groups        = @()
+                Instances     = @($script:mockInstance)
+                OwnerId       = '898954404910'
+                RequesterId   = $null
+                ReservationId = 'r-0abc123def456789'
+            }
             $script:noTagResponse = [pscustomobject]@{
                 Reservations = @([pscustomobject]@{
                     Instances = @([pscustomobject]@{
@@ -75,6 +83,18 @@ Describe 'Get-AWSInstanceData' {
 
                 $results = @(Get-AWSInstanceData -Region 'us-east-1')
                 $results.Count | Should -Be 1
+            }
+        }
+
+        It 'handles reservation objects returned directly by Get-EC2Instance' {
+            InModuleScope PSCumulus -Parameters @{ DirectReservationResponse = $script:directReservationResponse } {
+                param($DirectReservationResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $DirectReservationResponse }
+
+                $results = @(Get-AWSInstanceData -Region 'us-east-1')
+                $results.Count | Should -Be 1
+                $results[0].Name | Should -Be 'app-server-01'
             }
         }
 

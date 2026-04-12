@@ -108,7 +108,33 @@ Describe 'Get-AzureInstanceData' {
                 Mock Get-AzVM { @($MockVm) }
 
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
-                $result.Status | Should -Be 'running'
+                $result.Status | Should -Be 'Running'
+            }
+        }
+
+        It 'falls back to Unknown when no power state is returned' {
+            InModuleScope PSCumulus {
+                $vmWithoutPowerState = [pscustomobject]@{
+                    Name              = 'offline-vm'
+                    Location          = 'eastus'
+                    ResourceGroupName = 'prod-rg'
+                    VmId              = 'vm-guid-offline'
+                    NetworkProfile    = [pscustomobject]@{ NetworkInterfaces = @() }
+                    HardwareProfile   = [pscustomobject]@{ VmSize = 'Standard_D2s_v3' }
+                    StorageProfile    = [pscustomobject]@{
+                        OsDisk = [pscustomobject]@{ OsType = 'Linux' }
+                    }
+                    Statuses          = @(
+                        [pscustomobject]@{ Code = 'ProvisioningState/succeeded'; DisplayStatus = 'Provisioning succeeded' }
+                    )
+                }
+
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($vmWithoutPowerState) }
+
+                $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
+                $result.Status | Should -Be 'Unknown'
+                $result.Metadata.PowerState | Should -BeNullOrEmpty
             }
         }
 

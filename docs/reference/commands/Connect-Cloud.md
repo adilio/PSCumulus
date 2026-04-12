@@ -19,7 +19,7 @@ Prepares a ready-to-use cloud session for the specified provider.
 ### Azure (Default)
 
 ```
-Connect-Cloud -Provider <string[]> [-Subscription <string>] [-Tenant <string>] [<CommonParameters>]
+Connect-Cloud -Provider <string[]> [-Tenant <string>] [-Subscription <string>] [<CommonParameters>]
 ```
 
 ### GCP
@@ -71,13 +71,19 @@ Connect-AzAccount interactively, then stores the session context.
 
 ### EXAMPLE 2
 
+Connect-Cloud -Provider Azure -Tenant '00000000-0000-0000-0000-000000000000' -Subscription 'my-subscription'
+
+Connects to Azure without prompting for tenant or subscription selection.
+
+### EXAMPLE 3
+
 Connect-Cloud -Provider AWS -Region 'us-east-1'
 
 Checks for existing AWS credentials.
 If none are found, triggers
 the AWS configuration flow, then stores the session context.
 
-### EXAMPLE 3
+### EXAMPLE 4
 
 Connect-Cloud -Provider GCP -Project 'my-project'
 
@@ -85,7 +91,7 @@ Checks for an active gcloud account.
 If none is found, triggers
 gcloud auth application-default login, then stores the session context.
 
-### EXAMPLE 4
+### EXAMPLE 5
 
 Connect-Cloud -Provider AWS, Azure, GCP
 
@@ -108,27 +114,6 @@ ParameterSets:
 - Name: GCP
   Position: Named
   IsRequired: true
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -Subscription
-
-The Azure subscription to target for the connection context.
-
-```yaml
-Type: System.String
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: Azure
-  Position: Named
-  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -170,9 +155,30 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
-### -Tenant
+### -Region
 
-The Azure tenant to target for the connection context.
+The AWS region to target for the connection context.
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: AWS
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Subscription
+
+The Azure subscription to target for the connection context.
 
 ```yaml
 Type: System.String
@@ -191,9 +197,9 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
-### -Region
+### -Tenant
 
-The AWS region to target for the connection context.
+The Azure tenant to target for the connection context.
 
 ```yaml
 Type: System.String
@@ -201,9 +207,9 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: AWS
+- Name: Azure
   Position: Named
-  IsRequired: true
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -232,3 +238,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
+
+
