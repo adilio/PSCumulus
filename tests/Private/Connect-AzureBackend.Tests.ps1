@@ -58,6 +58,29 @@ Describe 'Connect-AzureBackend' {
                 Should -Invoke Connect-AzAccount -Times 1
             }
         }
+
+        It 'passes Tenant and Subscription to Connect-AzAccount when provided' {
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzContext { $null }
+                Mock Connect-AzAccount {
+                    [pscustomobject]@{
+                        Context = [pscustomobject]@{
+                            Name         = 'ctx'
+                            Tenant       = [pscustomobject]@{ Id = 'tenant-abc' }
+                            Subscription = [pscustomobject]@{ Name = 'sub-abc' }
+                            Account      = [pscustomobject]@{ Id = 'user@contoso.com' }
+                        }
+                    }
+                }
+
+                $null = Connect-AzureBackend -Tenant 'tenant-abc' -Subscription 'sub-abc'
+
+                Should -Invoke Connect-AzAccount -Times 1 -ParameterFilter {
+                    $Tenant -eq 'tenant-abc' -and $Subscription -eq 'sub-abc'
+                }
+            }
+        }
     }
 
     Context 'successful connection' {

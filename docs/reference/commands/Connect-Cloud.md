@@ -19,7 +19,7 @@ Prepares a ready-to-use cloud session for the specified provider.
 ### Azure (Default)
 
 ```
-Connect-Cloud -Provider <string[]> [<CommonParameters>]
+Connect-Cloud -Provider <string[]> [-Subscription <string>] [-Tenant <string>] [<CommonParameters>]
 ```
 
 ### GCP
@@ -116,6 +116,27 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
+### -Subscription
+
+The Azure subscription to target for the connection context.
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
 ### -Provider
 
 The cloud provider or providers to connect to.
@@ -141,6 +162,27 @@ ParameterSets:
 - Name: Azure
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Tenant
+
+The Azure tenant to target for the connection context.
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -190,5 +232,3 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
-
-

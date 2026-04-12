@@ -1,6 +1,9 @@
 function Connect-AzureBackend {
     [CmdletBinding()]
-    param()
+    param(
+        [string]$Tenant,
+        [string]$Subscription
+    )
 
     Assert-CommandAvailable `
         -CommandName 'Connect-AzAccount' `
@@ -10,8 +13,30 @@ function Connect-AzureBackend {
 
     if (-not $existingContext) {
         Write-Host "No active Azure session found. Starting login..."
-        $loginResult = Connect-AzAccount -ErrorAction Stop
-        $azContext = $loginResult.Context
+        $connectParams = @{
+            ErrorAction = 'Stop'
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($Tenant)) {
+            $connectParams.Tenant = $Tenant
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($Subscription)) {
+            $connectParams.Subscription = $Subscription
+        }
+
+        $loginResult = Connect-AzAccount @connectParams
+        $azContext = Get-AzContext -ErrorAction SilentlyContinue
+
+        if (-not $azContext -and $loginResult.Context) {
+            $azContext = $loginResult.Context
+        }
+
+        if (-not $azContext) {
+            throw [System.InvalidOperationException]::new(
+                'Azure login completed, but no active context was found.'
+            )
+        }
     } else {
         $azContext = $existingContext
     }

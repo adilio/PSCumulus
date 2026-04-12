@@ -104,7 +104,7 @@ Rule of thumb: if the normalized object would be mostly `Metadata`, the abstract
 
 The per-provider detection works differently for each provider because the providers are genuinely different:
 
-- **Azure**: checks `Get-AzContext`; calls `Connect-AzAccount` if no session exists
+- **Azure**: checks `Get-AzContext`; calls `Connect-AzAccount` if no session exists, and can pass tenant and subscription selectors when provided
 - **AWS**: checks environment variables and `~/.aws` credential files; proceeds through `Initialize-AWSDefaultConfiguration`
 - **GCP**: checks `gcloud auth list` for an active account; calls `gcloud auth application-default login` if none is found
 

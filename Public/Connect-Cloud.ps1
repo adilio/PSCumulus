@@ -27,6 +27,11 @@ function Connect-Cloud {
             Connect-AzAccount interactively, then stores the session context.
 
         .EXAMPLE
+            Connect-Cloud -Provider Azure -Tenant '00000000-0000-0000-0000-000000000000' -Subscription 'my-subscription'
+
+            Connects to Azure without prompting for tenant or subscription selection.
+
+        .EXAMPLE
             Connect-Cloud -Provider AWS -Region 'us-east-1'
 
             Checks for existing AWS credentials. If none are found, triggers
@@ -54,6 +59,16 @@ function Connect-Cloud {
         [ValidateSet('Azure', 'AWS', 'GCP')]
         [string[]]$Provider,
 
+        # The Azure tenant to target for the connection context.
+        [Parameter(ParameterSetName = 'Azure')]
+        [ValidateNotNullOrEmpty()]
+        [string]$Tenant,
+
+        # The Azure subscription to target for the connection context.
+        [Parameter(ParameterSetName = 'Azure')]
+        [ValidateNotNullOrEmpty()]
+        [string]$Subscription,
+
         # The AWS region to target for the connection context.
         [Parameter(Mandatory, ParameterSetName = 'AWS')]
         [ValidateNotNullOrEmpty()]
@@ -74,6 +89,16 @@ function Connect-Cloud {
 
         foreach ($p in $Provider) {
             $argumentMap = @{}
+
+            if ($p -eq 'Azure') {
+                if ($PSBoundParameters.ContainsKey('Tenant')) {
+                    $argumentMap.Tenant = $Tenant
+                }
+
+                if ($PSBoundParameters.ContainsKey('Subscription')) {
+                    $argumentMap.Subscription = $Subscription
+                }
+            }
 
             if ($p -eq 'AWS' -and $PSBoundParameters.ContainsKey('Region')) {
                 $argumentMap.Region = $Region

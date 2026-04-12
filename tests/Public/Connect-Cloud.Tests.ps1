@@ -47,6 +47,26 @@ Describe 'Connect-Cloud' {
             }
         }
 
+        It 'passes Tenant and Subscription to the Azure backend' {
+            InModuleScope PSCumulus {
+                Mock Connect-AzureBackend {
+                    param([string]$Tenant, [string]$Subscription)
+                    [pscustomobject]@{
+                        PSTypeName   = 'PSCumulus.ConnectionResult'
+                        Provider     = 'Azure'
+                        Connected    = $true
+                        Tenant       = $Tenant
+                        Subscription = $Subscription
+                    }
+                }
+
+                $result = Connect-Cloud -Provider Azure -Tenant 'tenant-abc' -Subscription 'sub-abc'
+
+                $result.Tenant | Should -Be 'tenant-abc'
+                $result.Subscription | Should -Be 'sub-abc'
+            }
+        }
+
         It 'returns the result from the backend' {
             InModuleScope PSCumulus {
                 Mock Connect-AzureBackend {
