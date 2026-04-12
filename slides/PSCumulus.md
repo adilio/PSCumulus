@@ -262,10 +262,13 @@ Speaker notes:
 
 <!--
 Speaker notes:
-- The question behind every command: is the operator intent genuinely the same across all three clouds?
-- Six resource types passed that test. One didn't.
-- The dash on IAM is not an omission. It's a decision.
-- This table is the philosophy made visible.
+- The test behind every command: do the underlying CSP philosophies behind this concept
+  overlap enough that a normalized answer is still honest?
+- For compute, storage, disk, network, functions, tags: yes. The concepts align.
+- For IAM: the human question is the same. The answer can't be.
+  AWS thinks in policy documents. Azure in role assignments scoped to a hierarchy.
+  GCP in bindings. Those aren't the same concept wearing different clothes.
+- The dash is not an omission. It's the test failing honestly.
 -->
 
 ---

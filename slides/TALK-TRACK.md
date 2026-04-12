@@ -249,17 +249,17 @@ Then:
 
 Then show the table and state the philosophy explicitly:
 
-> Every command in this module started with the same question: is the operator intent genuinely the same across all three clouds? Not the implementation. Not the API shape. The intent. What is the person actually trying to find out?
+> The question behind every command wasn't just "does this resource type exist in all three clouds?" It was more specific than that: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?
 >
-> For compute, the answer is yes. You want to know what's running, where, and what state it's in. Azure, AWS, and GCP all have a concept that maps to that. So Get-CloudInstance exists.
+> For compute, the answer is yes. All three clouds define an instance as something that runs, has a name, a region, a status, a size. The philosophies align. The answer maps. So Get-CloudInstance exists.
 >
-> For storage -- buckets, accounts, whatever they call it -- the intent maps. For disks, for networks, for serverless functions. The intent is similar enough that a normalized command earns its place.
+> For storage, disks, networks, functions, tags -- same story, with varying degrees of seam showing at the edges. But the core concept is close enough that normalization isn't lying.
 >
-> And then there's IAM. Look at the last row. There's a dash where the PSCumulus command would be.
+> Then look at the last row. IAM. There's a dash where the PSCumulus command would be.
 >
-> That's not an omission. That's the test failing. AWS policy documents, Azure role assignments, GCP IAM bindings -- those are not the same operator intent wearing different clothes. The scoping is different, the inheritance model is different, the mental model you need to reason about them is different. Flattening them into one command would produce something that looks unified and lies about it.
+> The human question is the same -- who has access, and what can they do? That question doesn't change across clouds. But the answer can't be normalized, because the underlying philosophies diverge. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy -- subscription, resource group, individual resource, inherited downward. GCP thinks in bindings. Those aren't the same concept. Normalizing them doesn't simplify the answer. It destroys it.
 >
-> So the dash stays. The table is the philosophy made visible: normalization is only worth the cost when the thing you're normalizing is real.
+> So the dash stays. The test isn't just "is the question the same?" It's whether the underlying concepts are close enough that one output shape can represent all three without losing what makes the answer useful.
 
 Transition into Terraform:
 
@@ -323,17 +323,15 @@ Key message:
 
 Suggested language:
 
-> You saw the table. You saw the dash on IAM. This is where we talk about what that actually cost.
+> You saw the table. You saw the dash. This is what it cost to put it there.
 >
-> IAM is where the module stopped me from pretending the clouds are the same. And it's worth going one level deeper on why, because the temptation to paper over it was real.
+> The temptation to write Get-CloudPermission was real. It would have been easy to do, and it would have looked complete. But the table already told you why it doesn't exist: the underlying CSP philosophies don't overlap enough for a normalized answer to be honest.
 >
-> Think about what a fake Get-CloudPermission command would actually have to do to work.
+> Let me make that concrete. In AWS, access is expressed as policy documents -- JSON objects that describe what actions are allowed or denied on what resources, attached to users, groups, or roles. In Azure, access is role assignments: a binding of a principal to a named role at a specific scope in the resource hierarchy, inherited downward through subscriptions and resource groups. In GCP, access is IAM bindings on a resource -- member and role pairs, potentially conditional.
 >
-> In AWS, permissions are policy documents. JSON objects describing what actions are allowed or denied on what resources, attached to users, groups, or roles. In Azure, you have role assignments, which bind a named role to a principal at a particular scope in the resource hierarchy. In GCP, you have IAM bindings, which tie a member to a role on a project or resource.
+> Those aren't the same model. The scoping is different. The inheritance behavior is different. The mental model you need to reason about them is different. The question -- who has access? -- is the same. The answer can't be.
 >
-> Those are not the same model. Different shapes, different scoping rules, different inheritance behaviors.
->
-> So if I wrote Get-CloudPermission anyway, one of two things would happen. Either I'd flatten everything to the least common denominator and you'd lose the detail that actually matters. Or I'd put almost everything in Metadata, and the normalized object on top is nearly empty -- just a PSCumulus costume with nothing useful showing through.
+> So if I wrote Get-CloudPermission anyway, one of two things would happen. Either I'd flatten everything to the least common denominator and lose the scoping and inheritance that make the answer useful. Or I'd put almost everything in Metadata, and the normalized object on top would be nearly empty -- just a wrapper with nothing honest showing through.
 >
 > There's a rule I use for this: if the normalized object would be mostly Metadata, the abstraction is too weak to deserve a first-class public command.
 >
