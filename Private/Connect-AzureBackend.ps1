@@ -48,6 +48,7 @@ function Connect-AzureBackend {
         ContextName   = $azContext.Name
         TenantId      = $azContext.Tenant.Id
         Subscription  = $azContext.Subscription.Name
+        SubscriptionId = $azContext.Subscription.Id
         Account       = $azContext.Account.Id
     }
 }

@@ -18,6 +18,7 @@ It is intentionally not a full cloud framework. The goal is to make a few high-v
 The module uses a stable verb-noun pattern across Azure, AWS, and GCP:
 
 - `Connect-Cloud`
+- `Disconnect-Cloud`
 - `Get-CloudContext`
 - `Get-CloudInstance`
 - `Get-CloudStorage`
@@ -74,6 +75,14 @@ Get-CloudTag -ResourceId "i-0abc123"
 ```
 
 Pass `-Provider` explicitly whenever you want to override the remembered session provider.
+
+Use `Disconnect-Cloud` to clear PSCumulus's remembered session state for a specific provider without signing out of the cloud provider itself:
+
+```powershell
+Disconnect-Cloud -Provider AWS -AccountId "123456789012"
+Disconnect-Cloud -Provider Azure -Subscription "my-subscription"
+Disconnect-Cloud -Provider GCP -Project "my-project"
+```
 
 ## Commands
 
@@ -161,6 +170,8 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cl
 | `Metadata` | Provider-native details |
 
 `Connect-Cloud` returns a `PSCumulus.ConnectionResult` object describing the validated provider context for the session.
+
+`Disconnect-Cloud` clears the stored PSCumulus context for the selected provider and returns a `PSCumulus.ConnectionResult` object with `Connected = False`.
 
 ## Limits
 

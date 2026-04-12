@@ -8,6 +8,7 @@ Describe 'PSCumulus module' {
         It 'exports all public functions' {
             $commands = Get-Command -Module PSCumulus | Select-Object -ExpandProperty Name
             $commands | Should -Contain 'Connect-Cloud'
+            $commands | Should -Contain 'Disconnect-Cloud'
             $commands | Should -Contain 'Get-CloudContext'
             $commands | Should -Contain 'Get-CloudInstance'
             $commands | Should -Contain 'Get-CloudStorage'
@@ -19,9 +20,9 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Stop-CloudInstance'
         }
 
-        It 'exports exactly ten public functions' {
+        It 'exports exactly eleven public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 10
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 11
         }
 
         It 'does not export variables' {
@@ -63,6 +64,10 @@ Describe 'PSCumulus module' {
     Context 'public command OutputType' {
         It 'Connect-Cloud declares pscustomobject OutputType' {
             (Get-Command Connect-Cloud).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Disconnect-Cloud declares pscustomobject OutputType' {
+            (Get-Command Disconnect-Cloud).OutputType | Should -Not -BeNullOrEmpty
         }
 
         It 'Get-CloudInstance declares pscustomobject OutputType' {

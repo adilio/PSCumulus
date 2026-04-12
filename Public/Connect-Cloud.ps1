@@ -119,10 +119,28 @@ function Connect-Cloud {
             $script:PSCumulusContext.ActiveProvider = $p
             $script:PSCumulusContext.Providers[$p] = @{
                 Account     = $result.Account
+                AccountId   = $result.AccountId
                 Scope       = $scope
                 Region      = $result.Region
                 ConnectedAt = Get-Date
             }
+
+            if ($p -eq 'Azure') {
+                $script:PSCumulusContext.Providers[$p].TenantId = $result.TenantId
+                $script:PSCumulusContext.Providers[$p].Subscription = $result.Subscription
+                $script:PSCumulusContext.Providers[$p].SubscriptionId = $result.SubscriptionId
+                $script:PSCumulusContext.Providers[$p].ContextName = $result.ContextName
+            }
+
+            if ($p -eq 'AWS') {
+                $script:PSCumulusContext.Providers[$p].ProfileName = $result.ProfileName
+            }
+
+            if ($p -eq 'GCP') {
+                $script:PSCumulusContext.Providers[$p].Project = $result.Project
+            }
+
+            $null = Update-CloudContextActiveProvider -PreferredProvider $p
 
             $result
         }

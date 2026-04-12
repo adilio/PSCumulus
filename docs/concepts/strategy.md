@@ -24,6 +24,7 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 | Command | Intent |
 |---|---|
 | `Connect-Cloud` | Prepare a ready-to-use cloud session, including auth if needed |
+| `Disconnect-Cloud` | Clear stored session context for a selected provider |
 | `Get-CloudContext` | Inspect established provider sessions for the current shell |
 | `Get-CloudInstance` | Enumerate compute instances, optionally filtered by exact name within scope |
 | `Get-CloudStorage` | Enumerate storage resources |
@@ -110,11 +111,11 @@ The per-provider detection works differently for each provider because the provi
 - **AWS**: checks environment variables and `~/.aws` credential files; proceeds through `Initialize-AWSDefaultConfiguration`
 - **GCP**: checks `gcloud auth list` for an active account; calls `gcloud auth application-default login` if none is found
 
-Session context is stored per provider, not as a single active slot. This means connecting to Azure, then AWS, then GCP leaves all three contexts available. `Get-CloudContext` surfaces all of them.
+Session context is stored per provider, not as a single active slot. This means connecting to Azure, then AWS, then GCP leaves all three contexts available. `Get-CloudContext` surfaces all of them, and `Disconnect-Cloud` can clear one provider without disturbing the others.
 
 ## Ergonomics
 
-After `Connect-Cloud`, the module remembers the active provider for the current session. Public commands can often omit `-Provider` when:
+After `Connect-Cloud`, the module remembers the active provider for the current session. `Disconnect-Cloud` recalculates the active provider when the active one is removed. Public commands can often omit `-Provider` when:
 
 - the parameter set already implies the provider
 - the active session provider makes the intent unambiguous

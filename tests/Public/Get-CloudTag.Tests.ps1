@@ -120,6 +120,13 @@ Describe 'Get-CloudTag' {
         It 'uses the current provider when Provider is omitted for ResourceId lookups' {
             InModuleScope PSCumulus {
                 $script:PSCumulusContext.ActiveProvider = 'AWS'
+                $script:PSCumulusContext.Providers.AWS = @{
+                    Account     = '123456789012'
+                    AccountId   = '123456789012'
+                    Scope       = 'default'
+                    Region      = 'us-east-1'
+                    ConnectedAt = (Get-Date)
+                }
 
                 Mock Get-AWSTagData {
                     param([string]$ResourceId)

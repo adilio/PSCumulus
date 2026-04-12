@@ -23,13 +23,34 @@ function Connect-AWSBackend {
         Initialize-AWSDefaultConfiguration -Region $Region -ErrorAction Stop
     }
 
+    $accountId = $null
+    if (Get-Command -Name 'Get-STSCallerIdentity' -ErrorAction SilentlyContinue) {
+        try {
+            $callerIdentity = Get-STSCallerIdentity -ErrorAction Stop
+            if ($callerIdentity.Account) {
+                $accountId = $callerIdentity.Account
+            }
+        } catch {
+            $accountId = $null
+        }
+    }
+
+    $profileName = if ($configuration.Name) {
+        $configuration.Name
+    } elseif ($configuration.ProfileName) {
+        $configuration.ProfileName
+    } else {
+        $null
+    }
+
     [pscustomobject]@{
         PSTypeName   = 'PSCumulus.ConnectionResult'
         Provider     = 'AWS'
         Connected    = $true
         Region       = if ($Region) { $Region } else { $configuration.Region }
-        ProfileName  = $configuration.Name
-        Account      = $configuration.Name
+        ProfileName  = $profileName
+        AccountId    = $accountId
+        Account      = if ($accountId) { $accountId } elseif ($profileName) { $profileName } else { $configuration.Name }
         StoreAs      = $configuration.ProfileLocation
     }
 }

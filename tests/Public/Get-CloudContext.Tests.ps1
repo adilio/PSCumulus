@@ -130,5 +130,24 @@ Describe 'Get-CloudContext' {
                 $result.Provider | Should -Not -Contain 'AWS'
             }
         }
+
+        It 'recomputes the active provider when the stored active provider is missing' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.ActiveProvider   = 'AWS'
+                $script:PSCumulusContext.Providers.Azure = @{
+                    Account = 'adil@contoso.com'; Scope = 'my-sub'; Region = $null; ConnectedAt = (Get-Date).AddMinutes(-10)
+                }
+                $script:PSCumulusContext.Providers.AWS   = $null
+                $script:PSCumulusContext.Providers.GCP   = @{
+                    Account = 'adil@gcp.com'; Scope = 'proj'; Region = $null; ConnectedAt = (Get-Date)
+                }
+
+                $result = @(Get-CloudContext)
+                $active = $result | Where-Object { $_.IsActive }
+                @($active).Count | Should -Be 1
+                $active.Provider | Should -Be 'GCP'
+                (Get-CurrentCloudProvider) | Should -Be 'GCP'
+            }
+        }
     }
 }

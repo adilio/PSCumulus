@@ -5,12 +5,21 @@ BeforeAll {
         function global:Initialize-AWSDefaultConfiguration { param([string]$Region) }
     }
 
+    if (-not (Get-Command Get-STSCallerIdentity -ErrorAction SilentlyContinue)) {
+        $script:stubCreatedGetSTSCallerIdentity = $true
+        function global:Get-STSCallerIdentity { }
+    }
+
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
 }
 
 AfterAll {
     if ($script:stubCreatedInitialize) {
         Remove-Item -Path Function:global:Initialize-AWSDefaultConfiguration -ErrorAction SilentlyContinue
+    }
+
+    if ($script:stubCreatedGetSTSCallerIdentity) {
+        Remove-Item -Path Function:global:Get-STSCallerIdentity -ErrorAction SilentlyContinue
     }
 }
 
@@ -76,6 +85,22 @@ Describe 'Connect-AWSBackend' {
 
                 $result = Connect-AWSBackend -Region 'eu-west-1'
                 $result.Region | Should -Be 'eu-west-1'
+            }
+        }
+
+        It 'surfaces the AWS account id when STS is available' {
+            InModuleScope PSCumulus {
+                Mock Assert-CommandAvailable {}
+                Mock Initialize-AWSDefaultConfiguration {
+                    [pscustomobject]@{ Name = 'default'; Region = 'us-east-1'; ProfileLocation = $null }
+                }
+                Mock Get-STSCallerIdentity {
+                    [pscustomobject]@{ Account = '123456789012' }
+                }
+
+                $result = Connect-AWSBackend
+                $result.AccountId | Should -Be '123456789012'
+                $result.Account | Should -Be '123456789012'
             }
         }
 

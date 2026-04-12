@@ -32,7 +32,7 @@ This cmdlet has the following aliases,
 Shows all cloud providers that have been connected in this session, along with
 the active account, scope, and region for each.
 IsActive indicates which provider
-was last connected with Connect-Cloud.
+is currently active for the session.
 
 ## EXAMPLES
 
@@ -64,5 +64,4 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
-
 

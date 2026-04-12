@@ -12,6 +12,7 @@
 
     FunctionsToExport = @(
         'Connect-Cloud',
+        'Disconnect-Cloud',
         'Get-CloudContext',
         'Get-CloudInstance',
         'Get-CloudStorage',
@@ -46,6 +47,11 @@
 - Get-CloudStorage, Get-CloudDisk, Get-CloudNetwork, Get-CloudFunction
 - Start-CloudInstance, Stop-CloudInstance
 - Get-CloudContext, Get-CloudTag
+
+0.1.1
+- Disconnect-Cloud: clear provider-scoped PSCumulus session state
+- AWS connection context captures account id when available
+- Get-CloudContext recalculates the active provider when session state changes
 '@
         }
     }
