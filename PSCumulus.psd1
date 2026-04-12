@@ -42,14 +42,13 @@
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
 0.1.2
-- Added scoped Disconnect-Cloud for Azure, AWS, and GCP session state
+- Added scoped Disconnect-Cloud for Azure, AWS, and GCP
 - Get-CloudInstance now supports name filtering, detailed output, and richer instance metadata
-- Azure VM status is friendlier, AWS instance parsing is fixed, and cloud context now reads Current vs Connected
-- Azure tenant/subscription support and multi-cloud context handling were refined
-- Gcloud test coverage and generated docs were stabilized for CI
+- Cloud context now reads Current vs Connected, with friendlier Azure VM state handling
+- Azure tenant/subscription support, AWS instance parsing, and CI docs/test stability were improved
 
 0.1.1
-- Added demo setup and talk materials with simulated multi-cloud data, named demo queries, richer examples, and cleanup helpers
+- Added demo setup and talk materials with simulated multi-cloud data and richer examples
 - Added CloudRecord Tags, Connect-Cloud array-provider support, and Get-CloudInstance -All
 - Prepared the manifest and docs for PSGallery install flow
 - Refined the normalization philosophy and docs to match the cross-cloud design
