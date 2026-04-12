@@ -1,7 +1,8 @@
 function Get-AzureInstanceData {
     [CmdletBinding()]
     param(
-        [string]$ResourceGroup
+        [string]$ResourceGroup,
+        [string]$Name
     )
 
     Assert-CommandAvailable `
@@ -12,6 +13,12 @@ function Get-AzureInstanceData {
         Get-AzVM -Status -ErrorAction Stop
     } else {
         Get-AzVM -ResourceGroupName $ResourceGroup -Status -ErrorAction Stop
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($Name)) {
+        $virtualMachines = @(
+            $virtualMachines | Where-Object { $_.Name -eq $Name }
+        )
     }
 
     foreach ($virtualMachine in $virtualMachines) {

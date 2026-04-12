@@ -142,6 +142,32 @@ Describe 'Get-GCPInstanceData' {
                 $result.Tags['env'] | Should -Be 'prod'
             }
         }
+
+        It 'filters by Name when provided' {
+            InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
+                param($Account, $Instance)
+                $otherInstance = [pscustomobject]@{
+                    name              = 'other-vm'
+                    zone              = 'projects/my-proj/zones/us-central1-a'
+                    machineType       = 'projects/my-proj/machineTypes/n1-standard-2'
+                    status            = 'RUNNING'
+                    creationTimestamp = '2026-02-01T09:00:00.000-07:00'
+                    id                = '9876543210'
+                    networkInterfaces = @([pscustomobject]@{
+                        networkIP     = '10.128.0.6'
+                        accessConfigs = @([pscustomobject]@{ natIP = '34.1.2.4' })
+                    })
+                    labels = [pscustomobject]@{ env = 'dev' }
+                }
+                Mock Assert-GCloudAuthenticated { $Account }
+                Mock Get-GCloudProject { 'my-project' }
+                Mock Invoke-GCloudJson { @($otherInstance, $Instance) }
+
+                $results = @(Get-GCPInstanceData -Project 'my-project' -Name 'gcp-vm-01')
+                $results.Count | Should -Be 1
+                $results[0].Name | Should -Be 'gcp-vm-01'
+            }
+        }
     }
 
     Context 'authentication' {

@@ -16,14 +16,29 @@ function Get-CloudInstance {
             Gets Azure instances scoped to a resource group.
 
         .EXAMPLE
+            Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01'
+
+            Gets the Azure instance named web-server-01 within the resource group.
+
+        .EXAMPLE
             Get-CloudInstance -Provider AWS -Region 'us-east-1'
 
             Gets AWS instances for a region.
 
         .EXAMPLE
+            Get-CloudInstance -Provider AWS -Region 'us-east-1' -Name 'app-server-01'
+
+            Gets the AWS instance with the matching Name tag or InstanceId.
+
+        .EXAMPLE
             Get-CloudInstance -Provider GCP -Project 'my-project'
 
             Gets GCP instances for a project.
+
+        .EXAMPLE
+            Get-CloudInstance -Provider GCP -Project 'my-project' -Name 'gcp-vm-01'
+
+            Gets the GCP instance with the matching instance name.
 
         .EXAMPLE
             Get-CloudInstance -All
@@ -49,6 +64,13 @@ function Get-CloudInstance {
         [Parameter(Mandatory, ParameterSetName = 'Azure')]
         [ValidateNotNullOrEmpty()]
         [string]$ResourceGroup,
+
+        # The instance name to filter within the selected scope.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
 
         # The AWS region to query for instances.
         [Parameter(Mandatory, ParameterSetName = 'AWS')]
@@ -101,12 +123,24 @@ function Get-CloudInstance {
             $argumentMap.ResourceGroup = $ResourceGroup
         }
 
+        if ($resolvedProvider -eq 'Azure' -and $PSBoundParameters.ContainsKey('Name')) {
+            $argumentMap.Name = $Name
+        }
+
         if ($resolvedProvider -eq 'AWS' -and $PSBoundParameters.ContainsKey('Region')) {
             $argumentMap.Region = $Region
         }
 
+        if ($resolvedProvider -eq 'AWS' -and $PSBoundParameters.ContainsKey('Name')) {
+            $argumentMap.Name = $Name
+        }
+
         if ($resolvedProvider -eq 'GCP' -and $PSBoundParameters.ContainsKey('Project')) {
             $argumentMap.Project = $Project
+        }
+
+        if ($resolvedProvider -eq 'GCP' -and $PSBoundParameters.ContainsKey('Name')) {
+            $argumentMap.Name = $Name
         }
 
         Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap

@@ -1,7 +1,8 @@
 function Get-GCPInstanceData {
     [CmdletBinding()]
     param(
-        [string]$Project
+        [string]$Project,
+        [string]$Name
     )
 
     $null = Assert-GCloudAuthenticated
@@ -9,6 +10,10 @@ function Get-GCPInstanceData {
     $instances = Invoke-GCloudJson -Arguments @('compute', 'instances', 'list', "--project=$resolvedProject")
 
     foreach ($instance in $instances) {
+        if (-not [string]::IsNullOrWhiteSpace($Name) -and $instance.name -ne $Name) {
+            continue
+        }
+
         $zoneName = if ($instance.zone) {
             ($instance.zone -split '/')[-1]
         } else {

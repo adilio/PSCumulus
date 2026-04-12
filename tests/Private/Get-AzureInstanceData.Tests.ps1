@@ -181,5 +181,30 @@ Describe 'Get-AzureInstanceData' {
                 $result.Tags['team'] | Should -Be 'platform'
             }
         }
+
+        It 'filters by Name when provided' {
+            InModuleScope PSCumulus -Parameters @{ MockVm = $script:mockVm } {
+                param($MockVm)
+                $otherVm = [pscustomobject]@{
+                    Name              = 'other-vm'
+                    Location          = 'eastus'
+                    ResourceGroupName = 'prod-rg'
+                    VmId              = 'vm-guid-other'
+                    HardwareProfile   = [pscustomobject]@{ VmSize = 'Standard_D2s_v3' }
+                    StorageProfile    = [pscustomobject]@{
+                        OsDisk = [pscustomobject]@{ OsType = 'Linux' }
+                    }
+                    Statuses          = @(
+                        [pscustomobject]@{ Code = 'PowerState/running'; DisplayStatus = 'VM running' }
+                    )
+                }
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($MockVm, $otherVm) }
+
+                $results = @(Get-AzureInstanceData -ResourceGroup 'prod-rg' -Name 'web-server-01')
+                $results.Count | Should -Be 1
+                $results[0].Name | Should -Be 'web-server-01'
+            }
+        }
     }
 }

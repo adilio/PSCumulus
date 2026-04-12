@@ -19,19 +19,19 @@ Gets compute instances from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudInstance -ResourceGroup <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudInstance -ResourceGroup <string> [-Name <string>] [-Provider <string>] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudInstance -Project <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudInstance -Project <string> [-Name <string>] [-Provider <string>] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudInstance -Region <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudInstance -Region <string> [-Name <string>] [-Provider <string>] [<CommonParameters>]
 ```
 
 ### All
@@ -63,24 +63,42 @@ Gets Azure instances scoped to a resource group.
 
 ### EXAMPLE 2
 
+Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01'
+
+Gets the Azure instance named web-server-01 within the resource group.
+
+### EXAMPLE 3
+
 Get-CloudInstance -Provider AWS -Region 'us-east-1'
 
 Gets AWS instances for a region.
 
-### EXAMPLE 3
+### EXAMPLE 4
+
+Get-CloudInstance -Provider AWS -Region 'us-east-1' -Name 'app-server-01'
+
+Gets the AWS instance with the matching Name tag or InstanceId.
+
+### EXAMPLE 5
 
 Get-CloudInstance -Provider GCP -Project 'my-project'
 
 Gets GCP instances for a project.
 
-### EXAMPLE 4
+### EXAMPLE 6
+
+Get-CloudInstance -Provider GCP -Project 'my-project' -Name 'gcp-vm-01'
+
+Gets the GCP instance with the matching instance name.
+
+### EXAMPLE 7
 
 Get-CloudInstance -All
 
 Gets instances from all providers with an established session context.
 Use after Connect-Cloud -Provider AWS, Azure, GCP.
 
-### EXAMPLE 5
+### EXAMPLE 8
 
 Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 
@@ -101,6 +119,39 @@ ParameterSets:
 - Name: All
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Name
+
+The instance name to filter within the selected scope.
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -225,5 +276,4 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
-
 

@@ -36,6 +36,27 @@ Describe 'Get-CloudInstance' {
                 -ParameterName 'Project'
         }
 
+        It 'makes Name optional in the Azure parameter set' {
+            Should-HaveOptionalParameter `
+                -CommandName 'Get-CloudInstance' `
+                -ParameterSetName 'Azure' `
+                -ParameterName 'Name'
+        }
+
+        It 'makes Name optional in the AWS parameter set' {
+            Should-HaveOptionalParameter `
+                -CommandName 'Get-CloudInstance' `
+                -ParameterSetName 'AWS' `
+                -ParameterName 'Name'
+        }
+
+        It 'makes Name optional in the GCP parameter set' {
+            Should-HaveOptionalParameter `
+                -CommandName 'Get-CloudInstance' `
+                -ParameterSetName 'GCP' `
+                -ParameterName 'Name'
+        }
+
         It 'rejects an invalid provider name' {
             { Get-CloudInstance -Provider Oracle -ResourceGroup 'rg' } | Should -Throw
         }
@@ -63,6 +84,18 @@ Describe 'Get-CloudInstance' {
 
                 $result = Get-CloudInstance -Provider Azure -ResourceGroup 'my-rg'
                 $result.Metadata.RG | Should -Be 'my-rg'
+            }
+        }
+
+        It 'passes Name to the Azure backend when provided' {
+            InModuleScope PSCumulus {
+                Mock Get-AzureInstanceData {
+                    param([string]$ResourceGroup, [string]$Name)
+                    ConvertTo-CloudRecord -Name $Name -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                }
+
+                $result = Get-CloudInstance -Provider Azure -ResourceGroup 'my-rg' -Name 'vm01'
+                $result.Name | Should -Be 'vm01'
             }
         }
 
@@ -115,6 +148,18 @@ Describe 'Get-CloudInstance' {
             }
         }
 
+        It 'passes Name to the AWS backend when provided' {
+            InModuleScope PSCumulus {
+                Mock Get-AWSInstanceData {
+                    param([string]$Region, [string]$Name)
+                    ConvertTo-CloudRecord -Name $Name -Provider AWS -Region $Region
+                }
+
+                $result = Get-CloudInstance -Provider AWS -Region 'ap-southeast-1' -Name 'app-server-01'
+                $result.Name | Should -Be 'app-server-01'
+            }
+        }
+
         It 'infers AWS when Provider is omitted' {
             InModuleScope PSCumulus {
                 Mock Get-AWSInstanceData {
@@ -150,6 +195,18 @@ Describe 'Get-CloudInstance' {
 
                 $result = Get-CloudInstance -Provider GCP -Project 'prod-gcp'
                 $result.Metadata.Proj | Should -Be 'prod-gcp'
+            }
+        }
+
+        It 'passes Name to the GCP backend when provided' {
+            InModuleScope PSCumulus {
+                Mock Get-GCPInstanceData {
+                    param([string]$Project, [string]$Name)
+                    ConvertTo-CloudRecord -Name $Name -Provider GCP -Metadata @{ Proj = $Project }
+                }
+
+                $result = Get-CloudInstance -Provider GCP -Project 'prod-gcp' -Name 'gcp-vm'
+                $result.Name | Should -Be 'gcp-vm'
             }
         }
     }

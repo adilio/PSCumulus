@@ -1,7 +1,8 @@
 function Get-AWSInstanceData {
     [CmdletBinding()]
     param(
-        [string]$Region
+        [string]$Region,
+        [string]$Name
     )
 
     Assert-CommandAvailable `
@@ -24,6 +25,10 @@ function Get-AWSInstanceData {
                 $instance.InstanceId
             } else {
                 $nameTag
+            }
+
+            if (-not [string]::IsNullOrWhiteSpace($Name) -and $resolvedName -ne $Name -and $instance.InstanceId -ne $Name) {
+                continue
             }
 
             $tagHashtable = @{}

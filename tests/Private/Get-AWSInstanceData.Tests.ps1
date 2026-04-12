@@ -216,5 +216,36 @@ Describe 'Get-AWSInstanceData' {
                 $result.Tags['env'] | Should -Be 'prod'
             }
         }
+
+        It 'filters by Name tag when provided' {
+            InModuleScope PSCumulus -Parameters @{ MockInstance = $script:mockInstance } {
+                param($MockInstance)
+                $otherResponse = [pscustomobject]@{
+                    Reservations = @([pscustomobject]@{
+                        Instances = @(
+                            [pscustomobject]@{
+                                InstanceId       = 'i-other'
+                                Tags             = @([pscustomobject]@{ Key = 'Name'; Value = 'other-server' })
+                                State            = [pscustomobject]@{ Name = [pscustomobject]@{ Value = 'running' } }
+                                InstanceType     = [pscustomobject]@{ Value = 't3.medium' }
+                                Placement        = [pscustomobject]@{ AvailabilityZone = 'us-east-1a' }
+                                LaunchTime       = [datetime]'2026-01-01'
+                                PrivateIpAddress = '10.0.0.1'
+                                PublicIpAddress  = $null
+                                VpcId            = 'vpc-123'
+                                SubnetId         = 'subnet-123'
+                            }
+                            $MockInstance
+                        )
+                    })
+                }
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $otherResponse }
+
+                $results = @(Get-AWSInstanceData -Region 'us-east-1' -Name 'app-server-01')
+                $results.Count | Should -Be 1
+                $results[0].Name | Should -Be 'app-server-01'
+            }
+        }
     }
 }

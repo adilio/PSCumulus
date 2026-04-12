@@ -25,7 +25,7 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 |---|---|
 | `Connect-Cloud` | Prepare a ready-to-use cloud session, including auth if needed |
 | `Get-CloudContext` | Inspect established provider sessions for the current shell |
-| `Get-CloudInstance` | Enumerate compute instances |
+| `Get-CloudInstance` | Enumerate compute instances, optionally filtered by exact name within scope |
 | `Get-CloudStorage` | Enumerate storage resources |
 | `Get-CloudTag` | Enumerate tags or labels |
 | `Get-CloudNetwork` | Enumerate virtual networks |
