@@ -51,6 +51,7 @@ Inventory commands return `PSCumulus.CloudRecord` objects with these common prop
 `Get-CloudContext` returns `PSCumulus.CloudContext` objects with these properties:
 
 - `Provider`
+- `ConnectionState`
 - `IsActive`
 - `Account`
 - `Scope`

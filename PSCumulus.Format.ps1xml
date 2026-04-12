@@ -58,7 +58,7 @@
               <ListItem><PropertyName>Name</PropertyName></ListItem>
               <ListItem><PropertyName>Provider</PropertyName></ListItem>
               <ListItem><PropertyName>Region</PropertyName></ListItem>
-              <ListItem><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
               <ListItem><PropertyName>Size</PropertyName></ListItem>
               <ListItem><PropertyName>PrivateIpAddress</PropertyName></ListItem>
               <ListItem><PropertyName>PublicIpAddress</PropertyName></ListItem>
@@ -117,10 +117,44 @@
               <TableColumnItem>
                 <ScriptBlock>
                   switch ($_.Provider) {
-                    'Azure' { $_.ContextName }
-                    'AWS'   { if ($_.Region) { "$($_.ProfileName) ($($_.Region))" } else { $_.ProfileName } }
-                    'GCP'   { "$($_.Account) / $($_.Project)" }
-                    default { '' }
+                    'Azure' {
+                      if ($_.ContextName) {
+                        $_.ContextName
+                      } elseif ($_.Subscription) {
+                        $_.Subscription
+                      } elseif ($_.Account) {
+                        $_.Account
+                      } else {
+                        'Connected'
+                      }
+                    }
+                    'AWS' {
+                      if ($_.ProfileName -and $_.Region) {
+                        "$($_.ProfileName) ($($_.Region))"
+                      } elseif ($_.AccountId -and $_.Region) {
+                        "$($_.AccountId) ($($_.Region))"
+                      } elseif ($_.ProfileName) {
+                        $_.ProfileName
+                      } elseif ($_.AccountId) {
+                        $_.AccountId
+                      } elseif ($_.Region) {
+                        $_.Region
+                      } else {
+                        'Connected'
+                      }
+                    }
+                    'GCP' {
+                      if ($_.Account -and $_.Project) {
+                        "$($_.Account) / $($_.Project)"
+                      } elseif ($_.Project) {
+                        $_.Project
+                      } elseif ($_.Account) {
+                        $_.Account
+                      } else {
+                        'Connected'
+                      }
+                    }
+                    default { 'Connected' }
                   }
                 </ScriptBlock>
               </TableColumnItem>
@@ -143,8 +177,8 @@
             <Width>8</Width>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>IsActive</Label>
-            <Width>9</Width>
+            <Label>State</Label>
+            <Width>10</Width>
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>Account</Label>
@@ -163,7 +197,7 @@
           <TableRowEntry>
             <TableColumnItems>
               <TableColumnItem><PropertyName>Provider</PropertyName></TableColumnItem>
-              <TableColumnItem><PropertyName>IsActive</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>ConnectionState</PropertyName></TableColumnItem>
               <TableColumnItem><PropertyName>Account</PropertyName></TableColumnItem>
               <TableColumnItem><PropertyName>Scope</PropertyName></TableColumnItem>
               <TableColumnItem><PropertyName>Region</PropertyName></TableColumnItem>

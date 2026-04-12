@@ -112,7 +112,7 @@ Describe 'Get-AzureInstanceData' {
             }
         }
 
-        It 'falls back to Unknown when no power state is returned' {
+        It 'falls back to Ready when no power state is returned' {
             InModuleScope PSCumulus {
                 $vmWithoutPowerState = [pscustomobject]@{
                     Name              = 'offline-vm'
@@ -133,7 +133,7 @@ Describe 'Get-AzureInstanceData' {
                 Mock Get-AzVM { @($vmWithoutPowerState) }
 
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
-                $result.Status | Should -Be 'Unknown'
+                $result.Status | Should -Be 'Ready'
                 $result.Metadata.PowerState | Should -BeNullOrEmpty
             }
         }

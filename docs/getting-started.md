@@ -54,14 +54,15 @@ Get-CloudContext
 ```
 
 ```
-Provider IsActive Account            Scope        Region
--------- -------- -------            -----        ------
-Azure    False    adil@contoso.com   my-sub
-AWS      True     default            default      us-east-1
-GCP      False    adil@example.com   my-project
+Provider ConnectionState Account            Scope        Region
+-------- -------------- -------            -----        ------
+Azure    Connected      adil@contoso.com   my-sub
+AWS      Current        default            default      us-east-1
+GCP      Connected      adil@example.com   my-project
 ```
 
-`IsActive` marks the provider that was connected most recently. Providers not yet connected are omitted from the output.
+`ConnectionState` shows which provider is active right now without making the
+others look disconnected. Providers not yet connected are omitted from the output.
 
 ## Common Examples
 

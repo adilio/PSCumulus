@@ -28,7 +28,7 @@ function Get-AzureInstanceData {
 
         $normalizedStatus = ConvertFrom-AzurePowerState -PowerState $powerStatus
         if ([string]::IsNullOrWhiteSpace($normalizedStatus)) {
-            $normalizedStatus = 'Unknown'
+            $normalizedStatus = 'Ready'
         }
 
         $tagHashtable = @{}

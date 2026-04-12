@@ -5,8 +5,10 @@ function Get-CloudContext {
 
         .DESCRIPTION
             Shows all cloud providers that have been connected in this session, along with
-            the active account, scope, and region for each. IsActive indicates which provider
-            is currently active for the session, based on the most recent connected context.
+            the active account, scope, and region for each. ConnectionState shows whether a
+            provider is the current active session context or simply connected in the session.
+            IsActive is retained as a compatibility flag and is only populated for the current
+            provider.
 
         .EXAMPLE
             Get-CloudContext
@@ -28,7 +30,8 @@ function Get-CloudContext {
             [pscustomobject]@{
                 PSTypeName  = 'PSCumulus.CloudContext'
                 Provider    = $provider
-                IsActive    = ($activeProvider -eq $provider)
+                ConnectionState = if ($activeProvider -eq $provider) { 'Current' } else { 'Connected' }
+                IsActive    = if ($activeProvider -eq $provider) { $true } else { $null }
                 Account     = $entry.Account
                 Scope       = $entry.Scope
                 Region      = $entry.Region

@@ -37,7 +37,7 @@ Describe 'Get-CloudContext' {
             }
         }
 
-        It 'marks the connected provider as IsActive' {
+        It 'marks the connected provider as Current' {
             InModuleScope PSCumulus {
                 $script:PSCumulusContext.ActiveProvider   = 'GCP'
                 $script:PSCumulusContext.Providers.Azure = $null
@@ -47,7 +47,8 @@ Describe 'Get-CloudContext' {
                 }
 
                 $result = Get-CloudContext
-                $result.IsActive | Should -Be $true
+                $result.ConnectionState | Should -Be 'Current'
+                $result.IsActive | Should -BeTrue
             }
         }
 
@@ -98,7 +99,7 @@ Describe 'Get-CloudContext' {
             }
         }
 
-        It 'marks only the active provider as IsActive' {
+        It 'marks only the active provider as Current' {
             InModuleScope PSCumulus {
                 $script:PSCumulusContext.ActiveProvider   = 'AWS'
                 $script:PSCumulusContext.Providers.Azure = @{
@@ -110,9 +111,11 @@ Describe 'Get-CloudContext' {
                 $script:PSCumulusContext.Providers.GCP   = $null
 
                 $result = @(Get-CloudContext)
-                $active = $result | Where-Object { $_.IsActive }
+                $active = $result | Where-Object { $_.ConnectionState -eq 'Current' }
                 @($active).Count | Should -Be 1
                 $active.Provider | Should -Be 'AWS'
+                ($result | Where-Object Provider -eq 'Azure').ConnectionState | Should -Be 'Connected'
+                ($result | Where-Object Provider -eq 'Azure').IsActive | Should -BeNullOrEmpty
             }
         }
 
@@ -143,7 +146,7 @@ Describe 'Get-CloudContext' {
                 }
 
                 $result = @(Get-CloudContext)
-                $active = $result | Where-Object { $_.IsActive }
+                $active = $result | Where-Object { $_.ConnectionState -eq 'Current' }
                 @($active).Count | Should -Be 1
                 $active.Provider | Should -Be 'GCP'
                 (Get-CurrentCloudProvider) | Should -Be 'GCP'
