@@ -1334,8 +1334,10 @@
 <h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
 <p>Shows all cloud providers that have been connected in this session, along with
 the active account, scope, and region for each.
-IsActive indicates which provider
-is currently active for the session, based on the most recent connected context.</p>
+ConnectionState shows whether a
+provider is the current active session context or simply connected in the session.
+IsActive is retained as a compatibility flag and is only populated for the current
+provider.</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
 <p>Get-CloudContext</p>

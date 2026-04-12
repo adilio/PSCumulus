@@ -1130,13 +1130,14 @@
 <p>After connecting to one or more providers, use <code>Get-CloudContext</code> to see all established sessions:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudContext</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>Provider IsActive Account            Scope        Region
--------- -------- -------            -----        ------
-Azure    False    adil@contoso.com   my-sub
-AWS      True     default            default      us-east-1
-GCP      False    adil@example.com   my-project
+<div class="highlight"><pre><span></span><code>Provider ConnectionState Account            Scope        Region
+-------- -------------- -------            -----        ------
+Azure    Connected      adil@contoso.com   my-sub
+AWS      Current        default            default      us-east-1
+GCP      Connected      adil@example.com   my-project
 </code></pre></div>
-<p><code>IsActive</code> marks the provider that was connected most recently. Providers not yet connected are omitted from the output.</p>
+<p><code>ConnectionState</code> shows which provider is active right now without making the
+others look disconnected. Providers not yet connected are omitted from the output.</p>
 <h2 id="common-examples">Common Examples<a class="headerlink" href="#common-examples" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="n">-ResourceGroup</span> <span class="s2">&quot;prod-rg&quot;</span>
 <span class="nb">Get-CloudStorage</span> <span class="n">-Provider</span> <span class="n">AWS</span> <span class="n">-Region</span> <span class="s2">&quot;us-east-1&quot;</span>
