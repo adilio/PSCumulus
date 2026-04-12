@@ -41,23 +41,21 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
-0.1.0
-- Connect-Cloud: unified auth for Azure, AWS, and GCP; accepts array of providers
-- Get-CloudInstance -All: query all connected providers in one pipeline
-- Tags property on all CloudRecord objects, normalized across providers
-- Get-CloudStorage, Get-CloudDisk, Get-CloudNetwork, Get-CloudFunction
-- Start-CloudInstance, Stop-CloudInstance
-- Get-CloudContext, Get-CloudTag
+0.1.2
+- Added scoped Disconnect-Cloud for Azure, AWS, and GCP session state
+- Get-CloudInstance now supports name filtering, detailed output, and richer instance metadata
+- Azure VM status is friendlier, AWS instance parsing is fixed, and cloud context now reads Current vs Connected
+- Azure tenant/subscription support and multi-cloud context handling were refined
+- Gcloud test coverage and generated docs were stabilized for CI
 
 0.1.1
-- Disconnect-Cloud: clear provider-scoped PSCumulus session state
-- AWS connection context captures account id when available
-- Get-CloudContext recalculates the active provider when session state changes
+- Added demo setup and talk materials with simulated multi-cloud data, named demo queries, richer examples, and cleanup helpers
+- Added CloudRecord Tags, Connect-Cloud array-provider support, and Get-CloudInstance -All
+- Prepared the manifest and docs for PSGallery install flow
+- Refined the normalization philosophy and docs to match the cross-cloud design
 
-0.1.2
-- Cloud context output now distinguishes Current vs Connected providers
-- Azure instance status falls back to Ready when a power state is unavailable
-- Get-CloudInstance detailed output now uses State for the instance status label
+0.1.0
+- Initial release with Connect-Cloud, Get-CloudContext, inventory commands, lifecycle commands, and normalized cross-cloud output
 '@
         }
     }
