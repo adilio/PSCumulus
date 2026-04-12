@@ -227,4 +227,4 @@ mkdocs serve
 - The module overview is also available as `Get-Help about_PSCumulus`.
 - The consolidated project rationale, normalization rules, and roadmap live in [`docs/concepts/strategy.md`](./docs/concepts/strategy.md).
 - The generated command reference lives under [`docs/reference/`](./docs/reference/).
-- The talk draft and speaker material remain under [`slides/`](./slides).
+- The talk draft and speaker material remain under [`talk/`](./talk).
