@@ -1,6 +1,7 @@
 dist/
 .DS_Store
 *.html
+!talk/presentation.html
 *.pdf
 *.pptx
 .vscode/
