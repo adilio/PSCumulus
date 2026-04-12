@@ -16,7 +16,7 @@
         <link rel="prev" href="../../module/">
       
       
-        <link rel="next" href="../Get-CloudContext/">
+        <link rel="next" href="../Disconnect-Cloud/">
       
       
         
@@ -754,6 +754,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 5
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -798,6 +809,28 @@
     <span class="md-ellipsis">
       
         -Region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-subscription" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Subscription
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Tenant
       
     </span>
   </a>
@@ -885,6 +918,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Disconnect-Cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Disconnect-Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1322,6 +1383,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 5
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1366,6 +1438,28 @@
     <span class="md-ellipsis">
       
         -Region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-subscription" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Subscription
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Tenant
       
     </span>
   </a>
@@ -1474,7 +1568,7 @@
 <p>Prepares a ready-to-use cloud session for the specified provider.</p>
 <h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <h3 id="azure-default">Azure (Default)<a class="headerlink" href="#azure-default" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; [-Tenant &lt;string&gt;] [-Subscription &lt;string&gt;] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="gcp">GCP<a class="headerlink" href="#gcp" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; -Project &lt;string&gt; [&lt;CommonParameters&gt;]
@@ -1507,16 +1601,19 @@ sessions.</p>
 If none is found, triggers
 Connect-AzAccount interactively, then stores the session context.</p>
 <h3 id="example-2">EXAMPLE 2<a class="headerlink" href="#example-2" title="Permanent link">&para;</a></h3>
+<p>Connect-Cloud -Provider Azure -Tenant '00000000-0000-0000-0000-000000000000' -Subscription 'my-subscription'</p>
+<p>Connects to Azure without prompting for tenant or subscription selection.</p>
+<h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
 <p>Connect-Cloud -Provider AWS -Region 'us-east-1'</p>
 <p>Checks for existing AWS credentials.
 If none are found, triggers
 the AWS configuration flow, then stores the session context.</p>
-<h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
+<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
 <p>Connect-Cloud -Provider GCP -Project 'my-project'</p>
 <p>Checks for an active gcloud account.
 If none is found, triggers
 gcloud auth application-default login, then stores the session context.</p>
-<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
+<h3 id="example-5">EXAMPLE 5<a class="headerlink" href="#example-5" title="Permanent link">&para;</a></h3>
 <p>Connect-Cloud -Provider AWS, Azure, GCP</p>
 <p>Connects all three providers in sequence.
 Each gets its own stored context.
@@ -1578,6 +1675,40 @@ ActiveProvider is set to the last provider connected.</p>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-subscription">-Subscription<a class="headerlink" href="#-subscription" title="Permanent link">&para;</a></h3>
+<p>The Azure subscription to target for the connection context.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-tenant">-Tenant<a class="headerlink" href="#-tenant" title="Permanent link">&para;</a></h3>
+<p>The Azure tenant to target for the connection context.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>

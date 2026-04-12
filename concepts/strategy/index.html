@@ -756,6 +756,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/commands/Disconnect-Cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Disconnect-Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/commands/Get-CloudContext/" class="md-nav__link">
         
   
@@ -1216,12 +1244,16 @@
 <td>Prepare a ready-to-use cloud session, including auth if needed</td>
 </tr>
 <tr>
+<td><code>Disconnect-Cloud</code></td>
+<td>Clear stored session context for a selected provider</td>
+</tr>
+<tr>
 <td><code>Get-CloudContext</code></td>
 <td>Inspect established provider sessions for the current shell</td>
 </tr>
 <tr>
 <td><code>Get-CloudInstance</code></td>
-<td>Enumerate compute instances</td>
+<td>Enumerate compute instances, optionally filtered by exact name within scope</td>
 </tr>
 <tr>
 <td><code>Get-CloudStorage</code></td>
@@ -1302,6 +1334,14 @@
 <td>Creation time when available</td>
 </tr>
 <tr>
+<td><code>PrivateIpAddress</code></td>
+<td>Private IP address when available</td>
+</tr>
+<tr>
+<td><code>PublicIpAddress</code></td>
+<td>Public IP address when available</td>
+</tr>
+<tr>
 <td><code>Tags</code></td>
 <td>Normalized hashtable — AWS tags, Azure tags, GCP labels all map here</td>
 </tr>
@@ -1343,13 +1383,13 @@
 </ol>
 <p>The per-provider detection works differently for each provider because the providers are genuinely different:</p>
 <ul>
-<li><strong>Azure</strong>: checks <code>Get-AzContext</code>; calls <code>Connect-AzAccount</code> if no session exists</li>
+<li><strong>Azure</strong>: checks <code>Get-AzContext</code>; calls <code>Connect-AzAccount</code> if no session exists, and can pass tenant and subscription selectors when provided</li>
 <li><strong>AWS</strong>: checks environment variables and <code>~/.aws</code> credential files; proceeds through <code>Initialize-AWSDefaultConfiguration</code></li>
 <li><strong>GCP</strong>: checks <code>gcloud auth list</code> for an active account; calls <code>gcloud auth application-default login</code> if none is found</li>
 </ul>
-<p>Session context is stored per provider, not as a single active slot. This means connecting to Azure, then AWS, then GCP leaves all three contexts available. <code>Get-CloudContext</code> surfaces all of them.</p>
+<p>Session context is stored per provider, not as a single active slot. This means connecting to Azure, then AWS, then GCP leaves all three contexts available. <code>Get-CloudContext</code> surfaces all of them, and <code>Disconnect-Cloud</code> can clear one provider without disturbing the others.</p>
 <h2 id="ergonomics">Ergonomics<a class="headerlink" href="#ergonomics" title="Permanent link">&para;</a></h2>
-<p>After <code>Connect-Cloud</code>, the module remembers the active provider for the current session. Public commands can often omit <code>-Provider</code> when:</p>
+<p>After <code>Connect-Cloud</code>, the module remembers the active provider for the current session. <code>Disconnect-Cloud</code> recalculates the active provider when the active one is removed. Public commands can often omit <code>-Provider</code> when:</p>
 <ul>
 <li>the parameter set already implies the provider</li>
 <li>the active session provider makes the intent unambiguous</li>

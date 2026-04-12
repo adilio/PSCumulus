@@ -584,6 +584,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../Disconnect-Cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Disconnect-Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Get-CloudContext/" class="md-nav__link">
         
   
@@ -888,6 +916,50 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 6
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 7
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 8
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 9
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -910,6 +982,28 @@
     <span class="md-ellipsis">
       
         -All
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Detailed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Name
       
     </span>
   </a>
@@ -1388,6 +1482,50 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 6
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 7
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 8
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 9
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1410,6 +1548,28 @@
     <span class="md-ellipsis">
       
         -All
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Detailed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Name
       
     </span>
   </a>
@@ -1562,16 +1722,19 @@
 <p>Gets compute instances from a selected cloud provider.</p>
 <h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <h3 id="azure-default">Azure (Default)<a class="headerlink" href="#azure-default" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudInstance -ResourceGroup &lt;string&gt; [-Provider &lt;string&gt;] [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CloudInstance -ResourceGroup &lt;string&gt; [-Provider &lt;string&gt;] [-Name &lt;string&gt;] [-Detailed]
+ [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="gcp">GCP<a class="headerlink" href="#gcp" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudInstance -Project &lt;string&gt; [-Provider &lt;string&gt;] [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CloudInstance -Project &lt;string&gt; [-Provider &lt;string&gt;] [-Name &lt;string&gt;] [-Detailed]
+ [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="aws">AWS<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudInstance -Region &lt;string&gt; [-Provider &lt;string&gt;] [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CloudInstance -Region &lt;string&gt; [-Provider &lt;string&gt;] [-Name &lt;string&gt;] [-Detailed]
+ [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="all">All<a class="headerlink" href="#all" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudInstance -All [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CloudInstance -All [-Detailed] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
@@ -1586,16 +1749,28 @@ returning instances from all connected clouds in one pipeline.</p>
 <p>Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg'</p>
 <p>Gets Azure instances scoped to a resource group.</p>
 <h3 id="example-2">EXAMPLE 2<a class="headerlink" href="#example-2" title="Permanent link">&para;</a></h3>
+<p>Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01'</p>
+<p>Gets the Azure instance named web-server-01 within the resource group.</p>
+<h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
 <p>Get-CloudInstance -Provider AWS -Region 'us-east-1'</p>
 <p>Gets AWS instances for a region.</p>
-<h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
+<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
+<p>Get-CloudInstance -Provider AWS -Region 'us-east-1' -Name 'app-server-01'</p>
+<p>Gets the AWS instance with the matching Name tag or InstanceId.</p>
+<h3 id="example-5">EXAMPLE 5<a class="headerlink" href="#example-5" title="Permanent link">&para;</a></h3>
 <p>Get-CloudInstance -Provider GCP -Project 'my-project'</p>
 <p>Gets GCP instances for a project.</p>
-<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
+<h3 id="example-6">EXAMPLE 6<a class="headerlink" href="#example-6" title="Permanent link">&para;</a></h3>
+<p>Get-CloudInstance -Provider GCP -Project 'my-project' -Name 'gcp-vm-01'</p>
+<p>Gets the GCP instance with the matching instance name.</p>
+<h3 id="example-7">EXAMPLE 7<a class="headerlink" href="#example-7" title="Permanent link">&para;</a></h3>
+<p>Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01' -Detailed</p>
+<p>Gets the Azure instance with a richer, detail-focused view.</p>
+<h3 id="example-8">EXAMPLE 8<a class="headerlink" href="#example-8" title="Permanent link">&para;</a></h3>
 <p>Get-CloudInstance -All</p>
 <p>Gets instances from all providers with an established session context.
 Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
-<h3 id="example-5">EXAMPLE 5<a class="headerlink" href="#example-5" title="Permanent link">&para;</a></h3>
+<h3 id="example-9">EXAMPLE 9<a class="headerlink" href="#example-9" title="Permanent link">&para;</a></h3>
 <p>Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }</p>
 <p>Gets all prod-tagged instances across every connected cloud.</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
@@ -1609,6 +1784,70 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-detailed">-Detailed<a class="headerlink" href="#-detailed" title="Permanent link">&para;</a></h3>
+<p>Returns a richer display-oriented view of cloud records.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-name">-Name<a class="headerlink" href="#-name" title="Permanent link">&para;</a></h3>
+<p>The instance name to filter within the selected scope.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
