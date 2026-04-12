@@ -5,6 +5,8 @@ A thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.
 > Companion repo for the PowerShell + DevOps Global Summit 2026 session:
 > **"Cross-Cloud without Crossed Fingers: Surviving Azure, AWS, and GCP with PowerShell"**
 
+**Docs:** https://adilio.github.io/PSCumulus/
+
 ## Synopsis
 
 `PSCumulus` provides a small, consistent PowerShell surface for common cross-cloud tasks such as connecting, inventorying compute and storage, inspecting tags, and starting or stopping instances.
@@ -47,6 +49,7 @@ Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 ## Installation
 
 ```powershell
+Install-Module PSCumulus -Scope CurrentUser
 Import-Module PSCumulus
 ```
 
@@ -154,23 +157,26 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cl
 | `Status` | Normalized state such as `Running` or `Stopped` |
 | `Size` | SKU, instance type, or storage class |
 | `CreatedAt` | Creation time when available |
+| `Tags` | Normalized hashtable of tags or labels across providers |
 | `Metadata` | Provider-native details |
 
 `Connect-Cloud` returns a `PSCumulus.ConnectionResult` object describing the validated provider context for the session.
 
 ## Limits
 
-Not every cloud concept should be abstracted. Identity and access management is the clearest example.
+The test behind every unified command: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?
 
-These are intentionally separate:
+For compute, storage, disk, network, functions, and tags — yes. The question and the answer both translate.
+
+For IAM, the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Those are not the same concept wearing different clothes, so PSCumulus does not try to unify them:
 
 ```powershell
-Get-AzureRoleAssignment -Scope "/subscriptions/..."
-Get-AWSPolicyAttachment -UserName "adil"
-Get-GCPIAMBinding -Project "my-project"
+Get-AzRoleAssignment -Scope "/subscriptions/..."
+Get-IAMPolicy -UserName "adil"
+gcloud projects get-iam-policy my-project
 ```
 
-If the providers do not share an honest common model, PSCumulus does not try to invent one.
+Knowing when not to abstract is the actual skill.
 
 ## Testing
 
@@ -183,25 +189,25 @@ Invoke-Pester
 
 ## Documentation
 
-The docs are split by role:
+Full documentation is at **https://adilio.github.io/PSCumulus/**
 
-- repo-level overview and quick usage in this README
-- native PowerShell help through `Get-Help`
-- a browsable docs site built with MkDocs
-- generated command reference built from comment-based help with PlatyPS
+- [Getting Started](https://adilio.github.io/PSCumulus/getting-started/) — installation and first commands
+- [Strategy](https://adilio.github.io/PSCumulus/concepts/strategy/) — project rationale and normalization philosophy
+- [Reference](https://adilio.github.io/PSCumulus/reference/) — generated command documentation
 
-To regenerate the command reference:
+Native PowerShell help is also available:
 
 ```powershell
-./scripts/Update-Docs.ps1
+Get-Help about_PSCumulus
+Get-Help Get-CloudInstance -Examples
 ```
 
-To build the docs site locally:
+To build docs locally:
 
 ```powershell
 python -m pip install -r requirements-docs.txt
 ./scripts/Update-Docs.ps1
-mkdocs build --strict
+mkdocs serve
 ```
 
 ## Notes

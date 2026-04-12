@@ -44,13 +44,12 @@ GCP uses the CLI adapter path deliberately. It provides stable JSON output and a
 
 ## Normalization Strategy
 
-Normalize by intent, not by provider naming.
+The test behind every unified command: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?
 
-- `Get-CloudInstance` means "show me compute instances"
-- `Get-CloudStorage` means "show me storage resources"
-- `Get-CloudNetwork` means "show me virtual networks"
+- For compute, storage, disk, network, functions, and tags — yes. The question translates. The answer can be normalized.
+- For IAM — the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Forcing a single surface over those would erase distinctions that matter in practice.
 
-Provider-native differences still matter, but they belong in `Metadata`, not in the public command noun.
+Provider-native differences that survive normalization belong in `Metadata`, not in the public command noun.
 
 ### Shared Output Contract
 
@@ -64,6 +63,7 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cl
 | `Status` | Normalized title-case state |
 | `Size` | SKU, instance type, or storage class |
 | `CreatedAt` | Creation time when available |
+| `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
 | `Metadata` | Provider-native details that do not normalize cleanly |
 
 ### What Belongs In `Metadata`
@@ -74,7 +74,13 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cl
 
 ### What Not To Normalize
 
-Do not force a shared command when the providers express materially different models.
+Do not force a shared command when the providers express materially different models. IAM is the clearest example — the human question is the same ("who can do what?"), but the CSP answers are structured so differently that a normalized surface would be dishonest:
+
+```powershell
+Get-AzRoleAssignment -Scope "/subscriptions/..."
+Get-IAMPolicy -UserName "adil"
+gcloud projects get-iam-policy my-project
+```
 
 Explicit non-goals:
 

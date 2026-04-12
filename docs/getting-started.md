@@ -16,9 +16,10 @@ Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 
 > **Note:** GCP doesn't have a maintained PowerShell module, so there's no `Install-Module` equivalent. Install the `gcloud` CLI for your platform using the link above.
 
-## Import The Module
+## Install The Module
 
 ```powershell
+Install-Module PSCumulus -Scope CurrentUser
 Import-Module PSCumulus
 ```
 
