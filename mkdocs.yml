@@ -28,6 +28,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Talk Demo: talk-demo.md
   - Concepts:
       - Strategy: concepts/strategy.md
   - Reference:
