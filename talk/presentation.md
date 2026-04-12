@@ -2,8 +2,6 @@
 marp: true
 theme: summit-2026
 paginate: true
-header: PowerShell + DevOps Global Summit 2026
-footer: '@adilio'
 ---
 
 <!-- _class: title -->
