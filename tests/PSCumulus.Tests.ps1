@@ -55,9 +55,9 @@ Describe 'PSCumulus module' {
             $manifest.PrivateData.PSData.ProjectUri | Should -Be 'https://github.com/adilio/PSCumulus'
         }
 
-        It 'requires PowerShell 7.4 or higher' {
+        It 'requires PowerShell 5.1 or higher' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            [version]$manifest.PowerShellVersion | Should -BeGreaterOrEqual ([version]'7.4')
+            [version]$manifest.PowerShellVersion | Should -BeGreaterOrEqual ([version]'5.1')
         }
     }
 

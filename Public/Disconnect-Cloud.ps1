@@ -140,9 +140,41 @@ function Disconnect-Cloud {
         }
 
         $summary = switch ($Provider) {
-            'Azure' { $context.Subscription ?? $context.SubscriptionId ?? $context.Account }
-            'AWS'   { $context.AccountId ?? $context.Account ?? $context.ProfileName ?? $context.Scope }
-            'GCP'   { $context.Project ?? $context.Scope ?? $context.Account }
+            'Azure' {
+                if ($context.Subscription) {
+                    $context.Subscription
+                } elseif ($context.SubscriptionId) {
+                    $context.SubscriptionId
+                } elseif ($context.Account) {
+                    $context.Account
+                } else {
+                    $null
+                }
+            }
+            'AWS' {
+                if ($context.AccountId) {
+                    $context.AccountId
+                } elseif ($context.Account) {
+                    $context.Account
+                } elseif ($context.ProfileName) {
+                    $context.ProfileName
+                } elseif ($context.Scope) {
+                    $context.Scope
+                } else {
+                    $null
+                }
+            }
+            'GCP' {
+                if ($context.Project) {
+                    $context.Project
+                } elseif ($context.Scope) {
+                    $context.Scope
+                } elseif ($context.Account) {
+                    $context.Account
+                } else {
+                    $null
+                }
+            }
         }
 
         $target = if ($summary) {
