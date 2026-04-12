@@ -78,6 +78,21 @@ Describe 'Start-CloudInstance' {
                 Should -Invoke Start-AzureInstance -Times 1
             }
         }
+
+        It 'accepts piped Azure instance records' {
+            InModuleScope PSCumulus {
+                Mock Start-AzureInstance {
+                    param([string]$Name, [string]$ResourceGroup)
+                    ConvertTo-CloudRecord -Name $Name -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                }
+
+                $inputRecord = ConvertTo-CloudRecord -Name 'web-server-01' -Provider Azure -Metadata @{ ResourceGroup = 'prod-rg' }
+                $result = $inputRecord | Start-CloudInstance -Confirm:$false
+
+                $result.Name | Should -Be 'web-server-01'
+                $result.Metadata.RG | Should -Be 'prod-rg'
+            }
+        }
     }
 
     Context 'AWS routing' {
@@ -116,6 +131,21 @@ Describe 'Start-CloudInstance' {
                 Should -Invoke Start-AWSInstance -Times 1
             }
         }
+
+        It 'accepts piped AWS instance records' {
+            InModuleScope PSCumulus {
+                Mock Start-AWSInstance {
+                    param([string]$InstanceId, [string]$Region)
+                    ConvertTo-CloudRecord -Name $InstanceId -Provider AWS -Region $Region -Status 'Starting'
+                }
+
+                $inputRecord = ConvertTo-CloudRecord -Name 'app-server-01' -Provider AWS -Metadata @{ InstanceId = 'i-0abc123' }
+                $result = $inputRecord | Start-CloudInstance -Confirm:$false
+
+                $result.Name | Should -Be 'i-0abc123'
+                $result.Region | Should -BeNullOrEmpty
+            }
+        }
     }
 
     Context 'GCP routing' {
@@ -139,6 +169,22 @@ Describe 'Start-CloudInstance' {
                 }
 
                 $result = Start-CloudInstance -Provider GCP -Name 'gcp-vm' -Zone 'us-central1-a' -Project 'prod-gcp'
+                $result.Name | Should -Be 'gcp-vm'
+                $result.Region | Should -Be 'us-central1-a'
+                $result.Metadata.Proj | Should -Be 'prod-gcp'
+            }
+        }
+
+        It 'accepts piped GCP instance records' {
+            InModuleScope PSCumulus {
+                Mock Start-GCPInstance {
+                    param([string]$Name, [string]$Zone, [string]$Project)
+                    ConvertTo-CloudRecord -Name $Name -Provider GCP -Region $Zone -Metadata @{ Proj = $Project }
+                }
+
+                $inputRecord = ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP -Region 'us-central1-a' -Metadata @{ Project = 'prod-gcp'; Zone = 'us-central1-a' }
+                $result = $inputRecord | Start-CloudInstance -Confirm:$false
+
                 $result.Name | Should -Be 'gcp-vm'
                 $result.Region | Should -Be 'us-central1-a'
                 $result.Metadata.Proj | Should -Be 'prod-gcp'

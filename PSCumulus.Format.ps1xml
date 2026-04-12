@@ -45,6 +45,49 @@
       </TableControl>
     </View>
 
+    <!-- PSCumulus.CloudRecord.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.CloudRecord.Detailed</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>Size</PropertyName></ListItem>
+              <ListItem><PropertyName>PrivateIpAddress</PropertyName></ListItem>
+              <ListItem><PropertyName>PublicIpAddress</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+              <ListItem>
+                <Label>Metadata</Label>
+                <ScriptBlock>
+                  if ($_.Metadata) {
+                    ($_.Metadata.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
     <!-- PSCumulus.ConnectionResult -->
     <View>
       <Name>PSCumulus.ConnectionResult</Name>

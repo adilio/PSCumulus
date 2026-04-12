@@ -57,11 +57,17 @@ Starts an Azure VM.
 
 ### EXAMPLE 2
 
+Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Start-CloudInstance
+
+Starts an Azure VM from piped PSCumulus instance output.
+
+### EXAMPLE 3
+
 Start-CloudInstance -Provider AWS -InstanceId 'i-0123456789abcdef0' -Region 'us-east-1'
 
 Starts an AWS EC2 instance.
 
-### EXAMPLE 3
+### EXAMPLE 4
 
 Start-CloudInstance -Provider GCP -Name 'gcp-vm-01' -Zone 'us-central1-a' -Project 'my-project'
 
@@ -84,6 +90,27 @@ ParameterSets:
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -InputObject
+
+A PSCumulus cloud record piped from Get-CloudInstance.
+
+```yaml
+Type: System.Management.Automation.PSObject
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: true
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
@@ -298,5 +325,4 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
-
 

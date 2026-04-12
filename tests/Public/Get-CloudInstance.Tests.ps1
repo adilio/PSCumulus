@@ -57,6 +57,15 @@ Describe 'Get-CloudInstance' {
                 -ParameterName 'Name'
         }
 
+        It 'makes Detailed optional in every parameter set' {
+            foreach ($parameterSet in 'Azure', 'AWS', 'GCP', 'All') {
+                Should-HaveOptionalParameter `
+                    -CommandName 'Get-CloudInstance' `
+                    -ParameterSetName $parameterSet `
+                    -ParameterName 'Detailed'
+            }
+        }
+
         It 'rejects an invalid provider name' {
             { Get-CloudInstance -Provider Oracle -ResourceGroup 'rg' } | Should -Throw
         }
@@ -119,6 +128,17 @@ Describe 'Get-CloudInstance' {
 
                 $result = Get-CloudInstance -Provider Azure -ResourceGroup 'rg'
                 $result.PSObject.TypeNames | Should -Contain 'PSCumulus.CloudRecord'
+            }
+        }
+
+        It 'adds the detailed type name when Detailed is specified' {
+            InModuleScope PSCumulus {
+                Mock Get-AzureInstanceData {
+                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Region 'eastus' -Status 'Running'
+                }
+
+                $result = Get-CloudInstance -Provider Azure -ResourceGroup 'rg' -Detailed
+                $result.PSObject.TypeNames[0] | Should -Be 'PSCumulus.CloudRecord.Detailed'
             }
         }
     }

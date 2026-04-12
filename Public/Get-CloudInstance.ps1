@@ -41,6 +41,11 @@ function Get-CloudInstance {
             Gets the GCP instance with the matching instance name.
 
         .EXAMPLE
+            Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01' -Detailed
+
+            Gets the Azure instance with a richer, detail-focused view.
+
+        .EXAMPLE
             Get-CloudInstance -All
 
             Gets instances from all providers with an established session context.
@@ -84,7 +89,14 @@ function Get-CloudInstance {
 
         # Query all providers with an established session context.
         [Parameter(Mandatory, ParameterSetName = 'All')]
-        [switch]$All
+        [switch]$All,
+
+        # Returns a richer display-oriented view of cloud records.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'All')]
+        [switch]$Detailed
     )
 
     process {
@@ -92,6 +104,20 @@ function Get-CloudInstance {
             Azure = 'Get-AzureInstanceData'
             AWS   = 'Get-AWSInstanceData'
             GCP   = 'Get-GCPInstanceData'
+        }
+
+        $decorateRecord = {
+            param($Records)
+
+            foreach ($record in @($Records)) {
+                if ($Detailed -and $record) {
+                    if ($record.PSObject.TypeNames[0] -ne 'PSCumulus.CloudRecord.Detailed') {
+                        $record.PSObject.TypeNames.Insert(0, 'PSCumulus.CloudRecord.Detailed')
+                    }
+                }
+
+                $record
+            }
         }
 
         if ($PSCmdlet.ParameterSetName -eq 'All') {
@@ -109,7 +135,7 @@ function Get-CloudInstance {
                     $argumentMap.Project = $ctx.Scope
                 }
 
-                Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap
+                & $decorateRecord (Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap)
             }
 
             return
@@ -143,6 +169,6 @@ function Get-CloudInstance {
             $argumentMap.Name = $Name
         }
 
-        Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+        & $decorateRecord (Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap)
     }
 }

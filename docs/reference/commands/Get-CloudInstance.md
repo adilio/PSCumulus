@@ -19,19 +19,19 @@ Gets compute instances from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudInstance -ResourceGroup <string> [-Name <string>] [-Provider <string>] [<CommonParameters>]
+Get-CloudInstance -ResourceGroup <string> [-Name <string>] [-Provider <string>] [-Detailed] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudInstance -Project <string> [-Name <string>] [-Provider <string>] [<CommonParameters>]
+Get-CloudInstance -Project <string> [-Name <string>] [-Provider <string>] [-Detailed] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudInstance -Region <string> [-Name <string>] [-Provider <string>] [<CommonParameters>]
+Get-CloudInstance -Region <string> [-Name <string>] [-Provider <string>] [-Detailed] [<CommonParameters>]
 ```
 
 ### All
@@ -104,6 +104,12 @@ Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 
 Gets all prod-tagged instances across every connected cloud.
 
+### EXAMPLE 9
+
+Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg' -Name 'web-server-01' -Detailed
+
+Gets the Azure instance with a richer, detail-focused view.
+
 ## PARAMETERS
 
 ### -All
@@ -119,6 +125,45 @@ ParameterSets:
 - Name: All
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Detailed
+
+Returns a richer display-oriented view of cloud records.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -276,4 +321,3 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
-

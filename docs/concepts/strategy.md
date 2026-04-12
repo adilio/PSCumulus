@@ -63,6 +63,8 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cl
 | `Status` | Normalized title-case state |
 | `Size` | SKU, instance type, or storage class |
 | `CreatedAt` | Creation time when available |
+| `PrivateIpAddress` | Private IP address when available |
+| `PublicIpAddress` | Public IP address when available |
 | `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
 | `Metadata` | Provider-native details that do not normalize cleanly |
 

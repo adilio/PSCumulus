@@ -43,6 +43,8 @@ function Get-AWSInstanceData {
                 -Status (ConvertFrom-AWSInstanceState -StateName $instance.State.Name.Value) `
                 -Size $instance.InstanceType.Value `
                 -CreatedAt $instance.LaunchTime `
+                -PrivateIpAddress $instance.PrivateIpAddress `
+                -PublicIpAddress $instance.PublicIpAddress `
                 -Tags $tagHashtable `
                 -Metadata @{
                     InstanceId       = $instance.InstanceId

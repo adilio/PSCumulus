@@ -21,49 +21,79 @@ function Start-CloudInstance {
             Start-CloudInstance -Provider GCP -Name 'gcp-vm-01' -Zone 'us-central1-a' -Project 'my-project'
 
             Starts a GCP compute instance.
+
+        .EXAMPLE
+            Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Start-CloudInstance
+
+            Starts the Azure VM using piped PSCumulus instance output.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure', SupportsShouldProcess)]
     [OutputType([pscustomobject])]
     param(
+        # A PSCumulus cloud record piped from Get-CloudInstance.
+        [Parameter(Mandatory, ParameterSetName = 'Piped', ValueFromPipeline)]
+        [psobject]$InputObject,
+
         # The cloud provider to target.
-        [Parameter(ParameterSetName = 'Azure')]
-        [Parameter(ParameterSetName = 'AWS')]
-        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Azure', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'AWS', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'GCP', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [string]$Provider,
 
         # The instance name (Azure and GCP).
-        [Parameter(Mandatory, ParameterSetName = 'Azure')]
-        [Parameter(Mandatory, ParameterSetName = 'GCP')]
+        [Parameter(Mandatory, ParameterSetName = 'Azure', ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'GCP', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [string]$Name,
 
         # The Azure resource group containing the target VM.
-        [Parameter(Mandatory, ParameterSetName = 'Azure')]
+        [Parameter(Mandatory, ParameterSetName = 'Azure', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [string]$ResourceGroup,
 
         # The AWS EC2 instance identifier.
-        [Parameter(Mandatory, ParameterSetName = 'AWS')]
+        [Parameter(Mandatory, ParameterSetName = 'AWS', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [string]$InstanceId,
 
         # The AWS region where the instance resides.
-        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'AWS', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [string]$Region,
 
         # The GCP project containing the target instance.
-        [Parameter(Mandatory, ParameterSetName = 'GCP')]
+        [Parameter(Mandatory, ParameterSetName = 'GCP', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [string]$Project,
 
         # The GCP zone where the instance resides.
-        [Parameter(Mandatory, ParameterSetName = 'GCP')]
+        [Parameter(Mandatory, ParameterSetName = 'GCP', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
         [string]$Zone
     )
 
     process {
-        $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
+        $resolvedInput = Resolve-CloudInstanceInput `
+            -InputObject $InputObject `
+            -Provider $Provider `
+            -Name $Name `
+            -ResourceGroup $ResourceGroup `
+            -InstanceId $InstanceId `
+            -Region $Region `
+            -Project $Project `
+            -Zone $Zone
+
+        $resolvedProvider = if ($PSCmdlet.ParameterSetName -eq 'Piped') {
+            Resolve-CloudProvider -Provider $resolvedInput.Provider
+        } else {
+            Resolve-CloudProvider -Provider $resolvedInput.Provider -ParameterSetName $PSCmdlet.ParameterSetName
+        }
 
         $commandMap = @{
             Azure = 'Start-AzureInstance'
@@ -75,26 +105,26 @@ function Start-CloudInstance {
 
         switch ($resolvedProvider) {
             'Azure' {
-                $argumentMap.Name          = $Name
-                $argumentMap.ResourceGroup = $ResourceGroup
+                $argumentMap.Name          = $resolvedInput.Name
+                $argumentMap.ResourceGroup = $resolvedInput.ResourceGroup
             }
             'AWS' {
-                $argumentMap.InstanceId = $InstanceId
-                if ($PSBoundParameters.ContainsKey('Region')) {
-                    $argumentMap.Region = $Region
+                $argumentMap.InstanceId = $resolvedInput.InstanceId
+                if (-not [string]::IsNullOrWhiteSpace($resolvedInput.Region)) {
+                    $argumentMap.Region = $resolvedInput.Region
                 }
             }
             'GCP' {
-                $argumentMap.Name    = $Name
-                $argumentMap.Zone    = $Zone
-                $argumentMap.Project = $Project
+                $argumentMap.Name    = $resolvedInput.Name
+                $argumentMap.Zone    = $resolvedInput.Zone
+                $argumentMap.Project = $resolvedInput.Project
             }
         }
 
         $target = switch ($resolvedProvider) {
-            'Azure' { "$Name in resource group $ResourceGroup" }
-            'AWS'   { $InstanceId }
-            'GCP'   { "$Name in zone $Zone ($Project)" }
+            'Azure' { "$($resolvedInput.Name) in resource group $($resolvedInput.ResourceGroup)" }
+            'AWS'   { $resolvedInput.InstanceId }
+            'GCP'   { "$($resolvedInput.Name) in zone $($resolvedInput.Zone) ($($resolvedInput.Project))" }
         }
 
         if ($PSCmdlet.ShouldProcess($target, 'Start-CloudInstance')) {

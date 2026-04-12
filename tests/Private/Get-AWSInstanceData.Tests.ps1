@@ -155,6 +155,18 @@ Describe 'Get-AWSInstanceData' {
             }
         }
 
+        It 'surfaces PrivateIpAddress and PublicIpAddress' {
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.PrivateIpAddress | Should -Be '10.0.1.5'
+                $result.PublicIpAddress | Should -Be '52.1.2.3'
+            }
+        }
+
         It 'includes InstanceId in Metadata' {
             InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
                 param($MockResponse)

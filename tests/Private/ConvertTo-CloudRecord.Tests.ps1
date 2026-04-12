@@ -73,6 +73,20 @@ Describe 'ConvertTo-CloudRecord' {
             }
         }
 
+        It 'sets PrivateIpAddress when provided' {
+            InModuleScope PSCumulus {
+                $result = ConvertTo-CloudRecord -Name 'vm' -Provider AWS -PrivateIpAddress '10.0.0.4'
+                $result.PrivateIpAddress | Should -Be '10.0.0.4'
+            }
+        }
+
+        It 'sets PublicIpAddress when provided' {
+            InModuleScope PSCumulus {
+                $result = ConvertTo-CloudRecord -Name 'vm' -Provider AWS -PublicIpAddress '52.1.2.3'
+                $result.PublicIpAddress | Should -Be '52.1.2.3'
+            }
+        }
+
         It 'sets Metadata when provided' {
             InModuleScope PSCumulus {
                 $meta = @{ VpcId = 'vpc-123'; InstanceId = 'i-abc' }
@@ -98,6 +112,20 @@ Describe 'ConvertTo-CloudRecord' {
             }
         }
 
+        It 'defaults PrivateIpAddress to null' {
+            InModuleScope PSCumulus {
+                $result = ConvertTo-CloudRecord -Name 'vm' -Provider GCP
+                $result.PrivateIpAddress | Should -BeNullOrEmpty
+            }
+        }
+
+        It 'defaults PublicIpAddress to null' {
+            InModuleScope PSCumulus {
+                $result = ConvertTo-CloudRecord -Name 'vm' -Provider GCP
+                $result.PublicIpAddress | Should -BeNullOrEmpty
+            }
+        }
+
         It 'sets Tags when provided' {
             InModuleScope PSCumulus {
                 $tags = @{ environment = 'prod'; team = 'platform' }
@@ -109,7 +137,7 @@ Describe 'ConvertTo-CloudRecord' {
     }
 
     Context 'all standard properties are present' {
-        It 'has all seven top-level properties' {
+        It 'has all top-level properties' {
             InModuleScope PSCumulus {
                 $result = ConvertTo-CloudRecord -Name 'vm' -Provider Azure
                 $result.PSObject.Properties.Name | Should -Contain 'Name'
@@ -118,6 +146,8 @@ Describe 'ConvertTo-CloudRecord' {
                 $result.PSObject.Properties.Name | Should -Contain 'Status'
                 $result.PSObject.Properties.Name | Should -Contain 'Size'
                 $result.PSObject.Properties.Name | Should -Contain 'CreatedAt'
+                $result.PSObject.Properties.Name | Should -Contain 'PrivateIpAddress'
+                $result.PSObject.Properties.Name | Should -Contain 'PublicIpAddress'
                 $result.PSObject.Properties.Name | Should -Contain 'Tags'
                 $result.PSObject.Properties.Name | Should -Contain 'Metadata'
             }

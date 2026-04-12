@@ -1,5 +1,25 @@
 BeforeAll {
+    if (-not (Get-Command Get-AzNetworkInterface -ErrorAction SilentlyContinue)) {
+        $script:stubCreatedGetAzNetworkInterface = $true
+        function global:Get-AzNetworkInterface { param([string]$ResourceId) }
+    }
+
+    if (-not (Get-Command Get-AzPublicIpAddress -ErrorAction SilentlyContinue)) {
+        $script:stubCreatedGetAzPublicIpAddress = $true
+        function global:Get-AzPublicIpAddress { param([string]$ResourceId) }
+    }
+
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
+}
+
+AfterAll {
+    if ($script:stubCreatedGetAzNetworkInterface) {
+        Remove-Item -Path Function:global:Get-AzNetworkInterface -ErrorAction SilentlyContinue
+    }
+
+    if ($script:stubCreatedGetAzPublicIpAddress) {
+        Remove-Item -Path Function:global:Get-AzPublicIpAddress -ErrorAction SilentlyContinue
+    }
 }
 
 Describe 'Get-AzureInstanceData' {
@@ -25,6 +45,7 @@ Describe 'Get-AzureInstanceData' {
                 Location          = 'eastus'
                 ResourceGroupName = 'prod-rg'
                 VmId              = 'vm-guid-1234'
+                NetworkProfile    = [pscustomobject]@{ NetworkInterfaces = @() }
                 HardwareProfile   = [pscustomobject]@{ VmSize = 'Standard_D2s_v3' }
                 StorageProfile    = [pscustomobject]@{
                     OsDisk = [pscustomobject]@{ OsType = 'Linux' }
@@ -164,6 +185,7 @@ Describe 'Get-AzureInstanceData' {
                     Location          = 'eastus'
                     ResourceGroupName = 'prod-rg'
                     VmId              = 'vm-guid-tagged'
+                    NetworkProfile    = [pscustomobject]@{ NetworkInterfaces = @() }
                     HardwareProfile   = [pscustomobject]@{ VmSize = 'Standard_D2s_v3' }
                     StorageProfile    = [pscustomobject]@{
                         OsDisk = [pscustomobject]@{ OsType = 'Linux' }
@@ -179,6 +201,69 @@ Describe 'Get-AzureInstanceData' {
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
                 $result.Tags['environment'] | Should -Be 'prod'
                 $result.Tags['team'] | Should -Be 'platform'
+            }
+        }
+
+        It 'includes private and public IPs when network data is available' {
+            InModuleScope PSCumulus {
+                $vmWithNetwork = [pscustomobject]@{
+                    Name              = 'networked-vm'
+                    Location          = 'eastus'
+                    ResourceGroupName = 'prod-rg'
+                    VmId              = 'vm-guid-network'
+                    NetworkProfile    = [pscustomobject]@{
+                        NetworkInterfaces = @([pscustomobject]@{ Id = '/subscriptions/sub/resourceGroups/prod-rg/providers/Microsoft.Network/networkInterfaces/nic-1' })
+                    }
+                    HardwareProfile   = [pscustomobject]@{ VmSize = 'Standard_D2s_v3' }
+                    StorageProfile    = [pscustomobject]@{
+                        OsDisk = [pscustomobject]@{ OsType = 'Linux' }
+                    }
+                    Statuses          = @(
+                        [pscustomobject]@{ Code = 'PowerState/running'; DisplayStatus = 'VM running' }
+                    )
+                }
+
+                $networkInterface = [pscustomobject]@{
+                    IpConfigurations = @([pscustomobject]@{
+                        Primary          = $true
+                        PrivateIpAddress = '10.0.1.4'
+                        PublicIpAddress  = [pscustomobject]@{ Id = '/subscriptions/sub/resourceGroups/prod-rg/providers/Microsoft.Network/publicIPAddresses/pip-1' }
+                    })
+                }
+
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($vmWithNetwork) }
+                Mock Get-AzNetworkInterface { $networkInterface }
+                Mock Get-AzPublicIpAddress { [pscustomobject]@{ IpAddress = '52.160.1.10' } }
+
+                $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
+                $result.PrivateIpAddress | Should -Be '10.0.1.4'
+                $result.PublicIpAddress | Should -Be '52.160.1.10'
+            }
+        }
+
+        It 'leaves IPs null when network data is unavailable' {
+            InModuleScope PSCumulus {
+                $vmWithoutNetwork = [pscustomobject]@{
+                    Name              = 'bare-vm'
+                    Location          = 'eastus'
+                    ResourceGroupName = 'prod-rg'
+                    VmId              = 'vm-guid-bare'
+                    HardwareProfile   = [pscustomobject]@{ VmSize = 'Standard_D2s_v3' }
+                    StorageProfile    = [pscustomobject]@{
+                        OsDisk = [pscustomobject]@{ OsType = 'Linux' }
+                    }
+                    Statuses          = @(
+                        [pscustomobject]@{ Code = 'PowerState/running'; DisplayStatus = 'VM running' }
+                    )
+                }
+
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($vmWithoutNetwork) }
+
+                $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
+                $result.PrivateIpAddress | Should -BeNullOrEmpty
+                $result.PublicIpAddress | Should -BeNullOrEmpty
             }
         }
 

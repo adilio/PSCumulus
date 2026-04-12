@@ -51,6 +51,8 @@ function Get-GCPInstanceData {
             -Status (ConvertFrom-GCPInstanceStatus -Status $instance.status) `
             -Size $machineType `
             -CreatedAt $createdAt `
+            -PrivateIpAddress $primaryInterface.networkIP `
+            -PublicIpAddress $primaryAccessConfig.natIP `
             -Tags $tagHashtable `
             -Metadata @{
                 Project          = $resolvedProject

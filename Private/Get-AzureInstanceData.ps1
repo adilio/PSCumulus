@@ -31,12 +31,16 @@ function Get-AzureInstanceData {
             $virtualMachine.Tags.GetEnumerator() | ForEach-Object { $tagHashtable[$_.Key] = $_.Value }
         }
 
+        $addressData = Get-AzureInstanceAddressData -VirtualMachine $virtualMachine
+
         ConvertTo-CloudRecord `
             -Name $virtualMachine.Name `
             -Provider Azure `
             -Region $virtualMachine.Location `
             -Status (ConvertFrom-AzurePowerState -PowerState $powerStatus) `
             -Size $virtualMachine.HardwareProfile.VmSize `
+            -PrivateIpAddress $addressData.PrivateIpAddress `
+            -PublicIpAddress $addressData.PublicIpAddress `
             -Tags $tagHashtable `
             -Metadata @{
                 ResourceGroup = $virtualMachine.ResourceGroupName

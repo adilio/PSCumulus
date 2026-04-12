@@ -14,6 +14,8 @@ function ConvertTo-CloudRecord {
         [string]$Status,
         [string]$Size,
         [datetime]$CreatedAt,
+        [string]$PrivateIpAddress,
+        [string]$PublicIpAddress,
         [hashtable]$Tags = @{},
         [hashtable]$Metadata = @{}
     )
@@ -25,6 +27,8 @@ function ConvertTo-CloudRecord {
         Status    = $Status
         Size      = $Size
         CreatedAt = $CreatedAt
+        PrivateIpAddress = $PrivateIpAddress
+        PublicIpAddress  = $PublicIpAddress
         Tags      = $Tags
         Metadata  = $Metadata
     }

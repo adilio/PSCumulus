@@ -107,6 +107,19 @@ Describe 'Get-GCPInstanceData' {
             }
         }
 
+        It 'surfaces PrivateIpAddress and PublicIpAddress' {
+            InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
+                param($Account, $Instance)
+                Mock Assert-GCloudAuthenticated { $Account }
+                Mock Get-GCloudProject { 'my-project' }
+                Mock Invoke-GCloudJson { @($Instance) }
+
+                $result = Get-GCPInstanceData -Project 'my-project'
+                $result.PrivateIpAddress | Should -Be '10.128.0.5'
+                $result.PublicIpAddress | Should -Be '34.1.2.3'
+            }
+        }
+
         It 'includes Project in Metadata' {
             InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
                 param($Account, $Instance)
