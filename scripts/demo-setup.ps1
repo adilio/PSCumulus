@@ -405,18 +405,82 @@ function Remove-DemoSetup {
 }
 
 function Invoke-AllDemoQueries {
-    Write-Host "`n── Tagging compliance ──────────────────────────────────" -ForegroundColor Cyan
-    Find-UntaggedInstances
+    # Each section prints the underlying pipeline, then the result. Queries are
+    # inlined (not delegated to the Find-* / Show-* helpers) so the audience
+    # sees the real PowerShell -- not a wrapper.
 
-    Write-Host "`n── Stale instances (stopped/terminated > 30 days) ─────" -ForegroundColor Cyan
-    Find-StaleInstances
+    function Write-DemoQuery {
+        param([string]$Title, [string]$Helper, [string]$Query)
+        Write-Host "`n── $Title " -ForegroundColor Cyan -NoNewline
+        Write-Host ('─' * [Math]::Max(0, 60 - $Title.Length)) -ForegroundColor Cyan
+        Write-Host ''
+        if ($Helper) {
+            Write-Host "PS> # shortcut: $Helper" -ForegroundColor DarkGreen
+        }
+        foreach ($line in ($Query -split "`n")) {
+            Write-Host "PS> $line" -ForegroundColor DarkGray
+        }
+        Write-Host ''
+    }
 
-    Write-Host "`n── Fleet health ────────────────────────────────────────" -ForegroundColor Cyan
-    Show-FleetHealth
+    Write-DemoQuery 'Tagging compliance' 'Find-UntaggedInstances' @'
+Get-CloudInstance -All |
+    Where-Object { -not $_.Tags['owner'] } |
+    Format-Table Name, Provider, Region -AutoSize
+'@
+    Get-CloudInstance -All |
+        Where-Object { -not $_.Tags['owner'] } |
+        Format-Table Name, Provider, Region -AutoSize
 
-    Write-Host "`n── Cost-center rollup ──────────────────────────────────" -ForegroundColor Cyan
-    Show-CostCenterRollup
+    Write-DemoQuery 'Stale instances (stopped/terminated > 30 days)' 'Find-StaleInstances' @'
+$cutoff = (Get-Date).AddDays(-30)
+Get-CloudInstance -All |
+    Where-Object { $_.Status -ne 'Running' -and $_.CreatedAt -lt $cutoff } |
+    Select-Object Name, Provider, Status, CreatedAt |
+    Format-Table -AutoSize
+'@
+    $cutoff = (Get-Date).AddDays(-30)
+    Get-CloudInstance -All |
+        Where-Object { $_.Status -ne 'Running' -and $_.CreatedAt -lt $cutoff } |
+        Select-Object Name, Provider, Status, CreatedAt |
+        Format-Table -AutoSize
 
-    Write-Host "`n── Oldest instances ────────────────────────────────────" -ForegroundColor Cyan
-    Find-OldestInstances
+    Write-DemoQuery 'Fleet health' 'Show-FleetHealth' @'
+Get-CloudInstance -All |
+    Group-Object Provider, Status |
+    Select-Object Name, Count |
+    Sort-Object Count -Descending |
+    Format-Table -AutoSize
+'@
+    Get-CloudInstance -All |
+        Group-Object Provider, Status |
+        Select-Object Name, Count |
+        Sort-Object Count -Descending |
+        Format-Table -AutoSize
+
+    Write-DemoQuery 'Cost-center rollup' 'Show-CostCenterRollup' @'
+Get-CloudInstance -All |
+    Group-Object { $_.Tags['cost-center'] } |
+    Select-Object Name, Count |
+    Sort-Object Count -Descending |
+    Format-Table -AutoSize
+'@
+    Get-CloudInstance -All |
+        Group-Object { $_.Tags['cost-center'] } |
+        Select-Object Name, Count |
+        Sort-Object Count -Descending |
+        Format-Table -AutoSize
+
+    Write-DemoQuery 'Oldest instances' 'Find-OldestInstances' @'
+Get-CloudInstance -All |
+    Where-Object { $_.CreatedAt } |
+    Sort-Object CreatedAt |
+    Select-Object Name, Provider, Region, CreatedAt -First 5 |
+    Format-Table -AutoSize
+'@
+    Get-CloudInstance -All |
+        Where-Object { $_.CreatedAt } |
+        Sort-Object CreatedAt |
+        Select-Object Name, Provider, Region, CreatedAt -First 5 |
+        Format-Table -AutoSize
 }
