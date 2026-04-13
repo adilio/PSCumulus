@@ -13,16 +13,36 @@
 #   Import-Module ./PSCumulus.psd1 -Force
 #   . ./scripts/demo-setup.ps1
 #
-# ── Demo commands ─────────────────────────────────────────────────────────────
+# ── Talk flow: slide-by-slide commands ───────────────────────────────────────
+# Mirrors the live demo in talk/presentation.md (Slides 7 and 8).
 #
+# ── DEMO A — Native vs. Unified (Slide 7) ─────────────────────────────────────
+#
+#   # Native (shown, NOT run on stage)
+#   Get-AzVM
+#   Get-EC2Instance
+#   gcloud compute instances list --format=json
+#
+#   # Unified (run live)
+#   Connect-Cloud     -Provider AWS, Azure, GCP
 #   Get-CloudContext
+#   Get-CloudInstance -Provider Azure -ResourceGroup prod-rg
+#   Get-CloudInstance -Provider AWS   -Region us-east-1
+#   Get-CloudInstance -Provider GCP   -Project contoso-prod
 #
-#   Connect-Cloud -Provider AWS, Azure, GCP
+# ── DEMO B — One Pipe, Three Clouds (Slide 8) ────────────────────────────────
+#
 #   Get-CloudInstance -All
-#   Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
+#
+#   Get-CloudInstance -All |
+#     Where-Object { -not $_.Tags['owner'] } |
+#     Format-Table Name, Provider, Region -AutoSize
+#
+#   Show-FleetHealth
 #   Get-CloudInstance -All | Group-Object Provider | Select-Object Name, Count
 #
-#   # Pre-built query functions (tab-complete Find-* / Show-*)
+# ── Bonus pre-built queries (optional, if time allows) ────────────────────────
+#
 #   Find-UntaggedInstances   # tagging compliance: missing owner tag
 #   Find-StaleInstances      # cost waste: stopped/terminated > 30 days
 #   Show-FleetHealth         # running vs not-running by provider
@@ -30,13 +50,7 @@
 #   Find-OldestInstances     # oldest five instances across all clouds
 #   Invoke-AllDemoQueries    # run all of the above in sequence
 #
-#   # Cleanup
-#   Remove-DemoSetup            # unload module, remove demo functions
-#   Remove-DemoSetup -Uninstall # also uninstalls PSCumulus from the system
-#
-#   Get-CloudInstance -Provider Azure -ResourceGroup prod-rg
-#   Get-CloudInstance -Provider AWS   -Region us-east-1
-#   Get-CloudInstance -Provider GCP   -Project contoso-prod
+# ── Per-resource spot checks (Slide 11 reference commands) ────────────────────
 #
 #   Get-CloudStorage  -Provider Azure -ResourceGroup prod-rg
 #   Get-CloudStorage  -Provider AWS   -Region us-east-1
@@ -58,6 +72,8 @@
 #   Get-CloudTag      -Provider AWS   -ResourceId 'i-0a1b2c3d4e5f00001'
 #   Get-CloudTag      -Provider GCP   -Project contoso-prod -Resource 'instances/prod-web-01'
 #
+# ── Start / Stop (write path) ─────────────────────────────────────────────────
+#
 #   Start-CloudInstance -Provider Azure -Name web-server-01   -ResourceGroup prod-rg
 #   Start-CloudInstance -Provider AWS   -InstanceId i-0a1b2c3d4e5f00003 -Region us-east-1
 #   Start-CloudInstance -Provider GCP   -Name prod-worker-01  -Zone us-central1-c -Project contoso-prod
@@ -65,6 +81,11 @@
 #   Stop-CloudInstance  -Provider Azure -Name api-server-01   -ResourceGroup prod-rg
 #   Stop-CloudInstance  -Provider AWS   -InstanceId i-0a1b2c3d4e5f00002 -Region us-east-1
 #   Stop-CloudInstance  -Provider GCP   -Name prod-api-01     -Zone us-central1-b -Project contoso-prod
+#
+# ── Cleanup ───────────────────────────────────────────────────────────────────
+#
+#   Remove-DemoSetup            # unload module, remove demo functions
+#   Remove-DemoSetup -Uninstall # also uninstalls PSCumulus from the system
 #
 # ─────────────────────────────────────────────────────────────────────────────
 
