@@ -287,6 +287,7 @@ I had that argument with myself for about ten minutes in a text editor with no o
 
 ---
 
+<!-- _class: dense -->
 # What Earns a Unified Command
 
 | Resource | Azure | AWS | GCP | PSCumulus |

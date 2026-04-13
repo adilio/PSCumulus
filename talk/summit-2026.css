@@ -35,9 +35,9 @@
   /* Slide size (16:9) */
   width: 1280px;
   height: 720px;
-  font-size: 32px;
+  font-size: 34px;
   /* Base type scale for rem units */
-  padding: 70px;
+  padding: 50px;
   /* Large margin per Summit style */
 
   /* PowerShell Summit Official Colors */
@@ -252,19 +252,20 @@ img {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.62rem;
+  font-size: 0.68rem;
+  border: 2px solid var(--tertiary-color);
 }
 
 table th,
 table td {
   padding: var(--spacing-table-cell) var(--spacing-xl);
-  border-bottom: 1px solid var(--border);
+  border: 1px solid var(--tertiary-color);
   text-align: left;
 }
 
 table thead th {
   text-transform: uppercase;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   letter-spacing: 0.06em;
   color: var(--muted);
   border-bottom-color: color-mix(in srgb, var(--fg) 20%, var(--border));
@@ -796,6 +797,39 @@ table tbody tr:hover {
 
 .xlarge {
   font-size: 1.2rem;
+}
+
+/* ---------- Dense table slides (e.g., "What Earns a Unified Command") ---------- */
+section.dense {
+  padding: 40px 40px;
+}
+
+section.dense h1 {
+  font-size: 1.4rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+section.dense table {
+  font-size: 0.5rem;
+}
+
+section.dense table thead th {
+  font-size: 0.52rem;
+  padding: var(--spacing-xs) var(--spacing-md);
+}
+
+section.dense table td {
+  padding: var(--spacing-2xs) var(--spacing-md);
+}
+
+section.dense :not(pre) > code {
+  font-size: 0.46rem;
+  padding: 0 var(--spacing-xs);
+}
+
+section.dense p {
+  font-size: 0.7rem;
+  margin: var(--spacing-md) 0 0;
 }
 
 /* ---------- Big-statement section-break slides ---------- */
