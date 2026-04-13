@@ -444,6 +444,26 @@ For me, that tool was PowerShell. The module you just saw is just the map I drew
 
 *Slides and talk track linked in the repo. Thanks.*
 
+<div class="qr-block">
+
+<div class="qr-item">
+
+![qr](psgallery-qr.png)
+
+<p class="qr-caption">Install-Module PSCumulus</p>
+
+</div>
+
+<div class="qr-item">
+
+![qr](github-qr.png)
+
+<p class="qr-caption">github.com/adilio/PSCumulus</p>
+
+</div>
+
+</div>
+
 <!--
 [Advance to Slide 16 — Repo.]
 
