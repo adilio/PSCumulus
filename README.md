@@ -185,7 +185,6 @@ Get-Help Get-CloudInstance -Examples
 | [`talk/presentation.md`](talk/presentation.md) | 15-slide Marp deck with speaker notes |
 | [`talk/talk-track.md`](talk/talk-track.md) | Continuous 25-minute spoken track |
 | [`talk/summit-2026.css`](talk/summit-2026.css) | Summit 2026 Marp theme |
-| [`ANALYSIS.md`](ANALYSIS.md) | Critique of the talk and the reasoning behind the current structure |
 
 ## License
 
