@@ -1,0 +1,2468 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Thin cross-cloud PowerShell abstraction for Azure, AWS, and GCP.">
+      
+      
+      
+        <link rel="canonical" href="https://adilio.github.io/PSCumulus/concepts/evolution/">
+      
+      
+        <link rel="prev" href="../strategy/">
+      
+      
+        <link rel="next" href="../../reference/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Evolution - PSCumulus</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pscumulus-evolution" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PSCumulus" class="md-header__button md-logo" aria-label="PSCumulus" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PSCumulus
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Evolution
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/adilio/PSCumulus" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    adilio/PSCumulus
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PSCumulus" class="md-nav__button md-logo" aria-label="PSCumulus" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PSCumulus
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/adilio/PSCumulus" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    adilio/PSCumulus
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evolution
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evolution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#origin-story" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Origin Story
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-evolve-in-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Evolve In Stages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Evolve In Stages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-the-cmdlets-are-the-product-today" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The cmdlets are the product today
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-correctness-should-land-before-cleverness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Correctness should land before cleverness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-powershell-version-constraints-are-real" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PowerShell version constraints are real
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-philosophy-behind-the-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Philosophy Behind The Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Philosophy Behind The Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalize-only-where-the-answer-is-still-honest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalize only where the answer is still honest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preserve-the-seam-when-the-seam-is-meaningful" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preserve the seam when the seam is meaningful
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-principles-across-all-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Principles Across All Stages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-1-internal-typed-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 1 — Internal Typed Contract
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 1 — Internal Typed Contract">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-stops-where-it-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Stops Where It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-2-resource-kind-awareness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 2 — Resource Kind Awareness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 2 — Resource Kind Awareness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-separate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-3-cloud-path-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 3 — Cloud Path Model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 3 — Cloud Path Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-separate_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-4-the-provider-read-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 4 — The Provider (Read-Only)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 4 — The Provider (Read-Only)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-comes-after-stage-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Comes After Stage 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-philosophy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Philosophy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-5-write-operations-through-the-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 5 — Write Operations Through The Provider
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 5 — Write Operations Through The Provider">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-not-earlier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Not Earlier
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-6-cross-cloud-aggregation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 6 — Cross-Cloud Aggregation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 6 — Cross-Cloud Aggregation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-last" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Last
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-plan-deliberately-does-not-prioritize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What The Plan Deliberately Does Not Prioritize
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What The Plan Deliberately Does Not Prioritize">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#record-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Record methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abstract-backend-class-hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract backend class hierarchies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-context-object-refactors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full context-object refactors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-compiled-provider-first-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A compiled provider-first architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-success-looks-like" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Success Looks Like
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-through-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Through-Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/about-pscumulus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About PSCumulus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/module/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Module
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Commands
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Connect-Cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Connect-Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Disconnect-Cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Disconnect-Cloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Get-CloudContext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudContext
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Get-CloudDisk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudDisk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Get-CloudFunction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudFunction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Get-CloudInstance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudInstance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Get-CloudNetwork/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudNetwork
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Get-CloudStorage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudStorage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Get-CloudTag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudTag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Start-CloudInstance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Start-CloudInstance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/Stop-CloudInstance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stop-CloudInstance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#origin-story" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Origin Story
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-evolve-in-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Evolve In Stages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why Evolve In Stages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-the-cmdlets-are-the-product-today" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The cmdlets are the product today
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-correctness-should-land-before-cleverness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Correctness should land before cleverness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-powershell-version-constraints-are-real" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. PowerShell version constraints are real
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-philosophy-behind-the-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Philosophy Behind The Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Philosophy Behind The Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalize-only-where-the-answer-is-still-honest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalize only where the answer is still honest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preserve-the-seam-when-the-seam-is-meaningful" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preserve the seam when the seam is meaningful
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-principles-across-all-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Principles Across All Stages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-1-internal-typed-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 1 — Internal Typed Contract
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 1 — Internal Typed Contract">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-stops-where-it-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Stops Where It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-2-resource-kind-awareness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 2 — Resource Kind Awareness
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 2 — Resource Kind Awareness">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-separate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-3-cloud-path-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 3 — Cloud Path Model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 3 — Cloud Path Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-separate_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-4-the-provider-read-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 4 — The Provider (Read-Only)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 4 — The Provider (Read-Only)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-comes-after-stage-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Comes After Stage 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-philosophy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Philosophy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-5-write-operations-through-the-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 5 — Write Operations Through The Provider
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 5 — Write Operations Through The Provider">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-not-earlier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Not Earlier
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-6-cross-cloud-aggregation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stage 6 — Cross-Cloud Aggregation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 6 — Cross-Cloud Aggregation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#purpose_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-it-introduces_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-stage-exists_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Stage Exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-it-is-last" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Is Last
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-plan-deliberately-does-not-prioritize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What The Plan Deliberately Does Not Prioritize
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What The Plan Deliberately Does Not Prioritize">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#record-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Record methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#abstract-backend-class-hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract backend class hierarchies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-context-object-refactors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full context-object refactors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-compiled-provider-first-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A compiled provider-first architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-success-looks-like" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Success Looks Like
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-through-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Through-Line
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="pscumulus-evolution">PSCumulus Evolution<a class="headerlink" href="#pscumulus-evolution" title="Permanent link">&para;</a></h1>
+<p>This document explains where PSCumulus is going, why it is being evolved in stages, what each stage is meant to accomplish, and what has already landed.</p>
+<p>It is intentionally more reflective and more explicit than the README. The README explains what the module is and how to use it. This document explains why the architecture is being reshaped the way it is.</p>
+<h2 id="origin-story">Origin Story<a class="headerlink" href="#origin-story" title="Permanent link">&para;</a></h2>
+<p>The staged roadmap did not appear in a vacuum. It crystallized after the PowerShell + DevOps Global Summit 2026 talk on <strong>Monday, April 13, 2026</strong>.</p>
+<p>That talk was the public proof that PSCumulus already had a useful shape as a cmdlet-first module. The audience could see the point of the normalized records, the cross-cloud pipelines, and the narrowness of the abstraction. But the future direction of the module still felt open-ended.</p>
+<p>The real unlock came in the room: <strong>Jeffrey Snover sat in the front row and offered an insight that clarified the next move</strong>. The important future direction was not to replace the cmdlet model that was already working. It was to recognize that PSCumulus could keep the cmdlets as the primary surface and, later, add a Provider-shaped navigation layer on top of the same backend engine.</p>
+<p>That was the architectural unlock.</p>
+<p>It reframed the roadmap from “what should this module become instead?” to “how can this module grow without betraying the thing that already makes it useful?”</p>
+<p>Once that clicked, the stages became much easier to define:</p>
+<ul>
+<li>fix correctness first</li>
+<li>make records and paths more self-describing</li>
+<li>only then add navigation</li>
+<li>keep the Provider additive rather than foundational</li>
+</ul>
+<h2 id="current-status">Current Status<a class="headerlink" href="#current-status" title="Permanent link">&para;</a></h2>
+<p>PSCumulus is currently at <strong>Stage 1 — Internal Typed Contract</strong>.</p>
+<p>That means the core module still behaves the same way from the outside:</p>
+<ul>
+<li>the public interface is still cmdlet-first</li>
+<li><code>Get-CloudInstance</code>, <code>Get-CloudDisk</code>, <code>Get-CloudStorage</code>, and the rest still return <code>PSCumulus.CloudRecord</code></li>
+<li>those records are still <code>[pscustomobject]</code> instances stamped with a custom type name</li>
+<li>the public command surface has not been broken or renamed</li>
+</ul>
+<p>What changed in Stage 1 is the internal vocabulary and correctness model:</p>
+<ul>
+<li>instance states now normalize semantically instead of just being title-cased</li>
+<li>the original provider state is preserved in <code>Metadata.NativeStatus</code></li>
+<li>tag conversion logic now has a dedicated internal home</li>
+<li>the module has a typed internal foundation that later stages can build on</li>
+</ul>
+<p>That distinction matters. PSCumulus is not being rewritten in one dramatic jump. It is being evolved so that each stage can land safely, be tested independently, and remain useful even if the later stages take time or change shape.</p>
+<h2 id="why-evolve-in-stages">Why Evolve In Stages<a class="headerlink" href="#why-evolve-in-stages" title="Permanent link">&para;</a></h2>
+<p>The staged plan exists for three reasons.</p>
+<h3 id="1-the-cmdlets-are-the-product-today">1. The cmdlets are the product today<a class="headerlink" href="#1-the-cmdlets-are-the-product-today" title="Permanent link">&para;</a></h3>
+<p>PSCumulus already works as a cmdlet-based module. People can use it now. That means future changes should not treat the current surface as disposable scaffolding. The public commands are not a temporary bootstrap for a Provider. They are the primary user experience, and any future Provider is an additional affordance layered on top.</p>
+<p>This is why the plan insists on:</p>
+<ul>
+<li>keeping the existing cmdlets stable</li>
+<li>preserving <code>PSCumulus.CloudRecord</code></li>
+<li>adding future navigation as an additive path, not a replacement</li>
+</ul>
+<h3 id="2-correctness-should-land-before-cleverness">2. Correctness should land before cleverness<a class="headerlink" href="#2-correctness-should-land-before-cleverness" title="Permanent link">&para;</a></h3>
+<p>The biggest real problems in the codebase were not the absence of a Provider. They were simpler and more fundamental:</p>
+<ul>
+<li>status normalization was too close to string prettification</li>
+<li>provider-native status meaning was being lost</li>
+<li>tag conversion rules were repeated inline and had no shared internal home</li>
+</ul>
+<p>Fixing those first is valuable on its own. It improves the module even if the later stages never happen.</p>
+<h3 id="3-powershell-version-constraints-are-real">3. PowerShell version constraints are real<a class="headerlink" href="#3-powershell-version-constraints-are-real" title="Permanent link">&para;</a></h3>
+<p>The core module still targets PowerShell 5.1. That matters. Some future ideas, especially around Providers and class-based navigation infrastructure, fit PowerShell 7+ much better than 5.1.</p>
+<p>The staged plan preserves a clean split:</p>
+<ul>
+<li>the <strong>core module</strong> stays broadly compatible</li>
+<li>the <strong>future navigation layer</strong> can make stronger assumptions when it is ready</li>
+</ul>
+<p>That lets PSCumulus improve now without forcing the entire project to jump versions or change delivery model prematurely.</p>
+<h2 id="the-philosophy-behind-the-plan">The Philosophy Behind The Plan<a class="headerlink" href="#the-philosophy-behind-the-plan" title="Permanent link">&para;</a></h2>
+<p>PSCumulus started from a very specific thesis:</p>
+<blockquote>
+<p>Build on what does not move.</p>
+</blockquote>
+<p>The clouds differ wildly. PowerShell does not. The module works because PowerShell's verb-noun model provides a stable lens through which Azure, AWS, and GCP can be queried without pretending they are identical.</p>
+<p>That thesis imposes two obligations:</p>
+<h3 id="normalize-only-where-the-answer-is-still-honest">Normalize only where the answer is still honest<a class="headerlink" href="#normalize-only-where-the-answer-is-still-honest" title="Permanent link">&para;</a></h3>
+<p>If the providers are expressing the same practical thing in different dialects, normalization is useful.</p>
+<p>That is true for:</p>
+<ul>
+<li>compute inventory</li>
+<li>disks</li>
+<li>storage</li>
+<li>networks</li>
+<li>functions</li>
+<li>tags and labels</li>
+</ul>
+<p>It is not true for every cloud problem. IAM remains the clearest non-example. A fake cross-cloud IAM surface would flatten differences that actually matter.</p>
+<h3 id="preserve-the-seam-when-the-seam-is-meaningful">Preserve the seam when the seam is meaningful<a class="headerlink" href="#preserve-the-seam-when-the-seam-is-meaningful" title="Permanent link">&para;</a></h3>
+<p>A good abstraction is not one that erases every difference. It is one that gives the user a stable top-level shape while still preserving the provider-native detail that they will sometimes need.</p>
+<p>That is why <code>Metadata</code> exists.</p>
+<p>The evolution plan keeps that philosophy intact. Even the new typed internals are not an attempt to pretend all providers are the same. They are a way to make the module more precise about which differences are normalized and which differences remain native.</p>
+<h2 id="design-principles-across-all-stages">Design Principles Across All Stages<a class="headerlink" href="#design-principles-across-all-stages" title="Permanent link">&para;</a></h2>
+<p>These principles apply to the full roadmap.</p>
+<ul>
+<li>Each stage should ship independently and provide value on its own.</li>
+<li>The cmdlet surface remains the primary interface.</li>
+<li>The Provider, if and when it lands, is additive.</li>
+<li>The core module keeps its PowerShell 5.1-compatible posture.</li>
+<li>Later navigation work may require PowerShell 7+.</li>
+<li>New providers and new resource kinds should get easier to add over time, not harder.</li>
+</ul>
+<p>That last point is especially important. The roadmap is not only about new user features. It is also about making PSCumulus cheaper to extend without turning it into an over-abstracted framework.</p>
+<h2 id="stage-1-internal-typed-contract">Stage 1 — Internal Typed Contract<a class="headerlink" href="#stage-1-internal-typed-contract" title="Permanent link">&para;</a></h2>
+<h3 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h3>
+<p>Establish an internal typed vocabulary for provider state and tag conversion without breaking the existing public contract.</p>
+<h3 id="what-it-introduces">What It Introduces<a class="headerlink" href="#what-it-introduces" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>Classes/PSCumulus.Types.ps1</code></li>
+<li><code>CloudProvider</code></li>
+<li><code>CloudInstanceStatus</code></li>
+<li><code>CloudInstanceStatusMap</code></li>
+<li><code>CloudTagHelper</code></li>
+<li>wrapper converter functions that now delegate to the typed mapping layer</li>
+<li>semantic instance-state normalization</li>
+<li><code>Metadata.NativeStatus</code> on instance records</li>
+</ul>
+<h3 id="why-this-stage-exists">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists" title="Permanent link">&para;</a></h3>
+<p>Stage 1 fixes correctness first.</p>
+<p>Before this stage, the module had a stable public shape, but some of its semantics were weaker than they appeared. A state string that looks normalized is not the same thing as a state model that is normalized semantically.</p>
+<p>Examples:</p>
+<ul>
+<li>AWS <code>shutting-down</code> should not remain effectively “just a prettified string”; it should normalize to <code>Terminating</code></li>
+<li>Azure <code>VM deallocated</code> should normalize to <code>Stopped</code></li>
+<li>GCP <code>TERMINATED</code> should normalize to <code>Stopped</code>, because in GCP it means stopped-but-restartable, not permanently gone</li>
+</ul>
+<p>This stage gives PSCumulus a more honest and more testable internal language for those cases.</p>
+<h3 id="why-it-stops-where-it-does">Why It Stops Where It Does<a class="headerlink" href="#why-it-stops-where-it-does" title="Permanent link">&para;</a></h3>
+<p>Stage 1 deliberately does <strong>not</strong>:</p>
+<ul>
+<li>replace <code>PSCumulus.CloudRecord</code> with a public class</li>
+<li>add methods like <code>.Start()</code> to records</li>
+<li>introduce a Provider</li>
+<li>change public command signatures</li>
+</ul>
+<p>That restraint is the point. This stage is about making the existing module more trustworthy, not about changing how users interact with it.</p>
+<h2 id="stage-2-resource-kind-awareness">Stage 2 — Resource Kind Awareness<a class="headerlink" href="#stage-2-resource-kind-awareness" title="Permanent link">&para;</a></h2>
+<h3 id="purpose_1">Purpose<a class="headerlink" href="#purpose_1" title="Permanent link">&para;</a></h3>
+<p>Make each <code>CloudRecord</code> self-describing about which broad resource family it belongs to.</p>
+<h3 id="what-it-introduces_1">What It Introduces<a class="headerlink" href="#what-it-introduces_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>a resource-kind field on records</li>
+<li>backend population of that field for instances, disks, storage, networks, functions, and tags</li>
+</ul>
+<h3 id="why-this-stage-exists_1">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists_1" title="Permanent link">&para;</a></h3>
+<p>Right now, a record knows who it came from and what region it lives in, but it does not inherently know what kind of cloud thing it is. That information is implicit in which command produced it.</p>
+<p>That is fine for cmdlet use. It is not enough for future path-based navigation. A navigation layer needs records to be self-describing so it can place them under containers like <code>Instances</code>, <code>Disks</code>, or <code>Functions</code> without guessing.</p>
+<h3 id="why-it-is-separate">Why It Is Separate<a class="headerlink" href="#why-it-is-separate" title="Permanent link">&para;</a></h3>
+<p>This is an additive metadata stage. It does not need a Provider to be valuable, and it is much easier to test on its own than as part of a full navigation feature.</p>
+<h2 id="stage-3-cloud-path-model">Stage 3 — Cloud Path Model<a class="headerlink" href="#stage-3-cloud-path-model" title="Permanent link">&para;</a></h2>
+<h3 id="purpose_2">Purpose<a class="headerlink" href="#purpose_2" title="Permanent link">&para;</a></h3>
+<p>Define a structured cloud path and a resolver that can translate paths into backend calls.</p>
+<h3 id="what-it-introduces_2">What It Introduces<a class="headerlink" href="#what-it-introduces_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>a <code>CloudPath</code> model</li>
+<li>a resolver layer that maps paths to backend operations</li>
+<li>a public helper for path resolution if useful</li>
+</ul>
+<h3 id="why-this-stage-exists_2">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists_2" title="Permanent link">&para;</a></h3>
+<p>The path model is the heart of any future Provider. It is also useful independently of a Provider because it turns path parsing and identity resolution into something explicit and testable.</p>
+<p>This matters because cloud hierarchies do not line up neatly:</p>
+<ul>
+<li>Azure groups many workflows around resource groups</li>
+<li>AWS often scopes lookups around regions</li>
+<li>GCP often scopes them around projects</li>
+</ul>
+<p>The path model is where PSCumulus decides how to turn those different scope systems into one navigable hierarchy without lying about the underlying structure.</p>
+<h3 id="why-it-is-separate_1">Why It Is Separate<a class="headerlink" href="#why-it-is-separate_1" title="Permanent link">&para;</a></h3>
+<p>A Provider built without a clean path model would be fragile. Pulling the model out into its own stage means the hard part can be reasoned about and tested without mixing it with PowerShell Provider mechanics.</p>
+<h2 id="stage-4-the-provider-read-only">Stage 4 — The Provider (Read-Only)<a class="headerlink" href="#stage-4-the-provider-read-only" title="Permanent link">&para;</a></h2>
+<h3 id="purpose_3">Purpose<a class="headerlink" href="#purpose_3" title="Permanent link">&para;</a></h3>
+<p>Expose the existing backend engine through a read-only PowerShell navigation layer.</p>
+<h3 id="what-it-introduces_3">What It Introduces<a class="headerlink" href="#what-it-introduces_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>navigable drives</li>
+<li><code>Get-ChildItem</code> over cloud scopes and resource containers</li>
+<li><code>Get-Item</code> / <code>Test-Path</code> style access over cloud paths</li>
+<li>drive-backed discovery on top of the same backend logic the cmdlets already use</li>
+</ul>
+<h3 id="why-this-stage-exists_3">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists_3" title="Permanent link">&para;</a></h3>
+<p>This is the “Snover stage.” It turns cloud inventory into something you can browse.</p>
+<p>The attraction is obvious:</p>
+<ul>
+<li><code>dir Azure:\</code></li>
+<li><code>dir Azure:\prod-rg\Instances</code></li>
+<li><code>Get-Item AWS:\us-east-1\Instances\...</code></li>
+</ul>
+<p>This does not replace the cmdlets. It adds a second, more exploratory way of working with the same data.</p>
+<h3 id="why-it-comes-after-stage-3">Why It Comes After Stage 3<a class="headerlink" href="#why-it-comes-after-stage-3" title="Permanent link">&para;</a></h3>
+<p>Because the Provider should be thin.</p>
+<p>It should not invent a new engine. It should delegate to the same internal logic that already powers the cmdlets. That only works cleanly once the path model and resolver already exist.</p>
+<h3 id="version-philosophy">Version Philosophy<a class="headerlink" href="#version-philosophy" title="Permanent link">&para;</a></h3>
+<p>This is also the stage where PowerShell version reality matters most. Provider-oriented class infrastructure is a much more natural fit for PowerShell 7+ than for 5.1. That is why the roadmap treats the Provider as future-facing and additive, not as something the core module must force into 5.1 prematurely.</p>
+<h2 id="stage-5-write-operations-through-the-provider">Stage 5 — Write Operations Through The Provider<a class="headerlink" href="#stage-5-write-operations-through-the-provider" title="Permanent link">&para;</a></h2>
+<h3 id="purpose_4">Purpose<a class="headerlink" href="#purpose_4" title="Permanent link">&para;</a></h3>
+<p>Let path context drive lifecycle operations after read-only navigation is already stable.</p>
+<h3 id="what-it-introduces_4">What It Introduces<a class="headerlink" href="#what-it-introduces_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>path-based start/stop style actions</li>
+<li>Provider-aware lifecycle operations</li>
+<li><code>ShouldProcess</code> and confirmation semantics carried into the navigation model</li>
+</ul>
+<h3 id="why-this-stage-exists_4">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists_4" title="Permanent link">&para;</a></h3>
+<p>Once users can navigate to a resource, the next natural question is whether they can act on it from that context.</p>
+<p>That is appealing, but also the moment when convenience can become dangerous. Write operations need:</p>
+<ul>
+<li>reliable identity resolution</li>
+<li>clear <code>-WhatIf</code> behavior</li>
+<li>strong confirmation semantics</li>
+</ul>
+<h3 id="why-it-is-not-earlier">Why It Is Not Earlier<a class="headerlink" href="#why-it-is-not-earlier" title="Permanent link">&para;</a></h3>
+<p>Because a write-capable Provider built on an unstable read model would be reckless. Read-only navigation needs to be correct and predictable before any destructive or state-changing operations are layered on top.</p>
+<h2 id="stage-6-cross-cloud-aggregation">Stage 6 — Cross-Cloud Aggregation<a class="headerlink" href="#stage-6-cross-cloud-aggregation" title="Permanent link">&para;</a></h2>
+<h3 id="purpose_5">Purpose<a class="headerlink" href="#purpose_5" title="Permanent link">&para;</a></h3>
+<p>Expose the existing multi-provider aggregation story through navigation as well as through cmdlets.</p>
+<h3 id="what-it-introduces_5">What It Introduces<a class="headerlink" href="#what-it-introduces_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>a synthetic cross-cloud view</li>
+<li>navigable multi-provider containers</li>
+<li>a path-based form of the same “query all connected providers” story that <code>-All</code> already provides today</li>
+</ul>
+<h3 id="why-this-stage-exists_5">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists_5" title="Permanent link">&para;</a></h3>
+<p>PSCumulus already shines when it can say:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-All</span> <span class="p">|</span> <span class="nb">Group-Object</span> <span class="n">Provider</span><span class="p">,</span> <span class="n">Status</span>
+</code></pre></div>
+<p>Stage 6 asks what the navigation equivalent of that should look like.</p>
+<h3 id="why-it-is-last">Why It Is Last<a class="headerlink" href="#why-it-is-last" title="Permanent link">&para;</a></h3>
+<p>Because it depends on every prior stage being correct:</p>
+<ul>
+<li>typed vocabulary</li>
+<li>self-describing records</li>
+<li>stable path model</li>
+<li>reliable read-only Provider behavior</li>
+</ul>
+<p>It also has the highest potential for surprising performance behavior, because a single navigation command can fan out across multiple connected providers.</p>
+<h2 id="what-the-plan-deliberately-does-not-prioritize">What The Plan Deliberately Does Not Prioritize<a class="headerlink" href="#what-the-plan-deliberately-does-not-prioritize" title="Permanent link">&para;</a></h2>
+<p>Some ideas are intentionally deferred even though they are interesting.</p>
+<h3 id="record-methods">Record methods<a class="headerlink" href="#record-methods" title="Permanent link">&para;</a></h3>
+<p>Methods like <code>.Start()</code> or <code>.Stop()</code> on records may sound attractive, but the cmdlet and Provider surfaces already map more naturally onto PowerShell’s <code>ShouldProcess</code> and pipeline behavior.</p>
+<h3 id="abstract-backend-class-hierarchies">Abstract backend class hierarchies<a class="headerlink" href="#abstract-backend-class-hierarchies" title="Permanent link">&para;</a></h3>
+<p>The current function-based routing is repetitive, but it is also very readable and proportional to the module’s size. More abstraction is only worth it when it clearly reduces complexity.</p>
+<h3 id="full-context-object-refactors">Full context-object refactors<a class="headerlink" href="#full-context-object-refactors" title="Permanent link">&para;</a></h3>
+<p>The session context can remain simple until later stages genuinely require stronger structure.</p>
+<h3 id="a-compiled-provider-first-architecture">A compiled provider-first architecture<a class="headerlink" href="#a-compiled-provider-first-architecture" title="Permanent link">&para;</a></h3>
+<p>That is a valid future option if the Provider direction becomes central. It is not the right first move while the module is still proving its staged architecture.</p>
+<h2 id="what-success-looks-like">What Success Looks Like<a class="headerlink" href="#what-success-looks-like" title="Permanent link">&para;</a></h2>
+<p>The roadmap is working if PSCumulus becomes:</p>
+<ul>
+<li>more correct internally</li>
+<li>easier to extend</li>
+<li>more expressive for users</li>
+<li>still recognizably the same module from the outside</li>
+</ul>
+<p>That last point matters. A good evolution plan should make the module feel more capable, not unfamiliar.</p>
+<h2 id="the-through-line">The Through-Line<a class="headerlink" href="#the-through-line" title="Permanent link">&para;</a></h2>
+<p>Every stage in this plan is trying to protect the same original insight:</p>
+<p>PowerShell is the stable layer. The clouds are not.</p>
+<p>The job of PSCumulus is not to erase that reality. It is to make it livable.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.sections", "navigation.top", "content.code.copy", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -16,7 +16,7 @@
         <link rel="prev" href="../../getting-started/">
       
       
-        <link rel="next" href="../../reference/">
+        <link rel="next" href="../evolution/">
       
       
         
@@ -427,6 +427,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-this-repo-already-was" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Repo Already Was
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#provider-strategy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -510,10 +521,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#roadmap" class="md-nav__link">
+  <a href="#implementation-stages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Roadmap
+        Implementation Stages
       
     </span>
   </a>
@@ -524,6 +535,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evolution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evolution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1104,6 +1143,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-this-repo-already-was" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Repo Already Was
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#provider-strategy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1187,10 +1237,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#roadmap" class="md-nav__link">
+  <a href="#implementation-stages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Roadmap
+        Implementation Stages
       
     </span>
   </a>
@@ -1285,6 +1335,23 @@
 </tr>
 </tbody>
 </table>
+<h2 id="what-this-repo-already-was">What This Repo Already Was<a class="headerlink" href="#what-this-repo-already-was" title="Permanent link">&para;</a></h2>
+<p>Before the recent internal typed-contract work, PSCumulus was already a working cmdlet-first module with a clear shape:</p>
+<ul>
+<li>a small public surface built around verb-noun commands like <code>Get-CloudInstance</code></li>
+<li>provider-specific backend functions under <code>Private/</code></li>
+<li>normalized <code>PSCumulus.CloudRecord</code> output built from <code>[pscustomobject]</code></li>
+<li>a stored multi-provider session context for interactive use</li>
+<li>honest provider-native detail preserved in <code>Metadata</code></li>
+</ul>
+<p>That matters because the current evolution work is not trying to replace the original idea. It is trying to strengthen it.</p>
+<p>The repo was already proving a useful thesis:</p>
+<ul>
+<li>PowerShell's cmdlet model is a stable cross-cloud interface</li>
+<li>normalized records make pipelines practical across Azure, AWS, and GCP</li>
+<li>a narrow abstraction is more honest than pretending every cloud concept is universal</li>
+</ul>
+<p>The recent changes do not invalidate that model. They tighten its internal correctness and prepare it for future additive capabilities.</p>
 <h2 id="provider-strategy">Provider Strategy<a class="headerlink" href="#provider-strategy" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Azure: wrap <code>Az.*</code> modules</li>
@@ -1323,7 +1390,7 @@
 </tr>
 <tr>
 <td><code>Status</code></td>
-<td>Normalized title-case state</td>
+<td>Normalized semantic state</td>
 </tr>
 <tr>
 <td><code>Size</code></td>
@@ -1351,6 +1418,14 @@
 </tr>
 </tbody>
 </table>
+<p><code>Status</code> is semantic, not just title-cased provider output. Examples:</p>
+<ul>
+<li>AWS <code>shutting-down</code> becomes <code>Terminating</code></li>
+<li>Azure <code>VM deallocated</code> becomes <code>Stopped</code></li>
+<li>GCP <code>TERMINATED</code> becomes <code>Stopped</code></li>
+</ul>
+<p>That GCP mapping is deliberate: native GCP <code>TERMINATED</code> means stopped-but-restartable, while normalized <code>Terminated</code> is reserved for permanently gone resources. The original provider value remains available in <code>Metadata.NativeStatus</code>.</p>
+<p><code>Suspending</code> and <code>Suspended</code> are valid normalized states today, but they currently come from GCP only.</p>
 <h3 id="what-belongs-in-metadata">What Belongs In <code>Metadata</code><a class="headerlink" href="#what-belongs-in-metadata" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Azure: <code>ResourceGroup</code>, <code>VmId</code>, <code>OsType</code>, <code>Sku</code></li>
@@ -1395,14 +1470,21 @@
 <li>the active session provider makes the intent unambiguous</li>
 </ul>
 <p>This keeps interactive usage fast without making scripts depend on hidden state.</p>
-<h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
-<p>Near-term improvements that fit the current philosophy:</p>
-<ul>
-<li>Expand inline help and examples for the public commands</li>
-<li>Keep generated reference docs current through PlatyPS</li>
-<li>Keep improving test readability and coverage around interactive ergonomics</li>
-<li>Add more provider-safe lifecycle and read-only inventory scenarios where the intent is genuinely shared</li>
-</ul>
+<h2 id="implementation-stages">Implementation Stages<a class="headerlink" href="#implementation-stages" title="Permanent link">&para;</a></h2>
+<p>PSCumulus is being built in additive stages so each one is shippable on its own. The cmdlets remain the primary interface throughout. Any future Provider is layered on top of the same backend engine, not treated as a replacement. The core module stays PowerShell 5.1-compatible, while later navigation work is expected to target PowerShell 7+ where provider classes are more reliable.</p>
+<p>This direction became much clearer after the Summit talk on <strong>Monday, April 13, 2026</strong>, when Jeffrey Snover offered the insight that unlocked the roadmap: the cmdlets did not need to be displaced for PSCumulus to grow; a future Provider could be added as a navigation layer over the same backend engine. The full rationale and stage-by-stage narrative live in <a href="../evolution/">Evolution</a>.</p>
+<p><strong>Current status:</strong> Stage 1 is complete in the working tree after the Stage 1 alignment pass.<br />
+<strong>Next planned stage:</strong> Stage 2 — Resource Kind Awareness.</p>
+<p>Broad outline:</p>
+<ol>
+<li><strong>Stage 1 — Internal Typed Contract</strong>: strengthen internal correctness without changing the public cmdlet surface.</li>
+<li><strong>Stage 2 — Resource Kind Awareness</strong>: make records more self-describing for future routing and navigation.</li>
+<li><strong>Stage 3 — Cloud Path Model</strong>: define a structured path/resolver layer independent of any Provider mechanics.</li>
+<li><strong>Stage 4 — The Provider (Read-Only)</strong>: add additive navigation over the same backend engine.</li>
+<li><strong>Stage 5 — Write Operations Through the Provider</strong>: let lifecycle actions flow through path context once navigation is stable.</li>
+<li><strong>Stage 6 — Cross-Cloud Aggregation</strong>: expose multi-provider views through navigation as well as cmdlets.</li>
+</ol>
+<p>For the full stage-by-stage plan, rationale, origin story, and decision details, see <a href="../evolution/">Evolution</a>.</p>
 <p>Work intentionally left out:</p>
 <ul>
 <li>A fake universal IAM surface</li>
