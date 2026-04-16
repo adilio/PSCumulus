@@ -29,6 +29,7 @@ It keeps a small set of high-value cloud tasks consistent in the shell without p
 
 - Use [Getting Started](getting-started.md) for installation and first commands
 - Use [Strategy](concepts/strategy.md) for project rationale and normalization rules
+- Use [Evolution](concepts/evolution.md) for the full staged roadmap, origin story, and architectural rationale
 - Use [Reference](reference/index.md) for generated command documentation
 
 ## PowerShell Help

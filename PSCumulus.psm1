@@ -7,10 +7,12 @@ $script:PSCumulusContext = @{
     }
 }
 
+$classesPath = Join-Path -Path $PSScriptRoot -ChildPath 'Classes'
 $publicPath = Join-Path -Path $PSScriptRoot -ChildPath 'Public'
 $privatePath = Join-Path -Path $PSScriptRoot -ChildPath 'Private'
 
-foreach ($path in @($privatePath, $publicPath)) {
+# Classes must load before Private/Public files that reference their types.
+foreach ($path in @($classesPath, $privatePath, $publicPath)) {
     if (-not (Test-Path -Path $path)) {
         continue
     }

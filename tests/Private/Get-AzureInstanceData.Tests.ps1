@@ -135,6 +135,7 @@ Describe 'Get-AzureInstanceData' {
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
                 $result.Status | Should -Be 'Ready'
                 $result.Metadata.PowerState | Should -BeNullOrEmpty
+                $result.Metadata.NativeStatus | Should -BeNullOrEmpty
             }
         }
 
@@ -168,6 +169,17 @@ Describe 'Get-AzureInstanceData' {
 
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
                 $result.Metadata.VmId | Should -Be 'vm-guid-1234'
+            }
+        }
+
+        It 'includes the native Azure power state in Metadata.NativeStatus' {
+            InModuleScope PSCumulus -Parameters @{ MockVm = $script:mockVm } {
+                param($MockVm)
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($MockVm) }
+
+                $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
+                $result.Metadata.NativeStatus | Should -BeExactly 'VM running'
             }
         }
 

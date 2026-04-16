@@ -22,33 +22,39 @@ Describe 'ConvertFrom-AWSInstanceState' {
         }
     }
 
-    It 'title-cases "running"' {
+    It 'maps "running" to Running' {
         InModuleScope PSCumulus {
-            ConvertFrom-AWSInstanceState -StateName 'running' | Should -Be 'Running'
+            ConvertFrom-AWSInstanceState -StateName 'running' | Should -BeExactly 'Running'
         }
     }
 
-    It 'title-cases "stopped"' {
+    It 'maps "stopped" to Stopped' {
         InModuleScope PSCumulus {
-            ConvertFrom-AWSInstanceState -StateName 'stopped' | Should -Be 'Stopped'
+            ConvertFrom-AWSInstanceState -StateName 'stopped' | Should -BeExactly 'Stopped'
         }
     }
 
-    It 'title-cases "pending"' {
+    It 'maps "pending" to Pending' {
         InModuleScope PSCumulus {
-            ConvertFrom-AWSInstanceState -StateName 'pending' | Should -Be 'Pending'
+            ConvertFrom-AWSInstanceState -StateName 'pending' | Should -BeExactly 'Pending'
         }
     }
 
-    It 'title-cases "shutting-down"' {
+    It 'maps "shutting-down" to Terminating' {
         InModuleScope PSCumulus {
-            ConvertFrom-AWSInstanceState -StateName 'shutting-down' | Should -Be 'Shutting-Down'
+            ConvertFrom-AWSInstanceState -StateName 'shutting-down' | Should -BeExactly 'Terminating'
+        }
+    }
+
+    It 'maps "terminated" to Terminated' {
+        InModuleScope PSCumulus {
+            ConvertFrom-AWSInstanceState -StateName 'terminated' | Should -BeExactly 'Terminated'
         }
     }
 
     It 'normalises an already-uppercase state name' {
         InModuleScope PSCumulus {
-            ConvertFrom-AWSInstanceState -StateName 'RUNNING' | Should -Be 'Running'
+            ConvertFrom-AWSInstanceState -StateName 'RUNNING' | Should -BeExactly 'Running'
         }
     }
 }

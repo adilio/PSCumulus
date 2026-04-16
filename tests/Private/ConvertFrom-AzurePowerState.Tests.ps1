@@ -22,33 +22,39 @@ Describe 'ConvertFrom-AzurePowerState' {
         }
     }
 
-    It 'strips the "VM " prefix from Azure power state' {
+    It 'maps "VM running" to Running' {
         InModuleScope PSCumulus {
-            ConvertFrom-AzurePowerState -PowerState 'VM running' | Should -Be 'running'
+            ConvertFrom-AzurePowerState -PowerState 'VM running' | Should -BeExactly 'Running'
         }
     }
 
-    It 'strips "VM " prefix from stopped state' {
+    It 'maps "VM stopped" to Stopped' {
         InModuleScope PSCumulus {
-            ConvertFrom-AzurePowerState -PowerState 'VM stopped' | Should -Be 'stopped'
+            ConvertFrom-AzurePowerState -PowerState 'VM stopped' | Should -BeExactly 'Stopped'
         }
     }
 
-    It 'strips "VM " prefix from deallocated state' {
+    It 'maps "VM deallocated" to Stopped' {
         InModuleScope PSCumulus {
-            ConvertFrom-AzurePowerState -PowerState 'VM deallocated' | Should -Be 'deallocated'
+            ConvertFrom-AzurePowerState -PowerState 'VM deallocated' | Should -BeExactly 'Stopped'
         }
     }
 
-    It 'returns value unchanged when no "VM " prefix is present' {
+    It 'maps "VM deallocating" to Stopping' {
         InModuleScope PSCumulus {
-            ConvertFrom-AzurePowerState -PowerState 'running' | Should -Be 'running'
+            ConvertFrom-AzurePowerState -PowerState 'VM deallocating' | Should -BeExactly 'Stopping'
         }
     }
 
-    It 'returns value unchanged for unrecognised state without VM prefix' {
+    It 'maps "running" to Running without a prefix' {
         InModuleScope PSCumulus {
-            ConvertFrom-AzurePowerState -PowerState 'unknown' | Should -Be 'unknown'
+            ConvertFrom-AzurePowerState -PowerState 'running' | Should -BeExactly 'Running'
+        }
+    }
+
+    It 'maps unrecognised states to Unknown' {
+        InModuleScope PSCumulus {
+            ConvertFrom-AzurePowerState -PowerState 'unknown' | Should -BeExactly 'Unknown'
         }
     }
 }

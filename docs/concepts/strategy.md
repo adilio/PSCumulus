@@ -35,6 +35,26 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 | `Start-CloudInstance` | Start a compute instance |
 | `Stop-CloudInstance` | Stop a compute instance |
 
+## What This Repo Already Was
+
+Before the recent internal typed-contract work, PSCumulus was already a working cmdlet-first module with a clear shape:
+
+- a small public surface built around verb-noun commands like `Get-CloudInstance`
+- provider-specific backend functions under `Private/`
+- normalized `PSCumulus.CloudRecord` output built from `[pscustomobject]`
+- a stored multi-provider session context for interactive use
+- honest provider-native detail preserved in `Metadata`
+
+That matters because the current evolution work is not trying to replace the original idea. It is trying to strengthen it.
+
+The repo was already proving a useful thesis:
+
+- PowerShell's cmdlet model is a stable cross-cloud interface
+- normalized records make pipelines practical across Azure, AWS, and GCP
+- a narrow abstraction is more honest than pretending every cloud concept is universal
+
+The recent changes do not invalidate that model. They tighten its internal correctness and prepare it for future additive capabilities.
+
 ## Provider Strategy
 
 - Azure: wrap `Az.*` modules
@@ -61,13 +81,23 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cl
 | `Name` | Resource name |
 | `Provider` | `Azure`, `AWS`, or `GCP` |
 | `Region` | Region or zone |
-| `Status` | Normalized title-case state |
+| `Status` | Normalized semantic state |
 | `Size` | SKU, instance type, or storage class |
 | `CreatedAt` | Creation time when available |
 | `PrivateIpAddress` | Private IP address when available |
 | `PublicIpAddress` | Public IP address when available |
 | `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
 | `Metadata` | Provider-native details that do not normalize cleanly |
+
+`Status` is semantic, not just title-cased provider output. Examples:
+
+- AWS `shutting-down` becomes `Terminating`
+- Azure `VM deallocated` becomes `Stopped`
+- GCP `TERMINATED` becomes `Stopped`
+
+That GCP mapping is deliberate: native GCP `TERMINATED` means stopped-but-restartable, while normalized `Terminated` is reserved for permanently gone resources. The original provider value remains available in `Metadata.NativeStatus`.
+
+`Suspending` and `Suspended` are valid normalized states today, but they currently come from GCP only.
 
 ### What Belongs In `Metadata`
 
@@ -122,14 +152,25 @@ After `Connect-Cloud`, the module remembers the active provider for the current 
 
 This keeps interactive usage fast without making scripts depend on hidden state.
 
-## Roadmap
+## Implementation Stages
 
-Near-term improvements that fit the current philosophy:
+PSCumulus is being built in additive stages so each one is shippable on its own. The cmdlets remain the primary interface throughout. Any future Provider is layered on top of the same backend engine, not treated as a replacement. The core module stays PowerShell 5.1-compatible, while later navigation work is expected to target PowerShell 7+ where provider classes are more reliable.
 
-- Expand inline help and examples for the public commands
-- Keep generated reference docs current through PlatyPS
-- Keep improving test readability and coverage around interactive ergonomics
-- Add more provider-safe lifecycle and read-only inventory scenarios where the intent is genuinely shared
+This direction became much clearer after the Summit talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the insight that unlocked the roadmap: the cmdlets did not need to be displaced for PSCumulus to grow; a future Provider could be added as a navigation layer over the same backend engine. The full rationale and stage-by-stage narrative live in [Evolution](evolution.md).
+
+**Current status:** Stage 1 is complete in the working tree after the Stage 1 alignment pass.  
+**Next planned stage:** Stage 2 — Resource Kind Awareness.
+
+Broad outline:
+
+1. **Stage 1 — Internal Typed Contract**: strengthen internal correctness without changing the public cmdlet surface.
+2. **Stage 2 — Resource Kind Awareness**: make records more self-describing for future routing and navigation.
+3. **Stage 3 — Cloud Path Model**: define a structured path/resolver layer independent of any Provider mechanics.
+4. **Stage 4 — The Provider (Read-Only)**: add additive navigation over the same backend engine.
+5. **Stage 5 — Write Operations Through the Provider**: let lifecycle actions flow through path context once navigation is stable.
+6. **Stage 6 — Cross-Cloud Aggregation**: expose multi-provider views through navigation as well as cmdlets.
+
+For the full stage-by-stage plan, rationale, origin story, and decision details, see [Evolution](evolution.md).
 
 Work intentionally left out:
 

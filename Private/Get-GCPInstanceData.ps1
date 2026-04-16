@@ -37,12 +37,7 @@ function Get-GCPInstanceData {
         $accessConfigs = @($primaryInterface.accessConfigs)
         $primaryAccessConfig = $accessConfigs | Select-Object -First 1
 
-        $tagHashtable = @{}
-        if ($instance.labels) {
-            $instance.labels.PSObject.Properties | ForEach-Object {
-                $tagHashtable[$_.Name] = $_.Value
-            }
-        }
+        $tagHashtable = [CloudTagHelper]::FromGcpLabels($instance.labels)
 
         ConvertTo-CloudRecord `
             -Name $instance.name `
@@ -61,6 +56,7 @@ function Get-GCPInstanceData {
                 PrivateIpAddress = $primaryInterface.networkIP
                 PublicIpAddress  = $primaryAccessConfig.natIP
                 Labels           = $instance.labels
+                NativeStatus     = $instance.status
             }
     }
 }

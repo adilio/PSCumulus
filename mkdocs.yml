@@ -30,6 +30,7 @@ nav:
   - Getting Started: getting-started.md
   - Concepts:
       - Strategy: concepts/strategy.md
+      - Evolution: concepts/evolution.md
   - Reference:
       - Overview: reference/index.md
       - About PSCumulus: reference/about-pscumulus.md

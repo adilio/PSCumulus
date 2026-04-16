@@ -61,13 +61,23 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable shape:
 | `Name` | Resource name |
 | `Provider` | `Azure`, `AWS`, or `GCP` |
 | `Region` | Region or zone |
-| `Status` | Normalized state (e.g. `Running`, `Stopped`) |
+| `Status` | Normalized state (e.g. `Pending`, `Running`, `Stopped`, `Suspended`, `Terminated`) |
 | `Size` | SKU, instance type, or storage class |
 | `CreatedAt` | Creation time when available |
+| `PrivateIpAddress` | Private IP address when available |
+| `PublicIpAddress` | Public IP address when available |
 | `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
 | `Metadata` | Provider-native details that don't normalize cleanly |
 
-The first seven columns are what you can safely filter and group against across clouds. `Metadata` is where honest provider-native detail (Azure resource groups, AWS VPC IDs, GCP zones) lives without pretending to normalize.
+The first nine columns are what you can safely filter and group against across clouds. `Tags` stays a normal PowerShell hashtable lookup surface, and `Metadata` is where honest provider-native detail (Azure resource groups, AWS VPC IDs, GCP zones, native provider status strings) lives without pretending to normalize.
+
+Instance `Status` is semantic, not just title-cased provider text. For example:
+
+- AWS `shutting-down` normalizes to `Terminating`
+- Azure `VM deallocated` normalizes to `Stopped`
+- GCP `TERMINATED` normalizes to `Stopped`
+
+That last one is intentional: GCP native `TERMINATED` means the instance is stopped but still restartable, not permanently gone. The original provider value remains available in `Metadata.NativeStatus`. `Suspending` and `Suspended` are also valid normalized states, but currently come from GCP only.
 
 ## Cross-cloud pipelines
 
@@ -92,6 +102,40 @@ Get-CloudInstance -All |
 ```
 
 `-All` iterates every provider with stored context, calls each backend in turn, and streams one pipeline of `CloudRecord` objects. Filters, grouping, and projection work exactly like they do on any other PowerShell pipeline.
+
+## Evolution Roadmap
+
+PSCumulus is being evolved in stages so each step ships independently, delivers value on its own, and makes the next one easier. The cmdlets remain the primary interface throughout. Any future Provider is additive, not a replacement. The core module stays PowerShell 5.1-compatible, while future navigation work is expected to target PowerShell 7+ where provider classes are a better fit.
+
+The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the key insight that unlocked the next move: keep the cmdlet-first model intact, and treat any future Provider as an additive navigation layer over the same backend engine. The longer-form rationale lives in the [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) doc.
+
+**Current status:** Stage 1 is complete in the working tree after the Stage 1 alignment pass.  
+**Next planned stage:** Stage 2 — Resource Kind Awareness.
+
+1. **Stage 1 — Internal Typed Contract**  
+   Purpose: establish a typed internal vocabulary without changing the public cmdlet surface.  
+   Additive capability: internal types, wrapper converters, semantic instance status normalization, `Metadata.NativeStatus`, and no public cmdlet or output-type break.  
+   Why separate: it fixes correctness first and gives every later stage the same status/tag vocabulary.
+2. **Stage 2 — Resource Kind Awareness**  
+   Purpose: make each `CloudRecord` self-describing about what kind of resource it represents.  
+   Additive capability: a resource-kind field on records so later navigation and routing do not have to infer type from which cmdlet produced the object.  
+   Why separate: the future path and Provider layers need records to declare their own kind before they can organize them hierarchically.
+3. **Stage 3 — Cloud Path Model**  
+   Purpose: define and resolve hierarchical cloud paths independently of any Provider implementation.  
+   Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.  
+   Why separate: path parsing and resolution are useful and testable on their own, and they are the hardest part of Provider work to get right.
+4. **Stage 4 — The Provider (Read-Only)**  
+   Purpose: make cloud resources navigable through PowerShell drives.  
+   Additive capability: read-only navigation such as `dir Azure:\prod-rg\Instances`, layered over the same backend engine the cmdlets already use.  
+   Why separate: the Provider is additive, not a replacement, and it likely belongs in a PS 7+ path where provider classes are more reliable.
+5. **Stage 5 — Write Operations Through the Provider**  
+   Purpose: let lifecycle actions flow through path context once navigation is stable.  
+   Additive capability: path-driven start/stop style operations with `ShouldProcess` behavior preserved.  
+   Why separate: write operations need careful `-WhatIf` and confirmation behavior, so the read-only Provider needs to prove itself first.
+6. **Stage 6 — Cross-Cloud Aggregation**  
+   Purpose: expose the existing cross-cloud aggregation story through navigation as well as cmdlets.  
+   Additive capability: a synthetic cross-cloud view such as `Cloud:\Instances` spanning all connected providers.  
+   Why separate: it depends on the earlier path and Provider work being stable, and it carries the highest performance and UX risk.
 
 ## Per-provider usage
 
@@ -171,6 +215,7 @@ See [`docs/talk-demo.md`](docs/talk-demo.md) for the curated query list used in 
 
 - [Getting Started](https://adilio.github.io/PSCumulus/getting-started/)
 - [Strategy](https://adilio.github.io/PSCumulus/concepts/strategy/) — project rationale, normalization rules, roadmap
+- [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) — detailed staged plan, design rationale, origin story, and current project status
 - [Command reference](https://adilio.github.io/PSCumulus/reference/) — generated from PlatyPS
 
 ```powershell

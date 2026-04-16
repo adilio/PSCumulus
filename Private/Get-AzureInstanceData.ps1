@@ -31,10 +31,7 @@ function Get-AzureInstanceData {
             $normalizedStatus = 'Ready'
         }
 
-        $tagHashtable = @{}
-        if ($virtualMachine.Tags) {
-            $virtualMachine.Tags.GetEnumerator() | ForEach-Object { $tagHashtable[$_.Key] = $_.Value }
-        }
+        $tagHashtable = [CloudTagHelper]::FromAzureTags($virtualMachine.Tags)
 
         $addressData = Get-AzureInstanceAddressData -VirtualMachine $virtualMachine
 
@@ -52,6 +49,7 @@ function Get-AzureInstanceData {
                 VmId          = $virtualMachine.VmId
                 OsType        = $virtualMachine.StorageProfile.OsDisk.OsType.ToString()
                 PowerState    = $powerStatus
+                NativeStatus  = $powerStatus
             }
     }
 }

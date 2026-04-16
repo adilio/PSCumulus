@@ -198,6 +198,17 @@ Describe 'Get-AWSInstanceData' {
             }
         }
 
+        It 'includes the native AWS state in Metadata.NativeStatus' {
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.Metadata.NativeStatus | Should -BeExactly 'running'
+            }
+        }
+
         It 'calls Get-EC2Instance with Region when provided' {
             InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
                 param($MockResponse)

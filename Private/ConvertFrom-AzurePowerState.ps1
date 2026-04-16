@@ -4,13 +4,10 @@ function ConvertFrom-AzurePowerState {
         [string]$PowerState
     )
 
-    if ([string]::IsNullOrWhiteSpace($PowerState)) {
+    $status = [CloudInstanceStatusMap]::FromAzure($PowerState)
+    if ($null -eq $status) {
         return $null
     }
 
-    if ($PowerState -like 'VM *') {
-        return (Get-Culture).TextInfo.ToTitleCase($PowerState.Substring(3).ToLowerInvariant())
-    }
-
-    (Get-Culture).TextInfo.ToTitleCase($PowerState.ToLowerInvariant())
+    $status.ToString()
 }

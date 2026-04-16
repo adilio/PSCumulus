@@ -4,10 +4,10 @@ function ConvertFrom-GCPInstanceStatus {
         [string]$Status
     )
 
-    if ([string]::IsNullOrWhiteSpace($Status)) {
+    $normalizedStatus = [CloudInstanceStatusMap]::FromGcp($Status)
+    if ($null -eq $normalizedStatus) {
         return $null
     }
 
-    (Get-Culture).TextInfo.ToTitleCase($Status.ToLowerInvariant())
+    $normalizedStatus.ToString()
 }
-

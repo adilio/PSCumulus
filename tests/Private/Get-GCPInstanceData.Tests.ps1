@@ -83,7 +83,7 @@ Describe 'Get-GCPInstanceData' {
             }
         }
 
-        It 'title-cases the GCP status' {
+        It 'normalises the GCP status' {
             InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
                 param($Account, $Instance)
                 Mock Assert-GCloudAuthenticated { $Account }
@@ -129,6 +129,18 @@ Describe 'Get-GCPInstanceData' {
 
                 $result = Get-GCPInstanceData -Project 'my-project'
                 $result.Metadata.Project | Should -Be 'my-project'
+            }
+        }
+
+        It 'includes the native GCP status in Metadata.NativeStatus' {
+            InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
+                param($Account, $Instance)
+                Mock Assert-GCloudAuthenticated { $Account }
+                Mock Get-GCloudProject { 'my-project' }
+                Mock Invoke-GCloudJson { @($Instance) }
+
+                $result = Get-GCPInstanceData -Project 'my-project'
+                $result.Metadata.NativeStatus | Should -BeExactly 'RUNNING'
             }
         }
 

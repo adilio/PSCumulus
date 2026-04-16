@@ -37,16 +37,14 @@ function Get-AWSInstanceData {
                 continue
             }
 
-            $tagHashtable = @{}
-            foreach ($tag in $instance.Tags) {
-                $tagHashtable[$tag.Key] = $tag.Value
-            }
+            $tagHashtable = [CloudTagHelper]::FromAwsTags($instance.Tags)
+            $nativeStatus = $instance.State.Name.Value
 
             ConvertTo-CloudRecord `
                 -Name $resolvedName `
                 -Provider AWS `
                 -Region $instance.Placement.AvailabilityZone `
-                -Status (ConvertFrom-AWSInstanceState -StateName $instance.State.Name.Value) `
+                -Status (ConvertFrom-AWSInstanceState -StateName $nativeStatus) `
                 -Size $instance.InstanceType.Value `
                 -CreatedAt $instance.LaunchTime `
                 -PrivateIpAddress $instance.PrivateIpAddress `
@@ -58,6 +56,7 @@ function Get-AWSInstanceData {
                     PublicIpAddress  = $instance.PublicIpAddress
                     VpcId            = $instance.VpcId
                     SubnetId         = $instance.SubnetId
+                    NativeStatus     = $nativeStatus
                 }
         }
     }

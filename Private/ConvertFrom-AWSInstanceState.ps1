@@ -4,10 +4,10 @@ function ConvertFrom-AWSInstanceState {
         [string]$StateName
     )
 
-    if ([string]::IsNullOrWhiteSpace($StateName)) {
+    $status = [CloudInstanceStatusMap]::FromAws($StateName)
+    if ($null -eq $status) {
         return $null
     }
 
-    (Get-Culture).TextInfo.ToTitleCase($StateName.ToLowerInvariant())
+    $status.ToString()
 }
-
