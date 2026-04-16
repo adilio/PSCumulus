@@ -43,8 +43,13 @@ Inventory commands return `PSCumulus.CloudRecord` objects with these common prop
 - `Region`
 - `Status`
 - `Size`
+- `PrivateIpAddress`
+- `PublicIpAddress`
+- `Tags`
 - `CreatedAt`
 - `Metadata`
+
+For instance inventory, the shared contract is now backed by a real base class with vendor subclasses. Common provider identity fields such as Azure `ResourceGroup`, AWS `InstanceId`, and GCP `Project` are first-class properties on those vendor-specific instance records rather than living only in `Metadata`.
 
 `Connect-Cloud` returns `PSCumulus.ConnectionResult`.
 

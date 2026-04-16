@@ -120,7 +120,7 @@ Describe 'Get-GCPInstanceData' {
             }
         }
 
-        It 'includes Project in Metadata' {
+        It 'surfaces Project as a first-class property' {
             InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
                 param($Account, $Instance)
                 Mock Assert-GCloudAuthenticated { $Account }
@@ -128,7 +128,7 @@ Describe 'Get-GCPInstanceData' {
                 Mock Invoke-GCloudJson { @($Instance) }
 
                 $result = Get-GCPInstanceData -Project 'my-project'
-                $result.Metadata.Project | Should -Be 'my-project'
+                $result.Project | Should -Be 'my-project'
             }
         }
 
@@ -141,6 +141,18 @@ Describe 'Get-GCPInstanceData' {
 
                 $result = Get-GCPInstanceData -Project 'my-project'
                 $result.Metadata.NativeStatus | Should -BeExactly 'RUNNING'
+            }
+        }
+
+        It 'returns GCPCloudRecord instances' {
+            InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Instance = $script:mockGcpInstance } {
+                param($Account, $Instance)
+                Mock Assert-GCloudAuthenticated { $Account }
+                Mock Get-GCloudProject { 'my-project' }
+                Mock Invoke-GCloudJson { @($Instance) }
+
+                $result = Get-GCPInstanceData -Project 'my-project'
+                $result.PSObject.TypeNames | Should -Contain 'PSCumulus.GCPCloudRecord'
             }
         }
 

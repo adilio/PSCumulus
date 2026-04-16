@@ -37,7 +37,7 @@ Eleven commands. Verb-noun, normalized output, no provider marketing in the noun
 | `Start-CloudInstance` | Start a compute instance |
 | `Stop-CloudInstance` | Stop a compute instance |
 
-Read commands return a single normalized record type, `PSCumulus.CloudRecord`.
+Read commands return `PSCumulus.CloudRecord`-compatible records with a stable shared shape. For instance inventory, that contract is now implemented with a real base class plus vendor subclasses.
 
 ## Quick start
 
@@ -54,7 +54,7 @@ Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 
 ## The shared shape
 
-Inventory commands return `PSCumulus.CloudRecord` objects with a stable shape:
+Inventory commands return `PSCumulus.CloudRecord` records with a stable shape:
 
 | Property | Description |
 |---|---|
@@ -69,7 +69,7 @@ Inventory commands return `PSCumulus.CloudRecord` objects with a stable shape:
 | `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
 | `Metadata` | Provider-native details that don't normalize cleanly |
 
-The first nine columns are what you can safely filter and group against across clouds. `Tags` stays a normal PowerShell hashtable lookup surface, and `Metadata` is where honest provider-native detail (Azure resource groups, AWS VPC IDs, GCP zones, native provider status strings) lives without pretending to normalize.
+The first nine columns are what you can safely filter and group against across clouds. `Tags` stays a normal PowerShell hashtable lookup surface. `Metadata` remains available for honest provider-native long-tail detail, while commonly-needed instance fields like Azure `ResourceGroup`, AWS `InstanceId`, and GCP `Project` now live as first-class properties on vendor-specific instance subclasses.
 
 Instance `Status` is semantic, not just title-cased provider text. For example:
 
@@ -78,6 +78,8 @@ Instance `Status` is semantic, not just title-cased provider text. For example:
 - GCP `TERMINATED` normalizes to `Stopped`
 
 That last one is intentional: GCP native `TERMINATED` means the instance is stopped but still restartable, not permanently gone. The original provider value remains available in `Metadata.NativeStatus`. `Suspending` and `Suspended` are also valid normalized states, but currently come from GCP only.
+
+When Azure does not expose a readable power state, PSCumulus now emits `Unknown` rather than the older `Ready` fallback so instance status stays aligned with the semantic status vocabulary.
 
 ## Cross-cloud pipelines
 
@@ -107,19 +109,19 @@ Get-CloudInstance -All |
 
 PSCumulus is being evolved in stages so each step ships independently, delivers value on its own, and makes the next one easier. The cmdlets remain the primary interface throughout. Any future Provider is additive, not a replacement. The core module stays PowerShell 5.1-compatible, while future navigation work is expected to target PowerShell 7+ where provider classes are a better fit.
 
-The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the key insight that unlocked the next move: keep the cmdlet-first model intact, and treat any future Provider as an additive navigation layer over the same backend engine. The longer-form rationale lives in the [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) doc.
+The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the key insight that unlocked the next move: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the plan, but it now follows that corrected object-model foundation rather than defining it. The longer-form rationale lives in the [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) doc.
 
-**Current status:** Stage 1 is complete in the working tree after the Stage 1 alignment pass.  
-**Next planned stage:** Stage 2 — Resource Kind Awareness.
+**Current status:** Stage 1 is complete and Stage 2 is underway for instance records.  
+**Current implementation focus:** Stage 2 — Vendor Subclass Records.
 
 1. **Stage 1 — Internal Typed Contract**  
    Purpose: establish a typed internal vocabulary without changing the public cmdlet surface.  
    Additive capability: internal types, wrapper converters, semantic instance status normalization, `Metadata.NativeStatus`, and no public cmdlet or output-type break.  
    Why separate: it fixes correctness first and gives every later stage the same status/tag vocabulary.
-2. **Stage 2 — Resource Kind Awareness**  
-   Purpose: make each `CloudRecord` self-describing about what kind of resource it represents.  
-   Additive capability: a resource-kind field on records so later navigation and routing do not have to infer type from which cmdlet produced the object.  
-   Why separate: the future path and Provider layers need records to declare their own kind before they can organize them hierarchically.
+2. **Stage 2 — Vendor Subclass Records**  
+   Purpose: introduce a real `CloudRecord` base class, vendor subclasses, subclass-owned factory methods, and a `Kind` field.  
+   Additive capability: instance normalization now lives in one place per provider, and future path or Provider work can build on typed records instead of generic property bags.  
+   Why separate: it fixes the record model directly and absorbs resource-kind awareness into the same stage.
 3. **Stage 3 — Cloud Path Model**  
    Purpose: define and resolve hierarchical cloud paths independently of any Provider implementation.  
    Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.  

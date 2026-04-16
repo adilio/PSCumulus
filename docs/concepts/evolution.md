@@ -10,9 +10,11 @@ The staged roadmap did not appear in a vacuum. It crystallized after the PowerSh
 
 That talk was the public proof that PSCumulus already had a useful shape as a cmdlet-first module. The audience could see the point of the normalized records, the cross-cloud pipelines, and the narrowness of the abstraction. But the future direction of the module still felt open-ended.
 
-The real unlock came in the room: **Jeffrey Snover sat in the front row and offered an insight that clarified the next move**. The important future direction was not to replace the cmdlet model that was already working. It was to recognize that PSCumulus could keep the cmdlets as the primary surface and, later, add a Provider-shaped navigation layer on top of the same backend engine.
+The real unlock came in the room: **Jeffrey Snover sat in the front row and offered an insight that clarified the next move**:
 
-That was the architectural unlock.
+> Base class that has all of the common properties, the subclass for each vendor, then base output parser on subclass.
+
+That advice was initially misremembered as being primarily about a future Provider layer. The corrected reading is more precise and more useful: the next architectural move is to fix the **record model** first, then let later navigation work build on top of that stronger foundation.
 
 It reframed the roadmap from “what should this module become instead?” to “how can this module grow without betraying the thing that already makes it useful?”
 
@@ -25,14 +27,14 @@ Once that clicked, the stages became much easier to define:
 
 ## Current Status
 
-PSCumulus is currently at **Stage 1 — Internal Typed Contract**.
+PSCumulus is currently between **Stage 1 — Internal Typed Contract** and **Stage 2 — Vendor Subclass Records**.
 
 That means the core module still behaves the same way from the outside:
 
 - the public interface is still cmdlet-first
 - `Get-CloudInstance`, `Get-CloudDisk`, `Get-CloudStorage`, and the rest still return `PSCumulus.CloudRecord`
-- those records are still `[pscustomobject]` instances stamped with a custom type name
 - the public command surface has not been broken or renamed
+- format and display behavior still target `PSCumulus.CloudRecord`
 
 What changed in Stage 1 is the internal vocabulary and correctness model:
 
@@ -40,6 +42,13 @@ What changed in Stage 1 is the internal vocabulary and correctness model:
 - the original provider state is preserved in `Metadata.NativeStatus`
 - tag conversion logic now has a dedicated internal home
 - the module has a typed internal foundation that later stages can build on
+
+What Stage 2 changes is the construction path for records themselves:
+
+- `CloudRecord` becomes a real PowerShell base class
+- vendor subclasses become the place of authority for provider-specific fields
+- instance normalization moves into subclass factory methods
+- Azure's old `Ready` fallback is retired in favor of semantic `Unknown`
 
 That distinction matters. PSCumulus is not being rewritten in one dramatic jump. It is being evolved so that each stage can land safely, be tested independently, and remain useful even if the later stages take time or change shape.
 
@@ -54,7 +63,7 @@ PSCumulus already works as a cmdlet-based module. People can use it now. That me
 This is why the plan insists on:
 
 - keeping the existing cmdlets stable
-- preserving `PSCumulus.CloudRecord`
+- preserving `PSCumulus.CloudRecord` as the public-facing contract, even while the implementation shifts from stamped objects to real classes
 - adding future navigation as an additive path, not a replacement
 
 ### 2. Correctness should land before cleverness
@@ -111,6 +120,8 @@ That is why `Metadata` exists.
 
 The evolution plan keeps that philosophy intact. Even the new typed internals are not an attempt to pretend all providers are the same. They are a way to make the module more precise about which differences are normalized and which differences remain native.
 
+The important correction is that not every provider-specific field belongs in `Metadata`. A field like `ResourceGroup`, `InstanceId`, or `Project` is not opaque long-tail detail. It is well-defined, commonly needed, and deserves to be declared as a first-class property on the relevant vendor subclass.
+
 ## Design Principles Across All Stages
 
 These principles apply to the full roadmap.
@@ -159,33 +170,38 @@ This stage gives PSCumulus a more honest and more testable internal language for
 
 Stage 1 deliberately does **not**:
 
-- replace `PSCumulus.CloudRecord` with a public class
+- replace record construction with a class-based model
 - add methods like `.Start()` to records
 - introduce a Provider
 - change public command signatures
 
 That restraint is the point. This stage is about making the existing module more trustworthy, not about changing how users interact with it.
 
-## Stage 2 — Resource Kind Awareness
+## Stage 2 — Vendor Subclass Records
 
 ### Purpose
 
-Make each `CloudRecord` self-describing about which broad resource family it belongs to.
+Implement Snover's guidance directly: shared base class, vendor subclasses, and factory methods that own normalization.
 
 ### What It Introduces
 
-- a resource-kind field on records
-- backend population of that field for instances, disks, storage, networks, functions, and tags
+- `CloudRecord` as a real PowerShell base class
+- `AzureCloudRecord`, `AWSCloudRecord`, and `GCPCloudRecord`
+- a `Kind` field on the base class
+- typed first-class provider properties on each vendor subclass
+- subclass `From*` factory methods that perform normalization and record construction
+- instance backends that fetch provider data and delegate construction to those factory methods
+- format/type-name compatibility so `PSCumulus.CloudRecord` remains the public display contract
 
 ### Why This Stage Exists
 
-Right now, a record knows who it came from and what region it lives in, but it does not inherently know what kind of cloud thing it is. That information is implicit in which command produced it.
+Before this stage, normalization knowledge was scattered across backend functions, wrapper converters, tag helpers, and `ConvertTo-CloudRecord`. That made the final output shape harder to reason about and harder to test.
 
-That is fine for cmdlet use. It is not enough for future path-based navigation. A navigation layer needs records to be self-describing so it can place them under containers like `Instances`, `Disks`, or `Functions` without guessing.
+This stage creates one place of authority per provider. If you want to understand what an Azure instance record is, you read `AzureCloudRecord::FromAzVM()`. If you want to understand AWS or GCP, you read the corresponding subclass factory. The backend functions shrink back to their core job: talk to the provider, then delegate.
 
 ### Why It Is Separate
 
-This is an additive metadata stage. It does not need a Provider to be valuable, and it is much easier to test on its own than as part of a full navigation feature.
+This stage is valuable even if a Provider never lands. It also gives later path and Provider work a better foundation because those layers can return strongly typed records rather than generic property bags.
 
 ## Stage 3 — Cloud Path Model
 
@@ -211,6 +227,8 @@ This matters because cloud hierarchies do not line up neatly:
 
 The path model is where PSCumulus decides how to turn those different scope systems into one navigable hierarchy without lying about the underlying structure.
 
+The records returned by that resolver now benefit from Stage 2: a path can resolve to a typed `AzureCloudRecord`, `AWSCloudRecord`, or `GCPCloudRecord` rather than a generic object with implied provider-specific fields hiding in `Metadata`.
+
 ### Why It Is Separate
 
 A Provider built without a clean path model would be fragile. Pulling the model out into its own stage means the hard part can be reasoned about and tested without mixing it with PowerShell Provider mechanics.
@@ -230,7 +248,7 @@ Expose the existing backend engine through a read-only PowerShell navigation lay
 
 ### Why This Stage Exists
 
-This is the “Snover stage.” It turns cloud inventory into something you can browse.
+This is the Provider stage. It turns cloud inventory into something you can browse.
 
 The attraction is obvious:
 

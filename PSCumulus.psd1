@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.1.2'
+    ModuleVersion     = '0.2.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -41,6 +41,13 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.2.0
+- Marked a major architectural step in PSCumulus: the module now follows the corrected Snover direction of a shared base record with vendor subclasses, and normalization owned by subclass factory methods
+- Implemented Stage 2 for instance inventory: Get-CloudInstance now returns class-based Azure, AWS, and GCP instance records while preserving the PSCumulus.CloudRecord contract for formatting and pipeline use
+- Promoted commonly-needed provider identity fields to first-class properties on instance records, including Azure ResourceGroup and VmId, AWS InstanceId, VpcId, and SubnetId, and GCP Project and Zone
+- Retired the old Azure Ready fallback for missing power state and now emit Unknown so public instance status stays aligned with the semantic status model introduced in Stage 1
+- Updated the roadmap, strategy, and about/help documentation so the module page and repo docs clearly describe the new object-model direction and the current stage of the evolution plan
+
 0.1.2
 - Added scoped Disconnect-Cloud for Azure, AWS, and GCP
 - Get-CloudInstance now supports name filtering, detailed output, and richer instance metadata

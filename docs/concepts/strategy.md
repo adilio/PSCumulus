@@ -37,11 +37,11 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 
 ## What This Repo Already Was
 
-Before the recent internal typed-contract work, PSCumulus was already a working cmdlet-first module with a clear shape:
+Before the recent typed-contract and record-model work, PSCumulus was already a working cmdlet-first module with a clear shape:
 
 - a small public surface built around verb-noun commands like `Get-CloudInstance`
 - provider-specific backend functions under `Private/`
-- normalized `PSCumulus.CloudRecord` output built from `[pscustomobject]`
+- normalized `PSCumulus.CloudRecord` output built from a stable shared property contract
 - a stored multi-provider session context for interactive use
 - honest provider-native detail preserved in `Metadata`
 
@@ -72,9 +72,11 @@ The test behind every unified command: do the underlying CSP philosophies behind
 
 Provider-native differences that survive normalization belong in `Metadata`, not in the public command noun.
 
+For Stage 2, that principle gets sharpened: genuinely opaque detail stays in `Metadata`, but commonly-needed vendor identity fields graduate into first-class properties on vendor subclasses.
+
 ### Shared Output Contract
 
-Inventory commands return `PSCumulus.CloudRecord` objects with a stable cross-cloud shape:
+Inventory commands return `PSCumulus.CloudRecord`-compatible records with a stable cross-cloud shape:
 
 | Field | Description |
 |---|---|
@@ -99,11 +101,19 @@ That GCP mapping is deliberate: native GCP `TERMINATED` means stopped-but-restar
 
 `Suspending` and `Suspended` are valid normalized states today, but they currently come from GCP only.
 
+For Azure instances, when no power state can be read, PSCumulus now emits `Unknown` rather than the older `Ready` fallback so the public status contract stays aligned with the semantic enum vocabulary.
+
+### What Belongs On Vendor Subclasses
+
+- Azure instance records: `ResourceGroup`, `VmId`, `OsType`
+- AWS instance records: `InstanceId`, `VpcId`, `SubnetId`
+- GCP instance records: `Project`, `Zone`, `Id`
+
 ### What Belongs In `Metadata`
 
-- Azure: `ResourceGroup`, `VmId`, `OsType`, `Sku`
-- AWS: `InstanceId`, `VpcId`, `SubnetId`, `VolumeType`
-- GCP: `Project`, `Zone`, `Labels`, `DiskType`
+- native status strings
+- provider-native long-tail details that do not deserve a stable first-class property
+- transitional compatibility data while older resource kinds still use the legacy construction path
 
 ### What Not To Normalize
 
@@ -156,15 +166,15 @@ This keeps interactive usage fast without making scripts depend on hidden state.
 
 PSCumulus is being built in additive stages so each one is shippable on its own. The cmdlets remain the primary interface throughout. Any future Provider is layered on top of the same backend engine, not treated as a replacement. The core module stays PowerShell 5.1-compatible, while later navigation work is expected to target PowerShell 7+ where provider classes are more reliable.
 
-This direction became much clearer after the Summit talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the insight that unlocked the roadmap: the cmdlets did not need to be displaced for PSCumulus to grow; a future Provider could be added as a navigation layer over the same backend engine. The full rationale and stage-by-stage narrative live in [Evolution](evolution.md).
+This direction became much clearer after the Summit talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the insight that unlocked the roadmap: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the roadmap, but it now follows the corrected record model instead of leading it. The full rationale and stage-by-stage narrative live in [Evolution](evolution.md).
 
-**Current status:** Stage 1 is complete in the working tree after the Stage 1 alignment pass.  
-**Next planned stage:** Stage 2 — Resource Kind Awareness.
+**Current status:** Stage 1 is complete and Stage 2 has started for instance records.  
+**Current implementation focus:** Stage 2 — Vendor Subclass Records.
 
 Broad outline:
 
 1. **Stage 1 — Internal Typed Contract**: strengthen internal correctness without changing the public cmdlet surface.
-2. **Stage 2 — Resource Kind Awareness**: make records more self-describing for future routing and navigation.
+2. **Stage 2 — Vendor Subclass Records**: introduce a real base record class, vendor subclasses, subclass-owned normalization factories, and `Kind`.
 3. **Stage 3 — Cloud Path Model**: define a structured path/resolver layer independent of any Provider mechanics.
 4. **Stage 4 — The Provider (Read-Only)**: add additive navigation over the same backend engine.
 5. **Stage 5 — Write Operations Through the Provider**: let lifecycle actions flow through path context once navigation is stable.

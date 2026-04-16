@@ -23,41 +23,13 @@ function Get-AWSInstanceData {
 
     foreach ($reservation in @($reservations)) {
         foreach ($instance in @($reservation.Instances)) {
-            $nameTag = $instance.Tags |
-                Where-Object { $_.Key -eq 'Name' } |
-                Select-Object -First 1 -ExpandProperty Value
+            $resolvedRecord = [AWSCloudRecord]::FromEC2Instance($instance)
 
-            $resolvedName = if ([string]::IsNullOrWhiteSpace($nameTag)) {
-                $instance.InstanceId
-            } else {
-                $nameTag
-            }
-
-            if (-not [string]::IsNullOrWhiteSpace($Name) -and $resolvedName -ne $Name -and $instance.InstanceId -ne $Name) {
+            if (-not [string]::IsNullOrWhiteSpace($Name) -and $resolvedRecord.Name -ne $Name -and $resolvedRecord.InstanceId -ne $Name) {
                 continue
             }
 
-            $tagHashtable = [CloudTagHelper]::FromAwsTags($instance.Tags)
-            $nativeStatus = $instance.State.Name.Value
-
-            ConvertTo-CloudRecord `
-                -Name $resolvedName `
-                -Provider AWS `
-                -Region $instance.Placement.AvailabilityZone `
-                -Status (ConvertFrom-AWSInstanceState -StateName $nativeStatus) `
-                -Size $instance.InstanceType.Value `
-                -CreatedAt $instance.LaunchTime `
-                -PrivateIpAddress $instance.PrivateIpAddress `
-                -PublicIpAddress $instance.PublicIpAddress `
-                -Tags $tagHashtable `
-                -Metadata @{
-                    InstanceId       = $instance.InstanceId
-                    PrivateIpAddress = $instance.PrivateIpAddress
-                    PublicIpAddress  = $instance.PublicIpAddress
-                    VpcId            = $instance.VpcId
-                    SubnetId         = $instance.SubnetId
-                    NativeStatus     = $nativeStatus
-                }
+            $resolvedRecord
         }
     }
 }

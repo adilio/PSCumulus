@@ -112,7 +112,7 @@ Describe 'Get-AzureInstanceData' {
             }
         }
 
-        It 'falls back to Ready when no power state is returned' {
+        It 'falls back to Unknown when no power state is returned' {
             InModuleScope PSCumulus {
                 $vmWithoutPowerState = [pscustomobject]@{
                     Name              = 'offline-vm'
@@ -133,8 +133,7 @@ Describe 'Get-AzureInstanceData' {
                 Mock Get-AzVM { @($vmWithoutPowerState) }
 
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
-                $result.Status | Should -Be 'Ready'
-                $result.Metadata.PowerState | Should -BeNullOrEmpty
+                $result.Status | Should -Be 'Unknown'
                 $result.Metadata.NativeStatus | Should -BeNullOrEmpty
             }
         }
@@ -150,25 +149,25 @@ Describe 'Get-AzureInstanceData' {
             }
         }
 
-        It 'includes ResourceGroup in Metadata' {
+        It 'surfaces ResourceGroup as a first-class property' {
             InModuleScope PSCumulus -Parameters @{ MockVm = $script:mockVm } {
                 param($MockVm)
                 Mock Assert-CommandAvailable {}
                 Mock Get-AzVM { @($MockVm) }
 
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
-                $result.Metadata.ResourceGroup | Should -Be 'prod-rg'
+                $result.ResourceGroup | Should -Be 'prod-rg'
             }
         }
 
-        It 'includes VmId in Metadata' {
+        It 'surfaces VmId as a first-class property' {
             InModuleScope PSCumulus -Parameters @{ MockVm = $script:mockVm } {
                 param($MockVm)
                 Mock Assert-CommandAvailable {}
                 Mock Get-AzVM { @($MockVm) }
 
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
-                $result.Metadata.VmId | Should -Be 'vm-guid-1234'
+                $result.VmId | Should -Be 'vm-guid-1234'
             }
         }
 
@@ -191,6 +190,17 @@ Describe 'Get-AzureInstanceData' {
 
                 $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
                 $result.PSObject.TypeNames | Should -Contain 'PSCumulus.CloudRecord'
+            }
+        }
+
+        It 'returns AzureCloudRecord instances' {
+            InModuleScope PSCumulus -Parameters @{ MockVm = $script:mockVm } {
+                param($MockVm)
+                Mock Assert-CommandAvailable {}
+                Mock Get-AzVM { @($MockVm) }
+
+                $result = Get-AzureInstanceData -ResourceGroup 'prod-rg'
+                $result.PSObject.TypeNames | Should -Contain 'PSCumulus.AzureCloudRecord'
             }
         }
 

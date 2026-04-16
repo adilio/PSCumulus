@@ -169,3 +169,184 @@ class CloudTagHelper {
         return $result
     }
 }
+
+class CloudRecord {
+    [string]$Name
+    [string]$Provider
+    [string]$Region
+    [string]$Status
+    [string]$Size
+    [Nullable[datetime]]$CreatedAt
+    [string]$PrivateIpAddress
+    [string]$PublicIpAddress
+    [hashtable]$Tags
+    [hashtable]$Metadata
+    [string]$Kind
+
+    CloudRecord() {
+        $this.Tags = @{}
+        $this.Metadata = @{}
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.CloudRecord')
+    }
+}
+
+class AzureCloudRecord : CloudRecord {
+    [string]$ResourceGroup
+    [string]$VmId
+    [string]$OsType
+
+    AzureCloudRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureCloudRecord')
+    }
+
+    static [AzureCloudRecord] FromAzVM([object]$vm, [object]$addressData) {
+        $record = [AzureCloudRecord]::new()
+        $powerState = $null
+
+        if ($vm.Statuses) {
+            $powerState = $vm.Statuses |
+                Where-Object { $_.Code -like 'PowerState/*' } |
+                Select-Object -First 1 -ExpandProperty DisplayStatus
+        }
+
+        $normalizedStatus = [CloudInstanceStatusMap]::FromAzure($powerState)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudInstanceStatus]::Unknown
+        }
+
+        $resolvedOsType = $null
+        if ($vm.StorageProfile -and $vm.StorageProfile.OsDisk -and $vm.StorageProfile.OsDisk.OsType) {
+            $resolvedOsType = $vm.StorageProfile.OsDisk.OsType.ToString()
+        }
+
+        $record.Kind = 'Instance'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $vm.Name
+        $record.Region = $vm.Location
+        $record.Status = $normalizedStatus.ToString()
+        $record.Size = $vm.HardwareProfile.VmSize
+        $record.PrivateIpAddress = $addressData.PrivateIpAddress
+        $record.PublicIpAddress = $addressData.PublicIpAddress
+        $record.Tags = [CloudTagHelper]::FromAzureTags($vm.Tags)
+        $record.ResourceGroup = $vm.ResourceGroupName
+        $record.VmId = $vm.VmId
+        $record.OsType = $resolvedOsType
+        $record.Metadata = @{
+            NativeStatus = $powerState
+        }
+
+        return $record
+    }
+}
+
+class AWSCloudRecord : CloudRecord {
+    [string]$InstanceId
+    [string]$VpcId
+    [string]$SubnetId
+
+    AWSCloudRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSCloudRecord')
+    }
+
+    static [AWSCloudRecord] FromEC2Instance([object]$instance) {
+        $record = [AWSCloudRecord]::new()
+        $nameTag = $instance.Tags |
+            Where-Object { $_.Key -eq 'Name' } |
+            Select-Object -First 1 -ExpandProperty Value
+
+        $resolvedName = if ([string]::IsNullOrWhiteSpace($nameTag)) {
+            $instance.InstanceId
+        } else {
+            $nameTag
+        }
+
+        $nativeStatus = $null
+        if ($instance.State -and $instance.State.Name) {
+            $nativeStatus = $instance.State.Name.Value
+        }
+
+        $normalizedStatus = [CloudInstanceStatusMap]::FromAws($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudInstanceStatus]::Unknown
+        }
+
+        $record.Kind = 'Instance'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $resolvedName
+        $record.Region = $instance.Placement.AvailabilityZone
+        $record.Status = $normalizedStatus.ToString()
+        $record.Size = $instance.InstanceType.Value
+        $record.CreatedAt = $instance.LaunchTime
+        $record.PrivateIpAddress = $instance.PrivateIpAddress
+        $record.PublicIpAddress = $instance.PublicIpAddress
+        $record.Tags = [CloudTagHelper]::FromAwsTags($instance.Tags)
+        $record.InstanceId = $instance.InstanceId
+        $record.VpcId = $instance.VpcId
+        $record.SubnetId = $instance.SubnetId
+        $record.Metadata = @{
+            NativeStatus = $nativeStatus
+        }
+
+        return $record
+    }
+}
+
+class GCPCloudRecord : CloudRecord {
+    [string]$Project
+    [string]$Zone
+    [string]$Id
+
+    GCPCloudRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPCloudRecord')
+    }
+
+    static [GCPCloudRecord] FromGCloudJson([object]$instance, [string]$project) {
+        $record = [GCPCloudRecord]::new()
+        $zoneName = $null
+        $machineType = $null
+        $createdAt = $null
+        $primaryInterface = $null
+        $primaryAccessConfig = $null
+
+        if ($instance.zone) {
+            $zoneName = ($instance.zone -split '/')[-1]
+        }
+
+        if ($instance.machineType) {
+            $machineType = ($instance.machineType -split '/')[-1]
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($instance.creationTimestamp)) {
+            $createdAt = [datetime]::Parse($instance.creationTimestamp)
+        }
+
+        $networkInterfaces = @($instance.networkInterfaces)
+        $primaryInterface = $networkInterfaces | Select-Object -First 1
+        $accessConfigs = @($primaryInterface.accessConfigs)
+        $primaryAccessConfig = $accessConfigs | Select-Object -First 1
+
+        $normalizedStatus = [CloudInstanceStatusMap]::FromGcp($instance.status)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudInstanceStatus]::Unknown
+        }
+
+        $record.Kind = 'Instance'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $instance.name
+        $record.Region = $zoneName
+        $record.Status = $normalizedStatus.ToString()
+        $record.Size = $machineType
+        $record.CreatedAt = $createdAt
+        $record.PrivateIpAddress = $primaryInterface.networkIP
+        $record.PublicIpAddress = $primaryAccessConfig.natIP
+        $record.Tags = [CloudTagHelper]::FromGcpLabels($instance.labels)
+        $record.Project = $project
+        $record.Zone = $zoneName
+        $record.Id = $instance.id
+        $record.Metadata = @{
+            NativeStatus = $instance.status
+        }
+
+        return $record
+    }
+}

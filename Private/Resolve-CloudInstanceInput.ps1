@@ -27,11 +27,19 @@ function Resolve-CloudInstanceInput {
                     $Name = $InputObject.Name
                 }
 
+                if ([string]::IsNullOrWhiteSpace($ResourceGroup) -and $InputObject.PSObject.Properties['ResourceGroup']) {
+                    $ResourceGroup = $InputObject.ResourceGroup
+                }
+
                 if ([string]::IsNullOrWhiteSpace($ResourceGroup) -and $metadata -and $metadata.ResourceGroup) {
                     $ResourceGroup = $metadata.ResourceGroup
                 }
             }
             'AWS' {
+                if ([string]::IsNullOrWhiteSpace($InstanceId) -and $InputObject.PSObject.Properties['InstanceId']) {
+                    $InstanceId = $InputObject.InstanceId
+                }
+
                 if ([string]::IsNullOrWhiteSpace($InstanceId) -and $metadata -and $metadata.InstanceId) {
                     $InstanceId = $metadata.InstanceId
                 }
@@ -49,8 +57,16 @@ function Resolve-CloudInstanceInput {
                     $Name = $InputObject.Name
                 }
 
+                if ([string]::IsNullOrWhiteSpace($Project) -and $InputObject.PSObject.Properties['Project']) {
+                    $Project = $InputObject.Project
+                }
+
                 if ([string]::IsNullOrWhiteSpace($Project) -and $metadata -and $metadata.Project) {
                     $Project = $metadata.Project
+                }
+
+                if ([string]::IsNullOrWhiteSpace($Zone) -and $InputObject.PSObject.Properties['Zone']) {
+                    $Zone = $InputObject.Zone
                 }
 
                 if ([string]::IsNullOrWhiteSpace($Zone) -and $metadata -and $metadata.Zone) {

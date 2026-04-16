@@ -187,14 +187,14 @@ Describe 'Get-AWSInstanceData' {
             }
         }
 
-        It 'includes InstanceId in Metadata' {
+        It 'surfaces InstanceId as a first-class property' {
             InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
                 param($MockResponse)
                 Mock Assert-CommandAvailable {}
                 Mock Get-EC2Instance { $MockResponse }
 
                 $result = Get-AWSInstanceData -Region 'us-east-1'
-                $result.Metadata.InstanceId | Should -Be 'i-0abc123def456789'
+                $result.InstanceId | Should -Be 'i-0abc123def456789'
             }
         }
 
@@ -206,6 +206,17 @@ Describe 'Get-AWSInstanceData' {
 
                 $result = Get-AWSInstanceData -Region 'us-east-1'
                 $result.Metadata.NativeStatus | Should -BeExactly 'running'
+            }
+        }
+
+        It 'returns AWSCloudRecord instances' {
+            InModuleScope PSCumulus -Parameters @{ MockResponse = $script:mockResponse } {
+                param($MockResponse)
+                Mock Assert-CommandAvailable {}
+                Mock Get-EC2Instance { $MockResponse }
+
+                $result = Get-AWSInstanceData -Region 'us-east-1'
+                $result.PSObject.TypeNames | Should -Contain 'PSCumulus.AWSCloudRecord'
             }
         }
 
