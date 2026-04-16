@@ -472,6 +472,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#what-belongs-on-vendor-subclasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Belongs On Vendor Subclasses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-belongs-in-metadata" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1188,6 +1199,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#what-belongs-on-vendor-subclasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Belongs On Vendor Subclasses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-belongs-in-metadata" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1336,11 +1358,11 @@
 </tbody>
 </table>
 <h2 id="what-this-repo-already-was">What This Repo Already Was<a class="headerlink" href="#what-this-repo-already-was" title="Permanent link">&para;</a></h2>
-<p>Before the recent internal typed-contract work, PSCumulus was already a working cmdlet-first module with a clear shape:</p>
+<p>Before the recent typed-contract and record-model work, PSCumulus was already a working cmdlet-first module with a clear shape:</p>
 <ul>
 <li>a small public surface built around verb-noun commands like <code>Get-CloudInstance</code></li>
 <li>provider-specific backend functions under <code>Private/</code></li>
-<li>normalized <code>PSCumulus.CloudRecord</code> output built from <code>[pscustomobject]</code></li>
+<li>normalized <code>PSCumulus.CloudRecord</code> output built from a stable shared property contract</li>
 <li>a stored multi-provider session context for interactive use</li>
 <li>honest provider-native detail preserved in <code>Metadata</code></li>
 </ul>
@@ -1366,8 +1388,9 @@
 <li>For IAM — the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Forcing a single surface over those would erase distinctions that matter in practice.</li>
 </ul>
 <p>Provider-native differences that survive normalization belong in <code>Metadata</code>, not in the public command noun.</p>
+<p>For Stage 2, that principle gets sharpened: genuinely opaque detail stays in <code>Metadata</code>, but commonly-needed vendor identity fields graduate into first-class properties on vendor subclasses.</p>
 <h3 id="shared-output-contract">Shared Output Contract<a class="headerlink" href="#shared-output-contract" title="Permanent link">&para;</a></h3>
-<p>Inventory commands return <code>PSCumulus.CloudRecord</code> objects with a stable cross-cloud shape:</p>
+<p>Inventory commands return <code>PSCumulus.CloudRecord</code>-compatible records with a stable cross-cloud shape:</p>
 <table>
 <thead>
 <tr>
@@ -1426,11 +1449,18 @@
 </ul>
 <p>That GCP mapping is deliberate: native GCP <code>TERMINATED</code> means stopped-but-restartable, while normalized <code>Terminated</code> is reserved for permanently gone resources. The original provider value remains available in <code>Metadata.NativeStatus</code>.</p>
 <p><code>Suspending</code> and <code>Suspended</code> are valid normalized states today, but they currently come from GCP only.</p>
+<p>For Azure instances, when no power state can be read, PSCumulus now emits <code>Unknown</code> rather than the older <code>Ready</code> fallback so the public status contract stays aligned with the semantic enum vocabulary.</p>
+<h3 id="what-belongs-on-vendor-subclasses">What Belongs On Vendor Subclasses<a class="headerlink" href="#what-belongs-on-vendor-subclasses" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Azure instance records: <code>ResourceGroup</code>, <code>VmId</code>, <code>OsType</code></li>
+<li>AWS instance records: <code>InstanceId</code>, <code>VpcId</code>, <code>SubnetId</code></li>
+<li>GCP instance records: <code>Project</code>, <code>Zone</code>, <code>Id</code></li>
+</ul>
 <h3 id="what-belongs-in-metadata">What Belongs In <code>Metadata</code><a class="headerlink" href="#what-belongs-in-metadata" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Azure: <code>ResourceGroup</code>, <code>VmId</code>, <code>OsType</code>, <code>Sku</code></li>
-<li>AWS: <code>InstanceId</code>, <code>VpcId</code>, <code>SubnetId</code>, <code>VolumeType</code></li>
-<li>GCP: <code>Project</code>, <code>Zone</code>, <code>Labels</code>, <code>DiskType</code></li>
+<li>native status strings</li>
+<li>provider-native long-tail details that do not deserve a stable first-class property</li>
+<li>transitional compatibility data while older resource kinds still use the legacy construction path</li>
 </ul>
 <h3 id="what-not-to-normalize">What Not To Normalize<a class="headerlink" href="#what-not-to-normalize" title="Permanent link">&para;</a></h3>
 <p>Do not force a shared command when the providers express materially different models. IAM is the clearest example — the human question is the same ("who can do what?"), but the CSP answers are structured so differently that a normalized surface would be dishonest:</p>
@@ -1472,13 +1502,13 @@
 <p>This keeps interactive usage fast without making scripts depend on hidden state.</p>
 <h2 id="implementation-stages">Implementation Stages<a class="headerlink" href="#implementation-stages" title="Permanent link">&para;</a></h2>
 <p>PSCumulus is being built in additive stages so each one is shippable on its own. The cmdlets remain the primary interface throughout. Any future Provider is layered on top of the same backend engine, not treated as a replacement. The core module stays PowerShell 5.1-compatible, while later navigation work is expected to target PowerShell 7+ where provider classes are more reliable.</p>
-<p>This direction became much clearer after the Summit talk on <strong>Monday, April 13, 2026</strong>, when Jeffrey Snover offered the insight that unlocked the roadmap: the cmdlets did not need to be displaced for PSCumulus to grow; a future Provider could be added as a navigation layer over the same backend engine. The full rationale and stage-by-stage narrative live in <a href="../evolution/">Evolution</a>.</p>
-<p><strong>Current status:</strong> Stage 1 is complete in the working tree after the Stage 1 alignment pass.<br />
-<strong>Next planned stage:</strong> Stage 2 — Resource Kind Awareness.</p>
+<p>This direction became much clearer after the Summit talk on <strong>Monday, April 13, 2026</strong>, when Jeffrey Snover offered the insight that unlocked the roadmap: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the roadmap, but it now follows the corrected record model instead of leading it. The full rationale and stage-by-stage narrative live in <a href="../evolution/">Evolution</a>.</p>
+<p><strong>Current status:</strong> Stage 1 is complete and Stage 2 has started for instance records.<br />
+<strong>Current implementation focus:</strong> Stage 2 — Vendor Subclass Records.</p>
 <p>Broad outline:</p>
 <ol>
 <li><strong>Stage 1 — Internal Typed Contract</strong>: strengthen internal correctness without changing the public cmdlet surface.</li>
-<li><strong>Stage 2 — Resource Kind Awareness</strong>: make records more self-describing for future routing and navigation.</li>
+<li><strong>Stage 2 — Vendor Subclass Records</strong>: introduce a real base record class, vendor subclasses, subclass-owned normalization factories, and <code>Kind</code>.</li>
 <li><strong>Stage 3 — Cloud Path Model</strong>: define a structured path/resolver layer independent of any Provider mechanics.</li>
 <li><strong>Stage 4 — The Provider (Read-Only)</strong>: add additive navigation over the same backend engine.</li>
 <li><strong>Stage 5 — Write Operations Through the Provider</strong>: let lifecycle actions flow through path context once navigation is stable.</li>

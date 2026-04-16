@@ -1185,9 +1185,13 @@
 <li><code>Region</code></li>
 <li><code>Status</code></li>
 <li><code>Size</code></li>
+<li><code>PrivateIpAddress</code></li>
+<li><code>PublicIpAddress</code></li>
+<li><code>Tags</code></li>
 <li><code>CreatedAt</code></li>
 <li><code>Metadata</code></li>
 </ul>
+<p>For instance inventory, the shared contract is now backed by a real base class with vendor subclasses. Common provider identity fields such as Azure <code>ResourceGroup</code>, AWS <code>InstanceId</code>, and GCP <code>Project</code> are first-class properties on those vendor-specific instance records rather than living only in <code>Metadata</code>.</p>
 <p><code>Connect-Cloud</code> returns <code>PSCumulus.ConnectionResult</code>.</p>
 <p><code>Get-CloudContext</code> returns <code>PSCumulus.CloudContext</code> objects with these properties:</p>
 <ul>
