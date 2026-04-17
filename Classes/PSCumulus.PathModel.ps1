@@ -43,13 +43,6 @@ class CloudPath {
         $matchedProvider = $validProviders | Where-Object { $_ -eq $providerName } | Select-Object -First 1
 
         if (-not $matchedProvider) {
-            $matchedProvider = $validProviders | Where-Object {
-                $providerName.Length -ge 2 -and
-                $_ -eq $providerName.Substring(0, 1).ToUpper() + $providerName.Substring(1).ToLower()
-            } | Select-Object -First 1
-        }
-
-        if (-not $matchedProvider) {
             throw [System.ArgumentException]::new("Invalid provider '$providerName'. Must be one of: Azure, AWS, GCP.", 'path')
         }
 
@@ -82,19 +75,18 @@ class CloudPath {
 
         if ($segments.Count -ge 2) {
             $kindSegment = $segments[1]
-            $validKinds = @{
-                'Instance'  = 'Instances'
-                'Instances' = 'Instances'
-                'Disk'      = 'Disks'
-                'Disks'     = 'Disks'
-                'Storage'   = 'Storage'
-                'Network'   = 'Networks'
-                'Networks'  = 'Networks'
-                'Function'  = 'Functions'
-                'Functions' = 'Functions'
-                'Tag'       = 'Tags'
-                'Tags'      = 'Tags'
-            }
+            $validKinds = [System.Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
+            $validKinds['Instance'] = 'Instances'
+            $validKinds['Instances'] = 'Instances'
+            $validKinds['Disk'] = 'Disks'
+            $validKinds['Disks'] = 'Disks'
+            $validKinds['Storage'] = 'Storage'
+            $validKinds['Network'] = 'Networks'
+            $validKinds['Networks'] = 'Networks'
+            $validKinds['Function'] = 'Functions'
+            $validKinds['Functions'] = 'Functions'
+            $validKinds['Tag'] = 'Tags'
+            $validKinds['Tags'] = 'Tags'
 
             $canonicalKind = if ($validKinds.ContainsKey($kindSegment)) {
                 $validKinds[$kindSegment]
@@ -169,7 +161,7 @@ class CloudPathResolver {
             'Instances' = 'Instance'
             'Disks'     = 'Disk'
             'Storage'   = 'Storage'
-            'Network'   = 'Network'
+            'Networks'  = 'Network'
             'Functions' = 'Function'
             'Tags'      = 'Tag'
         }

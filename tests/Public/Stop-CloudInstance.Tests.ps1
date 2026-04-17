@@ -191,4 +191,92 @@ Describe 'Stop-CloudInstance' {
             }
         }
     }
+
+    Context 'Path parameter set' {
+        It 'dispatches Azure path to Stop-AzureInstance with correct parameters' {
+            InModuleScope PSCumulus {
+                Mock Stop-AzureInstance {
+                    param([string]$Name, [string]$ResourceGroup)
+                    [AzureCloudRecord]@{ Name = $Name; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
+                }
+
+                Stop-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -Confirm:$false
+
+                Should -Invoke Stop-AzureInstance -Times 1 -ParameterFilter {
+                    $Name -eq 'web-server-01' -and $ResourceGroup -eq 'prod-rg'
+                }
+            }
+        }
+
+        It 'dispatches AWS path to Stop-AWSInstance with correct parameters' {
+            InModuleScope PSCumulus {
+                Mock Stop-AWSInstance {
+                    param([string]$InstanceId, [string]$Region)
+                    [AWSCloudRecord]@{ Name = $InstanceId; Provider = 'AWS'; Region = $Region; Status = 'Stopping' }
+                }
+
+                Stop-CloudInstance -Path 'AWS:\us-east-1\Instances\i-12345678' -Confirm:$false
+
+                Should -Invoke Stop-AWSInstance -Times 1 -ParameterFilter {
+                    $InstanceId -eq 'i-12345678' -and $Region -eq 'us-east-1'
+                }
+            }
+        }
+
+        It 'dispatches GCP path and resolves Zone via Get-GCPInstanceData lookup' {
+            InModuleScope PSCumulus {
+                Mock Get-GCPInstanceData {
+                    [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP'; Zone = 'us-central1-a'; Project = 'my-project' }
+                }
+                Mock Stop-GCPInstance {
+                    param([string]$Name, [string]$Zone, [string]$Project)
+                    [GCPCloudRecord]@{ Name = $Name; Provider = 'GCP'; Region = $Zone; Metadata = @{ Proj = $Project } }
+                }
+
+                Stop-CloudInstance -Path 'GCP:\my-project\Instances\gcp-vm' -Confirm:$false
+
+                Should -Invoke Get-GCPInstanceData -Times 1 -ParameterFilter {
+                    $Project -eq 'my-project' -and $Name -eq 'gcp-vm'
+                }
+                Should -Invoke Stop-GCPInstance -Times 1 -ParameterFilter {
+                    $Name -eq 'gcp-vm' -and $Zone -eq 'us-central1-a' -and $Project -eq 'my-project'
+                }
+            }
+        }
+
+        It 'throws ArgumentException for non-Resource depth paths' {
+            InModuleScope PSCumulus {
+                { Stop-CloudInstance -Path 'Azure:\prod-rg\Instances' } | Should -Throw -ExpectedMessage '*Path must resolve to a specific resource*'
+                { Stop-CloudInstance -Path 'Azure:\prod-rg' } | Should -Throw -ExpectedMessage '*Path must resolve to a specific resource*'
+                { Stop-CloudInstance -Path 'Azure:\' } | Should -Throw -ExpectedMessage '*Path must resolve to a specific resource*'
+            }
+        }
+
+        It 'throws ArgumentException for non-Instances kind' {
+            InModuleScope PSCumulus {
+                { Stop-CloudInstance -Path 'Azure:\prod-rg\Disks\disk-01' } | Should -Throw -ExpectedMessage '*only supported for Instances*'
+                { Stop-CloudInstance -Path 'AWS:\us-east-1\Storage\bucket' } | Should -Throw -ExpectedMessage '*only supported for Instances*'
+            }
+        }
+
+        It 'does not invoke backend when -WhatIf is used' {
+            InModuleScope PSCumulus {
+                Mock Stop-AzureInstance {
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Status = 'Stopping' }
+                }
+
+                Stop-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -WhatIf
+
+                Should -Invoke Stop-AzureInstance -Times 0
+            }
+        }
+
+        It 'throws InvalidOperationException when GCP instance not found' {
+            InModuleScope PSCumulus {
+                Mock Get-GCPInstanceData { return $null }
+
+                { Stop-CloudInstance -Path 'GCP:\my-project\Instances\nonexistent-vm' } | Should -Throw -ExpectedMessage '*not found in project*'
+            }
+        }
+    }
 }

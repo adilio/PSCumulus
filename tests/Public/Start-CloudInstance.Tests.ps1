@@ -191,4 +191,92 @@ Describe 'Start-CloudInstance' {
             }
         }
     }
+
+    Context 'Path parameter set' {
+        It 'dispatches Azure path to Start-AzureInstance with correct parameters' {
+            InModuleScope PSCumulus {
+                Mock Start-AzureInstance {
+                    param([string]$Name, [string]$ResourceGroup)
+                    [AzureCloudRecord]@{ Name = $Name; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
+                }
+
+                Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -Confirm:$false
+
+                Should -Invoke Start-AzureInstance -Times 1 -ParameterFilter {
+                    $Name -eq 'web-server-01' -and $ResourceGroup -eq 'prod-rg'
+                }
+            }
+        }
+
+        It 'dispatches AWS path to Start-AWSInstance with correct parameters' {
+            InModuleScope PSCumulus {
+                Mock Start-AWSInstance {
+                    param([string]$InstanceId, [string]$Region)
+                    [AWSCloudRecord]@{ Name = $InstanceId; Provider = 'AWS'; Region = $Region; Status = 'Starting' }
+                }
+
+                Start-CloudInstance -Path 'AWS:\us-east-1\Instances\i-12345678' -Confirm:$false
+
+                Should -Invoke Start-AWSInstance -Times 1 -ParameterFilter {
+                    $InstanceId -eq 'i-12345678' -and $Region -eq 'us-east-1'
+                }
+            }
+        }
+
+        It 'dispatches GCP path and resolves Zone via Get-GCPInstanceData lookup' {
+            InModuleScope PSCumulus {
+                Mock Get-GCPInstanceData {
+                    [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP'; Zone = 'us-central1-a'; Project = 'my-project' }
+                }
+                Mock Start-GCPInstance {
+                    param([string]$Name, [string]$Zone, [string]$Project)
+                    [GCPCloudRecord]@{ Name = $Name; Provider = 'GCP'; Region = $Zone; Metadata = @{ Proj = $Project } }
+                }
+
+                Start-CloudInstance -Path 'GCP:\my-project\Instances\gcp-vm' -Confirm:$false
+
+                Should -Invoke Get-GCPInstanceData -Times 1 -ParameterFilter {
+                    $Project -eq 'my-project' -and $Name -eq 'gcp-vm'
+                }
+                Should -Invoke Start-GCPInstance -Times 1 -ParameterFilter {
+                    $Name -eq 'gcp-vm' -and $Zone -eq 'us-central1-a' -and $Project -eq 'my-project'
+                }
+            }
+        }
+
+        It 'throws ArgumentException for non-Resource depth paths' {
+            InModuleScope PSCumulus {
+                { Start-CloudInstance -Path 'Azure:\prod-rg\Instances' } | Should -Throw -ExpectedMessage '*Path must resolve to a specific resource*'
+                { Start-CloudInstance -Path 'Azure:\prod-rg' } | Should -Throw -ExpectedMessage '*Path must resolve to a specific resource*'
+                { Start-CloudInstance -Path 'Azure:\' } | Should -Throw -ExpectedMessage '*Path must resolve to a specific resource*'
+            }
+        }
+
+        It 'throws ArgumentException for non-Instances kind' {
+            InModuleScope PSCumulus {
+                { Start-CloudInstance -Path 'Azure:\prod-rg\Disks\disk-01' } | Should -Throw -ExpectedMessage '*only supported for Instances*'
+                { Start-CloudInstance -Path 'AWS:\us-east-1\Storage\bucket' } | Should -Throw -ExpectedMessage '*only supported for Instances*'
+            }
+        }
+
+        It 'does not invoke backend when -WhatIf is used' {
+            InModuleScope PSCumulus {
+                Mock Start-AzureInstance {
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Status = 'Starting' }
+                }
+
+                Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -WhatIf
+
+                Should -Invoke Start-AzureInstance -Times 0
+            }
+        }
+
+        It 'throws InvalidOperationException when GCP instance not found' {
+            InModuleScope PSCumulus {
+                Mock Get-GCPInstanceData { return $null }
+
+                { Start-CloudInstance -Path 'GCP:\my-project\Instances\nonexistent-vm' } | Should -Throw -ExpectedMessage '*not found in project*'
+            }
+        }
+    }
 }

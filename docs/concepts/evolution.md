@@ -27,7 +27,7 @@ Once that clicked, the stages became much easier to define:
 
 ## Current Status
 
-PSCumulus has completed **Stage 2: Vendor Subclass Records** (v0.3.2).
+PSCumulus has completed **Stage 6: Cross-Cloud Aggregation** (v0.6.0).
 
 **Stage 1 is complete:**
 - Internal typed vocabulary is established
@@ -47,6 +47,34 @@ PSCumulus has completed **Stage 2: Vendor Subclass Records** (v0.3.2).
 - Kind-level detailed format views showing vendor-specific properties
 - Semantic status normalization for all resource types with enum-based status maps
 - Native status preserved in `Metadata.NativeStatus` for all resource types
+
+**Stage 3 is complete:**
+- `CloudPath` model with structured parsing
+- `CloudPathResolver` maps paths to backend commands
+- Case-insensitive provider and kind name handling
+- Singular/plural kind normalization
+- Comprehensive path validation and depth tracking
+
+**Stage 4 is complete:**
+- Read-only SHiPS provider with navigable drives
+- CloudProviderRoot → CloudScopeNode → CloudKindNode → CloudResourceLeaf hierarchy
+- Provider-aware scope enumeration (Azure resource groups, AWS/GCP context)
+- Dynamic resource discovery per kind
+- PowerShell 5.1-compatible with conditional SHiPS loading
+
+**Stage 5 is complete:**
+- Path parameter set on `Start-CloudInstance` and `Stop-CloudInstance`
+- Path-aware lifecycle operations with depth and kind validation
+- GCP Zone auto-resolution via instance lookup
+- `ShouldProcess` and `-WhatIf` support for path-based operations
+- Provider inference from path syntax
+
+**Stage 6 is complete:**
+- `CloudAggregationRoot` for cross-cloud navigation
+- `Connect-CloudDrive` and `Disconnect-CloudDrive` cmdlets
+- Per-provider drive management (Azure:, AWS:, GCP:)
+- Automatic drive creation on connect, cleanup on disconnect
+- Connected provider filtering in aggregation root
 
 The module still behaves the same way from the outside:
 - the public interface is still cmdlet-first

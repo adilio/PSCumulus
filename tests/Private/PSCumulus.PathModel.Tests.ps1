@@ -115,6 +115,28 @@ Describe 'CloudPath.Parse' {
         }
     }
 
+    It 'Handles case-insensitive kind names' {
+        InModuleScope PSCumulus {
+            $result = [CloudPath]::Parse('Azure:\rg\instances\vm')
+            $result.Kind | Should -Be 'Instances'
+
+            $result = [CloudPath]::Parse('AWS:\region\DISKS\d1')
+            $result.Kind | Should -Be 'Disks'
+
+            $result = [CloudPath]::Parse('GCP:\proj\storage\bucket')
+            $result.Kind | Should -Be 'Storage'
+
+            $result = [CloudPath]::Parse('Azure:\rg\networks\vnet')
+            $result.Kind | Should -Be 'Networks'
+
+            $result = [CloudPath]::Parse('AWS:\region\FUNCTIONS\fn')
+            $result.Kind | Should -Be 'Functions'
+
+            $result = [CloudPath]::Parse('GCP:\proj\TAGS\t1')
+            $result.Kind | Should -Be 'Tags'
+        }
+    }
+
     It 'Throws on null or empty path' {
         InModuleScope PSCumulus {
             { [CloudPath]::Parse($null) } | Should -Throw -ExpectedMessage '*cannot be null or empty*'
@@ -273,7 +295,7 @@ Describe 'CloudPathResolver.GetBackendCommand' {
             [CloudPathResolver]::GetBackendCommand('Azure', 'Instances') | Should -Be 'Get-AzureInstanceData'
             [CloudPathResolver]::GetBackendCommand('Azure', 'Disks') | Should -Be 'Get-AzureDiskData'
             [CloudPathResolver]::GetBackendCommand('Azure', 'Storage') | Should -Be 'Get-AzureStorageData'
-            [CloudPathResolver]::GetBackendCommand('Azure', 'Network') | Should -Be 'Get-AzureNetworkData'
+            [CloudPathResolver]::GetBackendCommand('Azure', 'Networks') | Should -Be 'Get-AzureNetworkData'
             [CloudPathResolver]::GetBackendCommand('Azure', 'Functions') | Should -Be 'Get-AzureFunctionData'
             [CloudPathResolver]::GetBackendCommand('Azure', 'Tags') | Should -Be 'Get-AzureTagData'
 
