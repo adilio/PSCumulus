@@ -67,8 +67,8 @@ GCP uses the CLI adapter path deliberately. It provides stable JSON output and a
 
 The test behind every unified command: do the underlying CSP philosophies behind this concept overlap enough that a normalized answer is still honest?
 
-- For compute, storage, disk, network, functions, and tags — yes. The question translates. The answer can be normalized.
-- For IAM — the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Forcing a single surface over those would erase distinctions that matter in practice.
+- For compute, storage, disk, network, functions, and tags, yes. The question translates. The answer can be normalized.
+- For IAM, the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Forcing a single surface over those would erase distinctions that matter in practice.
 
 Provider-native differences that survive normalization belong in `Metadata`, not in the public command noun.
 
@@ -88,7 +88,7 @@ Inventory commands return `PSCumulus.CloudRecord`-compatible records with a stab
 | `CreatedAt` | Creation time when available |
 | `PrivateIpAddress` | Private IP address when available |
 | `PublicIpAddress` | Public IP address when available |
-| `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
+| `Tags` | Normalized hashtable. AWS tags, Azure tags, and GCP labels all map here |
 | `Metadata` | Provider-native details that do not normalize cleanly |
 
 `Status` is semantic, not just title-cased provider output. Examples:
@@ -117,7 +117,7 @@ For Azure instances, when no power state can be read, PSCumulus now emits `Unkno
 
 ### What Not To Normalize
 
-Do not force a shared command when the providers express materially different models. IAM is the clearest example — the human question is the same ("who can do what?"), but the CSP answers are structured so differently that a normalized surface would be dishonest:
+Do not force a shared command when the providers express materially different models. IAM is the clearest example. The human question is the same ("who can do what?"), but the CSP answers are structured so differently that a normalized surface would be dishonest:
 
 ```powershell
 Get-AzRoleAssignment -Scope "/subscriptions/..."
@@ -169,16 +169,16 @@ PSCumulus is being built in additive stages so each one is shippable on its own.
 This direction became much clearer after the Summit talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the insight that unlocked the roadmap: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the roadmap, but it now follows the corrected record model instead of leading it. The full rationale and stage-by-stage narrative live in [Evolution](evolution.md).
 
 **Current status:** Stage 1 is complete and Stage 2 has started for instance records.  
-**Current implementation focus:** Stage 2 — Vendor Subclass Records.
+**Current implementation focus:** Stage 2: Vendor Subclass Records.
 
 Broad outline:
 
-1. **Stage 1 — Internal Typed Contract**: strengthen internal correctness without changing the public cmdlet surface.
-2. **Stage 2 — Vendor Subclass Records**: introduce a real base record class, vendor subclasses, subclass-owned normalization factories, and `Kind`.
-3. **Stage 3 — Cloud Path Model**: define a structured path/resolver layer independent of any Provider mechanics.
-4. **Stage 4 — The Provider (Read-Only)**: add additive navigation over the same backend engine.
-5. **Stage 5 — Write Operations Through the Provider**: let lifecycle actions flow through path context once navigation is stable.
-6. **Stage 6 — Cross-Cloud Aggregation**: expose multi-provider views through navigation as well as cmdlets.
+1. **Stage 1: Internal Typed Contract**: strengthen internal correctness without changing the public cmdlet surface.
+2. **Stage 2: Vendor Subclass Records**: introduce a real base record class, vendor subclasses, subclass-owned normalization factories, and `Kind`.
+3. **Stage 3: Cloud Path Model**: define a structured path/resolver layer independent of any Provider mechanics.
+4. **Stage 4: The Provider (Read-Only)**: add additive navigation over the same backend engine.
+5. **Stage 5: Write Operations Through the Provider**: let lifecycle actions flow through path context once navigation is stable.
+6. **Stage 6: Cross-Cloud Aggregation**: expose multi-provider views through navigation as well as cmdlets.
 
 For the full stage-by-stage plan, rationale, origin story, and decision details, see [Evolution](evolution.md).
 

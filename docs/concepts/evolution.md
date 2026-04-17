@@ -27,7 +27,7 @@ Once that clicked, the stages became much easier to define:
 
 ## Current Status
 
-PSCumulus is currently between **Stage 1 — Internal Typed Contract** and **Stage 2 — Vendor Subclass Records**.
+PSCumulus is currently between **Stage 1: Internal Typed Contract** and **Stage 2: Vendor Subclass Records**.
 
 That means the core module still behaves the same way from the outside:
 
@@ -135,7 +135,7 @@ These principles apply to the full roadmap.
 
 That last point is especially important. The roadmap is not only about new user features. It is also about making PSCumulus cheaper to extend without turning it into an over-abstracted framework.
 
-## Stage 1 — Internal Typed Contract
+## Stage 1: Internal Typed Contract
 
 ### Purpose
 
@@ -177,7 +177,7 @@ Stage 1 deliberately does **not**:
 
 That restraint is the point. This stage is about making the existing module more trustworthy, not about changing how users interact with it.
 
-## Stage 2 — Vendor Subclass Records
+## Stage 2: Vendor Subclass Records
 
 ### Purpose
 
@@ -203,7 +203,7 @@ This stage creates one place of authority per provider. If you want to understan
 
 This stage is valuable even if a Provider never lands. It also gives later path and Provider work a better foundation because those layers can return strongly typed records rather than generic property bags.
 
-## Stage 3 — Cloud Path Model
+## Stage 3: Cloud Path Model
 
 ### Purpose
 
@@ -233,7 +233,7 @@ The records returned by that resolver now benefit from Stage 2: a path can resol
 
 A Provider built without a clean path model would be fragile. Pulling the model out into its own stage means the hard part can be reasoned about and tested without mixing it with PowerShell Provider mechanics.
 
-## Stage 4 — The Provider (Read-Only)
+## Stage 4: The Provider (Read-Only)
 
 ### Purpose
 
@@ -268,7 +268,7 @@ It should not invent a new engine. It should delegate to the same internal logic
 
 This is also the stage where PowerShell version reality matters most. Provider-oriented class infrastructure is a much more natural fit for PowerShell 7+ than for 5.1. That is why the roadmap treats the Provider as future-facing and additive, not as something the core module must force into 5.1 prematurely.
 
-## Stage 5 — Write Operations Through The Provider
+## Stage 5: Write Operations Through The Provider
 
 ### Purpose
 
@@ -294,7 +294,7 @@ That is appealing, but also the moment when convenience can become dangerous. Wr
 
 Because a write-capable Provider built on an unstable read model would be reckless. Read-only navigation needs to be correct and predictable before any destructive or state-changing operations are layered on top.
 
-## Stage 6 — Cross-Cloud Aggregation
+## Stage 6: Cross-Cloud Aggregation
 
 ### Purpose
 

@@ -15,7 +15,7 @@ A thin, honest PowerShell abstraction for Azure, AWS, and GCP.
 `PSCumulus` is a small cross-cloud module with two ideas behind it:
 
 1. **Build on what does not move.** PowerShell's verb-noun model is a stable cognitive anchor when you're drowning in three different cloud providers. Fluency is infrastructure.
-2. **Refuse to lie about the seams.** Every unified command in PSCumulus had to pass a test: *do the underlying provider philosophies overlap enough that a normalized answer is still honest?* For compute, storage, disks, networks, functions, and tags — yes. For IAM — no. That's why there is no `Get-CloudPermission`.
+2. **Refuse to lie about the seams.** Every unified command in PSCumulus had to pass a test: *do the underlying provider philosophies overlap enough that a normalized answer is still honest?* For compute, storage, disks, networks, functions, and tags, yes. For IAM, no. That's why there is no `Get-CloudPermission`.
 
 The module is evidence for an argument. The argument is that a deliberately narrow abstraction, with its seams left visible, is more useful than a comprehensive one that pretends the clouds are interchangeable.
 
@@ -66,7 +66,7 @@ Inventory commands return `PSCumulus.CloudRecord` records with a stable shape:
 | `CreatedAt` | Creation time when available |
 | `PrivateIpAddress` | Private IP address when available |
 | `PublicIpAddress` | Public IP address when available |
-| `Tags` | Normalized hashtable — AWS tags, Azure tags, GCP labels all map here |
+| `Tags` | Normalized hashtable. AWS tags, Azure tags, and GCP labels all map here |
 | `Metadata` | Provider-native details that don't normalize cleanly |
 
 The first nine columns are what you can safely filter and group against across clouds. `Tags` stays a normal PowerShell hashtable lookup surface. `Metadata` remains available for honest provider-native long-tail detail, while commonly-needed instance fields like Azure `ResourceGroup`, AWS `InstanceId`, and GCP `Project` now live as first-class properties on vendor-specific instance subclasses.
@@ -112,29 +112,29 @@ PSCumulus is being evolved in stages so each step ships independently, delivers 
 The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the key insight that unlocked the next move: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the plan, but it now follows that corrected object-model foundation rather than defining it. The longer-form rationale lives in the [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) doc.
 
 **Current status:** Stage 1 is complete and Stage 2 is underway for instance records.  
-**Current implementation focus:** Stage 2 — Vendor Subclass Records.
+**Current implementation focus:** Stage 2: Vendor Subclass Records.
 
-1. **Stage 1 — Internal Typed Contract**  
+1. **Stage 1: Internal Typed Contract**  
    Purpose: establish a typed internal vocabulary without changing the public cmdlet surface.  
    Additive capability: internal types, wrapper converters, semantic instance status normalization, `Metadata.NativeStatus`, and no public cmdlet or output-type break.  
    Why separate: it fixes correctness first and gives every later stage the same status/tag vocabulary.
-2. **Stage 2 — Vendor Subclass Records**  
+2. **Stage 2: Vendor Subclass Records**  
    Purpose: introduce a real `CloudRecord` base class, vendor subclasses, subclass-owned factory methods, and a `Kind` field.  
    Additive capability: instance normalization now lives in one place per provider, and future path or Provider work can build on typed records instead of generic property bags.  
    Why separate: it fixes the record model directly and absorbs resource-kind awareness into the same stage.
-3. **Stage 3 — Cloud Path Model**  
+3. **Stage 3: Cloud Path Model**  
    Purpose: define and resolve hierarchical cloud paths independently of any Provider implementation.  
    Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.  
    Why separate: path parsing and resolution are useful and testable on their own, and they are the hardest part of Provider work to get right.
-4. **Stage 4 — The Provider (Read-Only)**  
+4. **Stage 4: The Provider (Read-Only)**  
    Purpose: make cloud resources navigable through PowerShell drives.  
    Additive capability: read-only navigation such as `dir Azure:\prod-rg\Instances`, layered over the same backend engine the cmdlets already use.  
    Why separate: the Provider is additive, not a replacement, and it likely belongs in a PS 7+ path where provider classes are more reliable.
-5. **Stage 5 — Write Operations Through the Provider**  
+5. **Stage 5: Write Operations Through the Provider**  
    Purpose: let lifecycle actions flow through path context once navigation is stable.  
    Additive capability: path-driven start/stop style operations with `ShouldProcess` behavior preserved.  
    Why separate: write operations need careful `-WhatIf` and confirmation behavior, so the read-only Provider needs to prove itself first.
-6. **Stage 6 — Cross-Cloud Aggregation**  
+6. **Stage 6: Cross-Cloud Aggregation**  
    Purpose: expose the existing cross-cloud aggregation story through navigation as well as cmdlets.  
    Additive capability: a synthetic cross-cloud view such as `Cloud:\Instances` spanning all connected providers.  
    Why separate: it depends on the earlier path and Provider work being stable, and it carries the highest performance and UX risk.
@@ -167,7 +167,7 @@ Install-Module Az -Scope CurrentUser
 # AWS
 Install-Module AWS.Tools.EC2, AWS.Tools.S3 -Scope CurrentUser
 
-# GCP — no maintained PowerShell module; install the gcloud CLI
+# GCP: no maintained PowerShell module; install the gcloud CLI
 # https://cloud.google.com/sdk/docs/install
 ```
 
@@ -196,7 +196,7 @@ Provider SDK calls are mocked in the test suite, so cloud credentials are not re
 
 ## Demo mode
 
-For the Summit talk — and for anyone who wants to try PSCumulus without real cloud accounts — `scripts/demo-setup.ps1` monkeypatches the provider backends inside the module scope and seeds realistic multi-cloud data:
+For the Summit talk, and for anyone who wants to try PSCumulus without real cloud accounts, `scripts/demo-setup.ps1` monkeypatches the provider backends inside the module scope and seeds realistic multi-cloud data:
 
 ```powershell
 Import-Module ./PSCumulus.psd1 -Force
@@ -216,9 +216,9 @@ See [`docs/talk-demo.md`](docs/talk-demo.md) for the curated query list used in 
 ## Documentation
 
 - [Getting Started](https://adilio.github.io/PSCumulus/getting-started/)
-- [Strategy](https://adilio.github.io/PSCumulus/concepts/strategy/) — project rationale, normalization rules, roadmap
-- [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) — detailed staged plan, design rationale, origin story, and current project status
-- [Command reference](https://adilio.github.io/PSCumulus/reference/) — generated from PlatyPS
+- [Strategy](https://adilio.github.io/PSCumulus/concepts/strategy/): project rationale, normalization rules, roadmap
+- [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/): detailed staged plan, design rationale, origin story, and current project status
+- [Command reference](https://adilio.github.io/PSCumulus/reference/): generated from PlatyPS
 
 ```powershell
 Get-Help about_PSCumulus

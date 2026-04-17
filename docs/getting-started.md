@@ -31,7 +31,7 @@ Connect-Cloud -Provider AWS -Region "us-east-1"
 Connect-Cloud -Provider GCP -Project "my-project"
 ```
 
-`Connect-Cloud` does more than set a provider — it checks whether you are already authenticated and triggers the provider-native login flow automatically if not. If you are already logged in, it skips login and stores the session context directly.
+`Connect-Cloud` does more than set a provider. It checks whether you are already authenticated and triggers the provider-native login flow automatically if not. If you are already logged in, it skips login and stores the session context directly.
 
 `Connect-Cloud` remembers the active provider for the current session. In interactive use, many later commands can omit `-Provider` when the remaining parameters already imply the target cloud or when the current provider makes the intent clear.
 

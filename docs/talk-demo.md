@@ -1,4 +1,4 @@
-# PSCumulus Talk Demo — Cheat Sheet
+# PSCumulus Talk Demo: Cheat Sheet
 
 Copy-paste blocks aligned to *Cross-Cloud without Crossed Fingers* (Summit 2026). `demo-setup.ps1` injects simulated data, so every command below runs offline and returns the same output every time.
 
@@ -28,7 +28,7 @@ Dot-sourcing `demo-setup.ps1` pre-seeds context via `Connect-Cloud -Provider Azu
 
 ---
 
-## 1. DEMO A — Native vs. Unified *(Slide 7)*
+## 1. DEMO A: Native vs. Unified *(Slide 7)*
 
 ### Native (shown on slide, not run on stage)
 
@@ -50,7 +50,7 @@ Connect-Cloud -Provider AWS, Azure, GCP
 Get-CloudContext
 ```
 
-### Same question, three clouds — same shape every time
+### Same question, three clouds, same shape every time
 
 ```powershell
 Get-CloudInstance -Provider Azure -ResourceGroup prod-rg
@@ -66,7 +66,7 @@ Get-CloudInstance -Provider GCP -Project contoso-prod
 
 ---
 
-## 2. DEMO B — One Pipe, Three Clouds *(Slide 8)*
+## 2. DEMO B: One Pipe, Three Clouds *(Slide 8)*
 
 ### The `-All` stream
 
@@ -74,7 +74,7 @@ Get-CloudInstance -Provider GCP -Project contoso-prod
 Get-CloudInstance -All
 ```
 
-### Tagging compliance — untagged production assets across every cloud *(slide verbatim)*
+### Tagging compliance: untagged production assets across every cloud *(slide verbatim)*
 
 ```powershell
 Get-CloudInstance -All |
@@ -82,7 +82,7 @@ Get-CloudInstance -All |
   Format-Table Name, Provider, Region -AutoSize
 ```
 
-### Fleet health — running vs. not-running by provider
+### Fleet health: running vs. not-running by provider
 
 ```powershell
 Show-FleetHealth
@@ -104,7 +104,7 @@ Get-CloudInstance -All | Group-Object Provider | Select-Object Name, Count
 Find-UntaggedInstances
 ```
 
-### Stale instances — stopped/terminated > 30 days
+### Stale instances: stopped/terminated > 30 days
 
 ```powershell
 Find-StaleInstances
@@ -203,7 +203,7 @@ Remove-DemoSetup -Uninstall  # also uninstall PSCumulus
 
 ---
 
-## Reference — demo helpers exposed by `demo-setup.ps1`
+## Reference: demo helpers exposed by `demo-setup.ps1`
 
 | Command | What it runs |
 |---|---|
