@@ -541,6 +541,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Design Principles Across All Stages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hierarchy-design-kind-split-flat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hierarchy Design: Kind-Split Flat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-backward-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadata Backward Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -628,10 +656,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#completion-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Completion Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-it-introduces_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-visible-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User-Visible Changes
       
     </span>
   </a>
@@ -654,6 +704,17 @@
     <span class="md-ellipsis">
       
         Why It Is Separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-view-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Format View Strategy
       
     </span>
   </a>
@@ -754,6 +815,17 @@
     <span class="md-ellipsis">
       
         What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ux-anchors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UX Anchors
       
     </span>
   </a>
@@ -1673,6 +1745,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Design Principles Across All Stages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hierarchy-design-kind-split-flat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hierarchy Design: Kind-Split Flat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-backward-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadata Backward Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1760,10 +1860,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#completion-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Completion Criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-it-introduces_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-visible-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User-Visible Changes
       
     </span>
   </a>
@@ -1786,6 +1908,17 @@
     <span class="md-ellipsis">
       
         Why It Is Separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-view-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Format View Strategy
       
     </span>
   </a>
@@ -1886,6 +2019,17 @@
     <span class="md-ellipsis">
       
         What It Introduces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ux-anchors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UX Anchors
       
     </span>
   </a>
@@ -2175,29 +2319,28 @@
 <li>keep the Provider additive rather than foundational</li>
 </ul>
 <h2 id="current-status">Current Status<a class="headerlink" href="#current-status" title="Permanent link">&para;</a></h2>
-<p>PSCumulus is currently between <strong>Stage 1: Internal Typed Contract</strong> and <strong>Stage 2: Vendor Subclass Records</strong>.</p>
-<p>That means the core module still behaves the same way from the outside:</p>
-<ul>
-<li>the public interface is still cmdlet-first</li>
-<li><code>Get-CloudInstance</code>, <code>Get-CloudDisk</code>, <code>Get-CloudStorage</code>, and the rest still return <code>PSCumulus.CloudRecord</code></li>
-<li>the public command surface has not been broken or renamed</li>
-<li>format and display behavior still target <code>PSCumulus.CloudRecord</code></li>
-</ul>
-<p>What changed in Stage 1 is the internal vocabulary and correctness model:</p>
-<ul>
-<li>instance states now normalize semantically instead of just being title-cased</li>
-<li>the original provider state is preserved in <code>Metadata.NativeStatus</code></li>
-<li>tag conversion logic now has a dedicated internal home</li>
-<li>the module has a typed internal foundation that later stages can build on</li>
-</ul>
-<p>What Stage 2 changes is the construction path for records themselves:</p>
-<ul>
-<li><code>CloudRecord</code> becomes a real PowerShell base class</li>
-<li>vendor subclasses become the place of authority for provider-specific fields</li>
-<li>instance normalization moves into subclass factory methods</li>
-<li>Azure's old <code>Ready</code> fallback is retired in favor of semantic <code>Unknown</code></li>
-</ul>
-<p>That distinction matters. PSCumulus is not being rewritten in one dramatic jump. It is being evolved so that each stage can land safely, be tested independently, and remain useful even if the later stages take time or change shape.</p>
+<p>PSCumulus is currently implementing <strong>Stage 2: Vendor Subclass Records</strong>.</p>
+<p><strong>Stage 1 is complete:</strong>
+- Internal typed vocabulary is established
+- Status normalization is semantic
+- <code>Metadata.NativeStatus</code> preserves provider-native state
+- Tag conversion has a dedicated internal home</p>
+<p><strong>Stage 2 is partially complete:</strong>
+- <code>CloudRecord</code> is a real PowerShell base class
+- Instance records (<code>AzureCloudRecord</code>, <code>AWSCloudRecord</code>, <code>GCPCloudRecord</code>) use subclass factory methods
+- <code>Kind</code> is populated on instance records</p>
+<p><strong>Stage 2 completion criteria (in progress):</strong>
+- [ ] Every <code>Get-*Data</code> backend delegates to a kind-specific subclass factory method
+- [ ] <code>ConvertTo-CloudRecord</code> is removed
+- [ ] Start/Stop lifecycle responses return typed records
+- [ ] No <code>[pscustomobject]</code> escape hatch remains for creating records
+- [ ] <code>Kind</code> is populated on every record type
+- [ ] All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses</p>
+<p>The module still behaves the same way from the outside:
+- the public interface is still cmdlet-first
+- <code>Get-CloudInstance</code>, <code>Get-CloudDisk</code>, <code>Get-CloudStorage</code>, and the rest still return <code>PSCumulus.CloudRecord</code>
+- the public command surface has not been broken or renamed
+- format and display behavior still target <code>PSCumulus.CloudRecord</code></p>
 <h2 id="why-evolve-in-stages">Why Evolve In Stages<a class="headerlink" href="#why-evolve-in-stages" title="Permanent link">&para;</a></h2>
 <p>The staged plan exists for three reasons.</p>
 <h3 id="1-the-cmdlets-are-the-product-today">1. The cmdlets are the product today<a class="headerlink" href="#1-the-cmdlets-are-the-product-today" title="Permanent link">&para;</a></h3>
@@ -2257,8 +2400,37 @@
 <li>The core module keeps its PowerShell 5.1-compatible posture.</li>
 <li>Later navigation work may require PowerShell 7+.</li>
 <li>New providers and new resource kinds should get easier to add over time, not harder.</li>
+<li><strong>Locality of knowledge.</strong> When a piece of provider-specific logic needs to exist, it should live in exactly one place. The vendor subclass is that place. Helpers like <code>CloudInstanceStatusMap</code> and <code>CloudTagHelper</code> exist to be called <em>by</em> subclass factory methods, not to duplicate their responsibility.</li>
 </ul>
 <p>That last point is especially important. The roadmap is not only about new user features. It is also about making PSCumulus cheaper to extend without turning it into an over-abstracted framework.</p>
+<h3 id="hierarchy-design-kind-split-flat">Hierarchy Design: Kind-Split Flat<a class="headerlink" href="#hierarchy-design-kind-split-flat" title="Permanent link">&para;</a></h3>
+<p>The module adopts a <strong>kind-split flat hierarchy</strong>: one class per (vendor, kind) pair. This means fifteen leaf classes total, each small and focused:</p>
+<ul>
+<li><code>AzureInstanceRecord : CloudRecord</code> — Kind='Instance', ResourceGroup, VmId, OsType</li>
+<li><code>AzureDiskRecord : CloudRecord</code> — Kind='Disk', ResourceGroup, DiskSizeGB, Sku</li>
+<li><code>AzureStorageRecord : CloudRecord</code> — Kind='Storage', ResourceGroup, AccountName</li>
+<li><code>AzureNetworkRecord : CloudRecord</code> — Kind='Network', ResourceGroup, AddressSpace</li>
+<li><code>AzureFunctionRecord : CloudRecord</code> — Kind='Function', ResourceGroup, Runtime</li>
+<li><code>AWSInstanceRecord : CloudRecord</code> — Kind='Instance', InstanceId, VpcId, SubnetId</li>
+<li><code>AWSDiskRecord : CloudRecord</code> — Kind='Disk', VolumeId, VolumeType</li>
+<li><code>AWSStorageRecord : CloudRecord</code> — Kind='Storage', BucketName</li>
+<li><code>AWSNetworkRecord : CloudRecord</code> — Kind='Network', VpcId, CidrBlock</li>
+<li><code>AWSFunctionRecord : CloudRecord</code> — Kind='Function', FunctionName, Runtime</li>
+<li><code>GCPInstanceRecord : CloudRecord</code> — Kind='Instance', Project, Zone, Id</li>
+<li><code>GCPDiskRecord : CloudRecord</code> — Kind='Disk', Project, Zone, SourceImage</li>
+<li><code>GCPStorageRecord : CloudRecord</code> — Kind='Storage', BucketName</li>
+<li><code>GCPNetworkRecord : CloudRecord</code> — Kind='Network', Project, NetworkName</li>
+<li><code>GCPFunctionRecord : CloudRecord</code> — Kind='Function', Project, Runtime</li>
+</ul>
+<p>Each factory method (<code>AzureInstanceRecord::FromAzVM</code>, <code>AzureDiskRecord::FromAzDisk</code>) owns exactly one parsing contract. This matches the locality principle most faithfully.</p>
+<h3 id="metadata-backward-compatibility">Metadata Backward Compatibility<a class="headerlink" href="#metadata-backward-compatibility" title="Permanent link">&para;</a></h3>
+<p>Fields promoted from <code>Metadata</code> to typed properties follow a <strong>dual-write with deprecation</strong> pattern:</p>
+<ul>
+<li>In version 0.2.x: Promoted fields exist both as typed properties AND in <code>Metadata</code> for backward compatibility</li>
+<li>In version 0.3.0: Promoted fields are removed from <code>Metadata</code> to eliminate duplication</li>
+</ul>
+<p>This gives users time to migrate their scripts without accepting permanent duplication.</p>
+<p>User scripts that access <code>Metadata.ResourceGroup</code> will continue working in 0.2.x, but should transition to the direct <code>.ResourceGroup</code> property before 0.3.0.</p>
 <h2 id="stage-1-internal-typed-contract">Stage 1: Internal Typed Contract<a class="headerlink" href="#stage-1-internal-typed-contract" title="Permanent link">&para;</a></h2>
 <h3 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h3>
 <p>Establish an internal typed vocabulary for provider state and tag conversion without breaking the existing public contract.</p>
@@ -2294,22 +2466,55 @@
 <p>That restraint is the point. This stage is about making the existing module more trustworthy, not about changing how users interact with it.</p>
 <h2 id="stage-2-vendor-subclass-records">Stage 2: Vendor Subclass Records<a class="headerlink" href="#stage-2-vendor-subclass-records" title="Permanent link">&para;</a></h2>
 <h3 id="purpose_1">Purpose<a class="headerlink" href="#purpose_1" title="Permanent link">&para;</a></h3>
-<p>Implement Snover's guidance directly: shared base class, vendor subclasses, and factory methods that own normalization.</p>
+<p>Implement Snover's guidance directly: shared base class, kind-split vendor subclasses, and factory methods that own normalization.</p>
+<h3 id="completion-criteria">Completion Criteria<a class="headerlink" href="#completion-criteria" title="Permanent link">&para;</a></h3>
+<p>Stage 2 is complete only when:</p>
+<ul>
+<li>Every <code>Get-*Data</code> backend delegates to a kind-specific subclass factory method</li>
+<li><code>ConvertTo-CloudRecord</code> is removed (not just unused)</li>
+<li>Start/Stop lifecycle responses return typed records</li>
+<li>No <code>[pscustomobject]</code> escape hatch remains for creating records</li>
+<li><code>Kind</code> is populated on every record type</li>
+<li>All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses</li>
+</ul>
 <h3 id="what-it-introduces_1">What It Introduces<a class="headerlink" href="#what-it-introduces_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>CloudRecord</code> as a real PowerShell base class</li>
-<li><code>AzureCloudRecord</code>, <code>AWSCloudRecord</code>, and <code>GCPCloudRecord</code></li>
-<li>a <code>Kind</code> field on the base class</li>
-<li>typed first-class provider properties on each vendor subclass</li>
-<li>subclass <code>From*</code> factory methods that perform normalization and record construction</li>
-<li>instance backends that fetch provider data and delegate construction to those factory methods</li>
-<li>format/type-name compatibility so <code>PSCumulus.CloudRecord</code> remains the public display contract</li>
+<li>Kind-split vendor subclasses: <code>AzureInstanceRecord</code>, <code>AWSDiskRecord</code>, <code>GCPStorageRecord</code>, etc.</li>
+<li>A <code>Kind</code> field on the base class populated for all records</li>
+<li>Typed first-class provider properties on each vendor+kind subclass</li>
+<li>Subclass <code>From*</code> factory methods that perform normalization and record construction</li>
+<li>Instance backends that fetch provider data and delegate construction to those factory methods</li>
+<li>Format/type-name compatibility so <code>PSCumulus.CloudRecord</code> remains the public display contract</li>
 </ul>
+<h3 id="user-visible-changes">User-Visible Changes<a class="headerlink" href="#user-visible-changes" title="Permanent link">&para;</a></h3>
+<p><strong>Tab-completion works on typed properties:</strong>
+<div class="highlight"><pre><span></span><code><span class="nv">$vm</span> <span class="p">=</span> <span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="n">-ResourceGroup</span> <span class="n">prod-rg</span> <span class="n">-Name</span> <span class="n">web</span><span class="p">-</span><span class="n">01</span>
+<span class="nv">$vm</span><span class="p">.</span><span class="n">Re</span><span class="p">&lt;</span><span class="n">tab</span><span class="p">&gt;</span>   <span class="c"># completes to .ResourceGroup</span>
+<span class="nv">$vm</span><span class="p">.</span><span class="n">Vm</span><span class="p">&lt;</span><span class="n">tab</span><span class="p">&gt;</span>   <span class="c"># completes to .VmId</span>
+</code></pre></div></p>
+<p><strong>Where-Object shorthand filtering works:</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">ResourceGroup</span> <span class="o">-eq</span> <span class="n">prod-rg</span>
+<span class="c"># Previously: Where-Object { $_.Metadata.ResourceGroup -eq &#39;prod-rg&#39; }</span>
+</code></pre></div></p>
+<p><strong>Get-Member is self-documenting:</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="p">|</span> <span class="nb">Get-Member</span>
+<span class="c"># Shows typed provider-specific properties (ResourceGroup, VmId, OsType)</span>
+</code></pre></div></p>
+<p><strong>Select-Object works against typed fields:</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span> <span class="n">ResourceGroup</span><span class="p">,</span> <span class="n">Status</span>
+</code></pre></div></p>
 <h3 id="why-this-stage-exists_1">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists_1" title="Permanent link">&para;</a></h3>
 <p>Before this stage, normalization knowledge was scattered across backend functions, wrapper converters, tag helpers, and <code>ConvertTo-CloudRecord</code>. That made the final output shape harder to reason about and harder to test.</p>
-<p>This stage creates one place of authority per provider. If you want to understand what an Azure instance record is, you read <code>AzureCloudRecord::FromAzVM()</code>. If you want to understand AWS or GCP, you read the corresponding subclass factory. The backend functions shrink back to their core job: talk to the provider, then delegate.</p>
+<p>This stage creates one place of authority per provider per resource kind. If you want to understand what an Azure instance record is, you read <code>AzureInstanceRecord::FromAzVM()</code>. If you want to understand an Azure disk record, you read <code>AzureDiskRecord::FromAzDisk()</code>. The backend functions shrink back to their core job: talk to the provider, then delegate.</p>
 <h3 id="why-it-is-separate">Why It Is Separate<a class="headerlink" href="#why-it-is-separate" title="Permanent link">&para;</a></h3>
 <p>This stage is valuable even if a Provider never lands. It also gives later path and Provider work a better foundation because those layers can return strongly typed records rather than generic property bags.</p>
+<h3 id="format-view-strategy">Format View Strategy<a class="headerlink" href="#format-view-strategy" title="Permanent link">&para;</a></h3>
+<p>The module uses <strong>kind-level detailed views</strong> for now:
+- <code>PSCumulus.CloudRecord.Instance.Detailed</code> shows instance-specific columns
+- <code>PSCumulus.CloudRecord.Disk.Detailed</code> shows disk-specific columns
+- etc.</p>
+<p>This provides the biggest UX win per unit of effort. Vendor-specific detailed views can be added later if demand exists.</p>
 <h2 id="stage-3-cloud-path-model">Stage 3: Cloud Path Model<a class="headerlink" href="#stage-3-cloud-path-model" title="Permanent link">&para;</a></h2>
 <h3 id="purpose_2">Purpose<a class="headerlink" href="#purpose_2" title="Permanent link">&para;</a></h3>
 <p>Define a structured cloud path and a resolver that can translate paths into backend calls.</p>
@@ -2328,7 +2533,7 @@
 <li>GCP often scopes them around projects</li>
 </ul>
 <p>The path model is where PSCumulus decides how to turn those different scope systems into one navigable hierarchy without lying about the underlying structure.</p>
-<p>The records returned by that resolver now benefit from Stage 2: a path can resolve to a typed <code>AzureCloudRecord</code>, <code>AWSCloudRecord</code>, or <code>GCPCloudRecord</code> rather than a generic object with implied provider-specific fields hiding in <code>Metadata</code>.</p>
+<p>The records returned by that resolver now benefit from Stage 2: a path can resolve to a typed kind-specific record like <code>AzureInstanceRecord</code>, <code>AWSDiskRecord</code>, or <code>GCPStorageRecord</code> rather than a generic object with implied provider-specific fields hiding in <code>Metadata</code>.</p>
 <h3 id="why-it-is-separate_1">Why It Is Separate<a class="headerlink" href="#why-it-is-separate_1" title="Permanent link">&para;</a></h3>
 <p>A Provider built without a clean path model would be fragile. Pulling the model out into its own stage means the hard part can be reasoned about and tested without mixing it with PowerShell Provider mechanics.</p>
 <h2 id="stage-4-the-provider-read-only">Stage 4: The Provider (Read-Only)<a class="headerlink" href="#stage-4-the-provider-read-only" title="Permanent link">&para;</a></h2>
@@ -2341,6 +2546,24 @@
 <li><code>Get-Item</code> / <code>Test-Path</code> style access over cloud paths</li>
 <li>drive-backed discovery on top of the same backend logic the cmdlets already use</li>
 </ul>
+<h3 id="ux-anchors">UX Anchors<a class="headerlink" href="#ux-anchors" title="Permanent link">&para;</a></h3>
+<p><strong>Case sensitivity:</strong>
+- Provider names (Azure, AWS, GCP) are case-insensitive
+- Scope names (resource groups, regions, projects) are case-insensitive
+- Resource names match the underlying provider's casing rules</p>
+<p><strong>Enumeration cost:</strong>
+- <code>dir Azure:\</code> lists scopes (resource groups) — cached per session
+- <code>dir Azure:\prod-rg\Instances\</code> lists resources — lazy with cache
+- Verbose warning when fanout is expensive</p>
+<p><strong>Top-level container semantics:</strong>
+- <code>dir Azure:\</code> shows scopes (resource groups)
+- <code>dir Azure:\prod-rg\</code> shows kinds (Instances, Disks, Storage, etc.)
+- <code>dir Azure:\prod-rg\Instances\</code> shows resources</p>
+<p><strong>What Get-Item returns:</strong>
+- The typed subclass record (e.g., <code>AzureInstanceRecord</code>), not a wrapper</p>
+<p><strong>Tab-completion:</strong>
+- <code>dir Azure:\prod-rg\&lt;tab&gt;</code> completes to <code>Instances</code>, <code>Disks</code>, etc.
+- <code>dir Azure:\prod-rg\Instances\&lt;tab&gt;</code> completes to existing resource names</p>
 <h3 id="why-this-stage-exists_3">Why This Stage Exists<a class="headerlink" href="#why-this-stage-exists_3" title="Permanent link">&para;</a></h3>
 <p>This is the Provider stage. It turns cloud inventory into something you can browse.</p>
 <p>The attraction is obvious:</p>
