@@ -5,6 +5,7 @@ function Stop-AzureInstance {
         Justification = 'This internal helper is invoked only by Stop-CloudInstance, which implements ShouldProcess.'
     )]
     [CmdletBinding()]
+    [OutputType([AzureCloudRecord])]
     param(
         [Parameter(Mandatory)]
         [string]$Name,
@@ -19,11 +20,15 @@ function Stop-AzureInstance {
 
     $null = Stop-AzVM -ResourceGroupName $ResourceGroup -Name $Name -Force -ErrorAction Stop
 
-    ConvertTo-CloudRecord `
-        -Name $Name `
-        -Provider Azure `
-        -Status 'Stopping' `
-        -Metadata @{
-            ResourceGroup = $ResourceGroup
-        }
+    $record = [AzureCloudRecord]::new()
+    $record.Kind = 'Instance'
+    $record.Provider = [CloudProvider]::Azure.ToString()
+    $record.Name = $Name
+    $record.Status = 'Stopping'
+    $record.ResourceGroup = $ResourceGroup
+    $record.Metadata = @{
+        ResourceGroup = $ResourceGroup
+    }
+
+    return $record
 }

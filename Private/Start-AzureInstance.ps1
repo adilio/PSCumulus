@@ -5,6 +5,7 @@ function Start-AzureInstance {
         Justification = 'This internal helper is invoked only by Start-CloudInstance, which implements ShouldProcess.'
     )]
     [CmdletBinding()]
+    [OutputType([AzureCloudRecord])]
     param(
         [Parameter(Mandatory)]
         [string]$Name,
@@ -19,11 +20,15 @@ function Start-AzureInstance {
 
     $null = Start-AzVM -ResourceGroupName $ResourceGroup -Name $Name -ErrorAction Stop
 
-    ConvertTo-CloudRecord `
-        -Name $Name `
-        -Provider Azure `
-        -Status 'Starting' `
-        -Metadata @{
-            ResourceGroup = $ResourceGroup
-        }
+    $record = [AzureCloudRecord]::new()
+    $record.Kind = 'Instance'
+    $record.Provider = [CloudProvider]::Azure.ToString()
+    $record.Name = $Name
+    $record.Status = 'Starting'
+    $record.ResourceGroup = $ResourceGroup
+    $record.Metadata = @{
+        ResourceGroup = $ResourceGroup
+    }
+
+    return $record
 }

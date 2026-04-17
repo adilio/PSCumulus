@@ -110,12 +110,6 @@ Describe 'PSCumulus module' {
             }
         }
 
-        It 'ConvertTo-CloudRecord is loaded' {
-            InModuleScope PSCumulus {
-                Get-Command -Name ConvertTo-CloudRecord | Should -Not -BeNullOrEmpty
-            }
-        }
-
         It 'Assert-CloudTagArgument is loaded' {
             InModuleScope PSCumulus {
                 Get-Command -Name Assert-CloudTagArgument | Should -Not -BeNullOrEmpty

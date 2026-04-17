@@ -1,5 +1,6 @@
 function Get-AWSNetworkData {
     [CmdletBinding()]
+    [OutputType([AWSNetworkRecord])]
     param(
         [string]$Region
     )
@@ -15,26 +16,6 @@ function Get-AWSNetworkData {
     }
 
     foreach ($vpc in $vpcs) {
-        $nameTag = $vpc.Tags |
-            Where-Object { $_.Key -eq 'Name' } |
-            Select-Object -First 1 -ExpandProperty Value
-
-        $resolvedName = if ([string]::IsNullOrWhiteSpace($nameTag)) {
-            $vpc.VpcId
-        } else {
-            $nameTag
-        }
-
-        ConvertTo-CloudRecord `
-            -Name $resolvedName `
-            -Provider AWS `
-            -Region $Region `
-            -Status $vpc.State.Value `
-            -Size $vpc.CidrBlock `
-            -Metadata @{
-                VpcId     = $vpc.VpcId
-                IsDefault = $vpc.IsDefault
-                CidrBlock = $vpc.CidrBlock
-            }
+        [AWSNetworkRecord]::FromEC2Vpc($vpc)
     }
 }

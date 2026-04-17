@@ -5,6 +5,7 @@ function Start-AWSInstance {
         Justification = 'This internal helper is invoked only by Start-CloudInstance, which implements ShouldProcess.'
     )]
     [CmdletBinding()]
+    [OutputType([AWSCloudRecord])]
     param(
         [Parameter(Mandatory)]
         [string]$InstanceId,
@@ -23,12 +24,16 @@ function Start-AWSInstance {
 
     $null = Start-EC2Instance @startParams -ErrorAction Stop
 
-    ConvertTo-CloudRecord `
-        -Name $InstanceId `
-        -Provider AWS `
-        -Region $Region `
-        -Status 'Starting' `
-        -Metadata @{
-            InstanceId = $InstanceId
-        }
+    $record = [AWSCloudRecord]::new()
+    $record.Kind = 'Instance'
+    $record.Provider = [CloudProvider]::AWS.ToString()
+    $record.Name = $InstanceId
+    $record.Region = $Region
+    $record.Status = 'Starting'
+    $record.InstanceId = $InstanceId
+    $record.Metadata = @{
+        InstanceId = $InstanceId
+    }
+
+    return $record
 }

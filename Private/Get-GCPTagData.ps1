@@ -1,5 +1,6 @@
 function Get-GCPTagData {
     [CmdletBinding()]
+    [OutputType([GCPTagRecord])]
     param(
         [string]$Project,
         [string]$Resource
@@ -16,25 +17,17 @@ function Get-GCPTagData {
     # List resources filtered by name to avoid requiring a zone argument
     $resourceList = Invoke-GCloudJson -Arguments @(
         'compute', $resourceType, 'list',
-        "--filter=name=$resourceName",
+        "--filter=name:$resourceName",
         "--project=$resolvedProject"
     )
 
     $resourceData = $resourceList | Select-Object -First 1
 
-    $labels = @{}
-    if ($resourceData -and $resourceData.labels) {
-        $resourceData.labels.PSObject.Properties | ForEach-Object {
-            $labels[$_.Name] = $_.Value
-        }
+    $labels = if ($resourceData -and $resourceData.labels) {
+        $resourceData.labels
+    } else {
+        $null
     }
 
-    ConvertTo-CloudRecord `
-        -Name $resourceName `
-        -Provider GCP `
-        -Metadata @{
-            Project  = $resolvedProject
-            Resource = $Resource
-            Labels   = $labels
-        }
+    [GCPTagRecord]::FromGCloudLabels($labels, $resolvedProject, $Resource)
 }

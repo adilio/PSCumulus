@@ -1,5 +1,6 @@
 function Get-AWSTagData {
     [CmdletBinding()]
+    [OutputType([AWSTagRecord])]
     param(
         [string]$ResourceId
     )
@@ -11,16 +12,5 @@ function Get-AWSTagData {
     $tagFilter = @{ Name = 'resource-id'; Values = @($ResourceId) }
     $tagObjects = Get-EC2Tag -Filter $tagFilter -ErrorAction Stop
 
-    $tags = @{}
-    foreach ($tag in $tagObjects) {
-        $tags[$tag.Key] = $tag.Value
-    }
-
-    ConvertTo-CloudRecord `
-        -Name $ResourceId `
-        -Provider AWS `
-        -Metadata @{
-            ResourceId = $ResourceId
-            Tags       = $tags
-        }
+    [AWSTagRecord]::FromEC2Tags($tagObjects, $ResourceId)
 }

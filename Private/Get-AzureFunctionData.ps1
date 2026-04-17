@@ -1,5 +1,6 @@
 function Get-AzureFunctionData {
     [CmdletBinding()]
+    [OutputType([AzureFunctionRecord])]
     param(
         [string]$ResourceGroup
     )
@@ -15,22 +16,6 @@ function Get-AzureFunctionData {
     }
 
     foreach ($app in $apps) {
-        $params = @{
-            Name     = $app.Name
-            Provider = 'Azure'
-            Region   = $app.Location
-            Status   = $app.State
-            Metadata = @{
-                ResourceGroup  = $app.ResourceGroupName
-                Runtime        = $app.Runtime
-                RuntimeVersion = $app.RuntimeVersion
-                OSType         = if ($app.OSType) { $app.OSType.ToString() } else { $null }
-                Kind           = $app.Kind
-            }
-        }
-
-        if ($app.Runtime) { $params.Size = $app.Runtime }
-
-        ConvertTo-CloudRecord @params
+        [AzureFunctionRecord]::FromAzFunctionApp($app)
     }
 }

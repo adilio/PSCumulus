@@ -350,3 +350,673 @@ class GCPCloudRecord : CloudRecord {
         return $record
     }
 }
+
+# Azure Disk Record
+class AzureDiskRecord : CloudRecord {
+    [string]$ResourceGroup
+    [int]$DiskSizeGB
+    [string]$Sku
+    [string]$OsType
+
+    AzureDiskRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureDiskRecord')
+    }
+
+    static [AzureDiskRecord] FromAzDisk([object]$disk) {
+        $record = [AzureDiskRecord]::new()
+        $status = if ($disk.DiskState) { $disk.DiskState.ToString() } else { $null }
+        $resolvedOsType = if ($disk.OsType) { $disk.OsType.ToString() } else { $null }
+
+        $record.Kind = 'Disk'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $disk.Name
+        $record.Region = $disk.Location
+        $record.Status = $status
+        $record.Size = "$($disk.DiskSizeGB) GB"
+        $record.CreatedAt = $disk.TimeCreated
+        $record.ResourceGroup = $disk.ResourceGroupName
+        $record.DiskSizeGB = $disk.DiskSizeGB
+        $record.Sku = $disk.Sku.Name
+        $record.OsType = $resolvedOsType
+        $record.Metadata = @{
+            ResourceGroup = $disk.ResourceGroupName
+            DiskSizeGB    = $disk.DiskSizeGB
+            OsType        = $resolvedOsType
+            Sku           = $disk.Sku.Name
+        }
+
+        return $record
+    }
+}
+
+# AWS Disk Record
+class AWSDiskRecord : CloudRecord {
+    [string]$VolumeId
+    [string]$VolumeType
+    [bool]$Encrypted
+    [string]$InstanceId
+
+    AWSDiskRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSDiskRecord')
+    }
+
+    static [AWSDiskRecord] FromEC2Volume([object]$volume) {
+        $record = [AWSDiskRecord]::new()
+        $nameTag = $volume.Tags |
+            Where-Object { $_.Key -eq 'Name' } |
+            Select-Object -First 1 -ExpandProperty Value
+
+        $resolvedName = if ([string]::IsNullOrWhiteSpace($nameTag)) {
+            $volume.VolumeId
+        } else {
+            $nameTag
+        }
+
+        $attachedInstanceId = if ($volume.Attachments -and $volume.Attachments.Count -gt 0) {
+            $volume.Attachments[0].InstanceId
+        } else {
+            $null
+        }
+
+        $record.Kind = 'Disk'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $resolvedName
+        $record.Region = $volume.AvailabilityZone
+        $record.Status = $volume.State.Value
+        $record.Size = "$($volume.Size) GB"
+        $record.CreatedAt = $volume.CreateTime
+        $record.VolumeId = $volume.VolumeId
+        $record.VolumeType = $volume.VolumeType.Value
+        $record.Encrypted = $volume.Encrypted
+        $record.InstanceId = $attachedInstanceId
+        $record.Metadata = @{
+            VolumeId   = $volume.VolumeId
+            VolumeType = $volume.VolumeType.Value
+            Encrypted  = $volume.Encrypted
+            InstanceId = $attachedInstanceId
+        }
+
+        return $record
+    }
+}
+
+# GCP Disk Record
+class GCPDiskRecord : CloudRecord {
+    [string]$Project
+    [string]$Zone
+    [string]$DiskType
+    [int]$SizeGb
+
+    GCPDiskRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPDiskRecord')
+    }
+
+    static [GCPDiskRecord] FromGCloudJson([object]$disk, [string]$project) {
+        $record = [GCPDiskRecord]::new()
+        $zoneName = if ($disk.zone) {
+            ($disk.zone -split '/')[-1]
+        } else {
+            $null
+        }
+
+        $resolvedDiskType = if ($disk.type) {
+            ($disk.type -split '/')[-1]
+        } else {
+            $null
+        }
+
+        $status = if ($disk.status) {
+            (Get-Culture).TextInfo.ToTitleCase($disk.status.ToLower())
+        } else {
+            $null
+        }
+
+        $createdAt = $null
+        if (-not [string]::IsNullOrWhiteSpace($disk.creationTimestamp)) {
+            $createdAt = [datetime]::Parse($disk.creationTimestamp)
+        }
+
+        $record.Kind = 'Disk'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $disk.name
+        $record.Region = $zoneName
+        $record.Status = $status
+        $record.Size = "$($disk.sizeGb) GB"
+        $record.CreatedAt = $createdAt
+        $record.Project = $project
+        $record.Zone = $zoneName
+        $record.DiskType = $resolvedDiskType
+        $record.SizeGb = $disk.sizeGb
+        $record.Metadata = @{
+            Project  = $project
+            Zone     = $zoneName
+            DiskType = $resolvedDiskType
+            SizeGb   = $disk.sizeGb
+        }
+
+        return $record
+    }
+}
+
+# Azure Storage Record
+class AzureStorageRecord : CloudRecord {
+    [string]$ResourceGroup
+    [string]$AccountName
+
+    AzureStorageRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureStorageRecord')
+    }
+
+    static [AzureStorageRecord] FromAzStorageAccount([object]$account) {
+        $record = [AzureStorageRecord]::new()
+
+        $record.Kind = 'Storage'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $account.StorageAccountName
+        $record.Region = if ($account.PrimaryLocation) { $account.PrimaryLocation } elseif ($account.Location) { $account.Location } else { $null }
+        $record.Status = if ($account.StatusOfPrimary) { $account.StatusOfPrimary.ToString() } elseif ($account.ProvisioningState) { $account.ProvisioningState.ToString() } else { $null }
+        $record.Size = if ($account.Sku) { $account.Sku.Name.ToString() } else { $null }
+        $record.CreatedAt = $account.CreationTime
+        $record.ResourceGroup = $account.ResourceGroupName
+        $record.AccountName = $account.StorageAccountName
+        $record.Tags = [CloudTagHelper]::FromAzureTags($account.Tags)
+        $record.Metadata = @{
+            ResourceGroup = $account.ResourceGroupName
+            AccountName   = $account.StorageAccountName
+        }
+
+        return $record
+    }
+}
+
+# AWS Storage Record
+class AWSStorageRecord : CloudRecord {
+    [string]$BucketName
+
+    AWSStorageRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSStorageRecord')
+    }
+
+    static [AWSStorageRecord] FromS3Bucket([object]$bucket, [string]$bucketRegion) {
+        $record = [AWSStorageRecord]::new()
+
+        $record.Kind = 'Storage'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $bucket.BucketName
+        $record.Region = $bucketRegion
+        $record.Status = 'Available'
+        $record.CreatedAt = $bucket.CreationDate
+        $record.BucketName = $bucket.BucketName
+        $record.Metadata = @{
+            BucketName = $bucket.BucketName
+        }
+
+        return $record
+    }
+}
+
+# GCP Storage Record
+class GCPStorageRecord : CloudRecord {
+    [string]$BucketName
+    [string]$Project
+    [string]$StorageClass
+    [string]$Location
+
+    GCPStorageRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPStorageRecord')
+    }
+
+    static [GCPStorageRecord] FromGCloudJson([object]$bucket, [string]$project) {
+        $record = [GCPStorageRecord]::new()
+
+        # Bucket names may be prefixed with "gs://" in some output formats
+        $resolvedBucketName = if ($bucket.name) {
+            $bucket.name -replace '^gs://', ''
+        } else {
+            $null
+        }
+
+        $createdAt = $null
+        if (-not [string]::IsNullOrWhiteSpace($bucket.timeCreated)) {
+            $createdAt = [datetime]::Parse($bucket.timeCreated)
+        }
+
+        $record.Kind = 'Storage'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $resolvedBucketName
+        $record.Region = $bucket.location
+        $record.Status = if ($bucket.lifecycle) { 'Configured' } else { 'Available' }
+        $record.Size = if ($bucket.storageClass) { $bucket.storageClass } else { $null }
+        $record.CreatedAt = $createdAt
+        $record.BucketName = $resolvedBucketName
+        $record.Project = $project
+        $record.StorageClass = if ($bucket.storageClass) { $bucket.storageClass } else { $null }
+        $record.Location = $bucket.location
+        $record.Tags = [CloudTagHelper]::FromGcpLabels($bucket.labels)
+        $record.Metadata = @{
+            BucketName   = $resolvedBucketName
+            Project      = $project
+            StorageClass = $bucket.storageClass
+            Location     = $bucket.location
+        }
+
+        return $record
+    }
+}
+
+# Azure Network Record
+class AzureNetworkRecord : CloudRecord {
+    [string]$ResourceGroup
+    [string]$AddressSpace
+    [string]$VnetId
+
+    AzureNetworkRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureNetworkRecord')
+    }
+
+    static [AzureNetworkRecord] FromAzVirtualNetwork([object]$vnet) {
+        $record = [AzureNetworkRecord]::new()
+
+        $addressSpaces = if ($vnet.AddressSpace -and $vnet.AddressSpace.AddressPrefixes) {
+            $vnet.AddressSpace.AddressPrefixes
+        } else {
+            @()
+        }
+
+        $addressSpaceString = if ($addressSpaces.Count -gt 0) {
+            $addressSpaces -join ', '
+        } else {
+            $null
+        }
+
+        $firstAddressPrefix = if ($addressSpaces.Count -gt 0) {
+            $addressSpaces[0]
+        } else {
+            $null
+        }
+
+        $subnetCount = if ($vnet.Subnets) {
+            @($vnet.Subnets).Count
+        } else {
+            0
+        }
+
+        $record.Kind = 'Network'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $vnet.Name
+        $record.Region = $vnet.Location
+        $record.Status = if ($vnet.ProvisioningState) { $vnet.ProvisioningState.ToString() } else { $null }
+        $record.Size = $firstAddressPrefix
+        $record.ResourceGroup = $vnet.ResourceGroupName
+        $record.AddressSpace = $addressSpaceString
+        $record.VnetId = $vnet.Id
+        $record.Tags = [CloudTagHelper]::FromAzureTags($vnet.Tags)
+        $record.Metadata = @{
+            ResourceGroup = $vnet.ResourceGroupName
+            AddressSpace  = $addressSpaceString
+            VnetId        = $vnet.Id
+            SubnetCount   = $subnetCount
+        }
+
+        return $record
+    }
+}
+
+# AWS Network Record
+class AWSNetworkRecord : CloudRecord {
+    [string]$VpcId
+    [string]$CidrBlock
+    [bool]$IsDefault
+
+    AWSNetworkRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSNetworkRecord')
+    }
+
+    static [AWSNetworkRecord] FromEC2Vpc([object]$vpc) {
+        $record = [AWSNetworkRecord]::new()
+
+        $nameTag = $vpc.Tags |
+            Where-Object { $_.Key -eq 'Name' } |
+            Select-Object -First 1 -ExpandProperty Value
+
+        $resolvedName = if ([string]::IsNullOrWhiteSpace($nameTag)) {
+            $vpc.VpcId
+        } else {
+            $nameTag
+        }
+
+        $cidrBlocks = if ($vpc.CidrBlockAssociations) {
+            ($vpc.CidrBlockAssociations | Where-Object { $_.CidrBlockState.State -eq 'associated' } |
+                ForEach-Object { $_.CidrBlock }) -join ', '
+        } elseif ($vpc.CidrBlock) {
+            $vpc.CidrBlock
+        } else {
+            $null
+        }
+
+        $status = if ($vpc.State) {
+            if ($vpc.State.Value) {
+                $vpc.State.Value
+            } else {
+                $vpc.State.ToString()
+            }
+        } else {
+            'Available'
+        }
+
+        $record.Kind = 'Network'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $resolvedName
+        $record.Region = if ($vpc.RegionName) { $vpc.RegionName } else { $null }
+        $record.Status = $status
+        $record.Size = $cidrBlocks
+        $record.VpcId = $vpc.VpcId
+        $record.CidrBlock = $cidrBlocks
+        $record.IsDefault = $vpc.IsDefault
+        $record.Tags = [CloudTagHelper]::FromAwsTags($vpc.Tags)
+        $record.Metadata = @{
+            VpcId    = $vpc.VpcId
+            CidrBlock = $cidrBlocks
+            IsDefault = $vpc.IsDefault
+        }
+
+        return $record
+    }
+}
+
+# GCP Network Record
+class GCPNetworkRecord : CloudRecord {
+    [string]$Project
+    [string]$NetworkName
+    [string]$VpcId
+
+    GCPNetworkRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPNetworkRecord')
+    }
+
+    static [GCPNetworkRecord] FromGCloudJson([object]$network, [string]$project) {
+        $record = [GCPNetworkRecord]::new()
+
+        $createdAt = $null
+        if (-not [string]::IsNullOrWhiteSpace($network.creationTimestamp)) {
+            $createdAt = [datetime]::Parse($network.creationTimestamp)
+        }
+
+        $subnetworkMode = if ($network.autoCreateSubnetworks) { 'auto' } else { 'custom' }
+
+        $record.Kind = 'Network'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $network.name
+        $record.Region = 'global'
+        $record.Status = 'Available'
+        $record.CreatedAt = $createdAt
+        $record.Project = $project
+        $record.NetworkName = $network.name
+        $record.VpcId = if ($network.id) { $network.id.ToString() } else { $null }
+        $record.Metadata = @{
+            Project        = $project
+            NetworkName    = $network.name
+            VpcId          = if ($network.id) { $network.id.ToString() } else { $null }
+            SubnetworkMode = $subnetworkMode
+        }
+
+        return $record
+    }
+}
+
+# Azure Function Record
+class AzureFunctionRecord : CloudRecord {
+    [string]$ResourceGroup
+    [string]$Runtime
+
+    AzureFunctionRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureFunctionRecord')
+    }
+
+    static [AzureFunctionRecord] FromAzFunctionApp([object]$functionApp) {
+        $record = [AzureFunctionRecord]::new()
+
+        $resolvedRuntime = if ($functionApp.Runtime) {
+            $functionApp.Runtime
+        } elseif ($functionApp.Config -and $functionApp.Config.FunctionAppRuntime) {
+            $functionApp.Config.FunctionAppRuntime
+        } else {
+            $null
+        }
+
+        $record.Kind = 'Function'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $functionApp.Name
+        $record.Region = $functionApp.Location
+        $record.Status = if ($functionApp.State) { $functionApp.State.ToString() } else { 'Running' }
+        $record.Size = $resolvedRuntime
+        $record.ResourceGroup = $functionApp.ResourceGroupName
+        $record.Runtime = $resolvedRuntime
+        $record.Tags = [CloudTagHelper]::FromAzureTags($functionApp.Tags)
+        $record.Metadata = @{
+            ResourceGroup  = $functionApp.ResourceGroupName
+            Runtime        = $resolvedRuntime
+            RuntimeVersion = if ($functionApp.RuntimeVersion) { $functionApp.RuntimeVersion } else { $null }
+        }
+
+        return $record
+    }
+}
+
+# AWS Function Record
+class AWSFunctionRecord : CloudRecord {
+    [string]$FunctionName
+    [string]$Runtime
+
+    AWSFunctionRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSFunctionRecord')
+    }
+
+    static [AWSFunctionRecord] FromLambdaFunction([object]$function, [string]$region) {
+        $record = [AWSFunctionRecord]::new()
+
+        $resolvedRegion = if (-not [string]::IsNullOrWhiteSpace($region)) {
+            $region
+        } elseif ($function.FunctionArn) {
+            ($function.FunctionArn -split ':')[3]
+        } else {
+            $null
+        }
+
+        $runtimeValue = if ($function.Runtime) {
+            if ($function.Runtime -is [string]) {
+                $function.Runtime
+            } elseif ($function.Runtime.Value) {
+                $function.Runtime.Value
+            } else {
+                $null
+            }
+        } else {
+            $null
+        }
+
+        $record.Kind = 'Function'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $function.FunctionName
+        $record.Region = $resolvedRegion
+        $record.Status = if ($function.State) { (Get-Culture).TextInfo.ToTitleCase($function.State.ToLower()) } else { 'Active' }
+        $record.Size = $runtimeValue
+        $record.CreatedAt = $function.LastModified
+        $record.FunctionName = $function.FunctionName
+        $record.Runtime = $runtimeValue
+        $record.Tags = [CloudTagHelper]::FromAwsTags($function.Tags)
+        $record.Metadata = @{
+            FunctionName = $function.FunctionName
+            Runtime      = $runtimeValue
+            FunctionArn  = $function.FunctionArn
+        }
+
+        return $record
+    }
+}
+
+# GCP Function Record
+class GCPFunctionRecord : CloudRecord {
+    [string]$Project
+    [string]$Runtime
+    [string]$EntryPoint
+
+    GCPFunctionRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPFunctionRecord')
+    }
+
+    static [GCPFunctionRecord] FromGCloudJson([object]$function, [string]$project) {
+        $record = [GCPFunctionRecord]::new()
+
+        $nameParts = $function.name -split '/'
+        $shortName = $nameParts[-1]
+        $region = if ($nameParts.Count -ge 4) { $nameParts[-3] } else { $null }
+
+        $rawStatus = if ($function.state) { $function.state } elseif ($function.status) { $function.status } else { $null }
+        $status = if ($rawStatus) {
+            (Get-Culture).TextInfo.ToTitleCase($rawStatus.ToLower())
+        } else {
+            $null
+        }
+
+        $createdAt = $null
+        if (-not [string]::IsNullOrWhiteSpace($function.updateTime)) {
+            $createdAt = [datetime]::Parse($function.updateTime)
+        }
+
+        $record.Kind = 'Function'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $shortName
+        $record.Region = $region
+        $record.Status = $status
+        $record.Size = if ($function.runtime) { $function.runtime } else { $null }
+        $record.CreatedAt = $createdAt
+        $record.Project = $project
+        $record.Runtime = if ($function.runtime) { $function.runtime } else { $null }
+        $record.EntryPoint = if ($function.entryPoint) { $function.entryPoint } else { $null }
+        $record.Metadata = @{
+            Project    = $project
+            Runtime    = $function.runtime
+            EntryPoint = $function.entryPoint
+            FullName   = $function.name
+        }
+
+        return $record
+    }
+}
+
+# Azure Tag Record
+class AzureTagRecord : CloudRecord {
+    [string]$ResourceId
+    [hashtable]$TagData
+
+    AzureTagRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureTagRecord')
+    }
+
+    static [AzureTagRecord] FromAzTag([object]$tagWrapper, [string]$resourceId) {
+        $record = [AzureTagRecord]::new()
+
+        $tags = @{}
+        if ($tagWrapper.Properties -and $tagWrapper.Properties.TagsProperty) {
+            foreach ($kvp in $tagWrapper.Properties.TagsProperty.GetEnumerator()) {
+                $tags[$kvp.Key] = $kvp.Value
+            }
+        }
+
+        $resourceName = ($resourceId -split '/')[-1]
+
+        $record.Kind = 'Tag'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $resourceName
+        $record.Status = if ($tagWrapper.Properties) { 'Tagged' } else { 'No Tags' }
+        $record.ResourceId = $resourceId
+        $record.TagData = $tags
+        $record.Tags = $tags
+        $record.Metadata = @{
+            ResourceId = $resourceId
+            Tags       = $tags
+        }
+
+        return $record
+    }
+}
+
+# AWS Tag Record
+class AWSTagRecord : CloudRecord {
+    [string]$ResourceId
+    [hashtable]$TagData
+
+    AWSTagRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSTagRecord')
+    }
+
+    static [AWSTagRecord] FromEC2Tags([object[]]$tagObjects, [string]$resourceId) {
+        $record = [AWSTagRecord]::new()
+
+        $tags = @{}
+        foreach ($tag in $tagObjects) {
+            $tags[$tag.Key] = $tag.Value
+        }
+
+        $record.Kind = 'Tag'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $resourceId
+        $record.Status = if ($tags.Count -gt 0) { 'Tagged' } else { 'No Tags' }
+        $record.ResourceId = $resourceId
+        $record.TagData = $tags
+        $record.Tags = $tags
+        $record.Metadata = @{
+            ResourceId = $resourceId
+            Tags       = $tags
+        }
+
+        return $record
+    }
+}
+
+# GCP Tag Record
+class GCPTagRecord : CloudRecord {
+    [string]$Project
+    [string]$Resource
+    [hashtable]$LabelData
+
+    GCPTagRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPTagRecord')
+    }
+
+    static [GCPTagRecord] FromGCloudLabels([object]$labels, [string]$project, [string]$resource) {
+        $record = [GCPTagRecord]::new()
+
+        $labelHashtable = @{}
+        if ($labels) {
+            if ($labels -is [hashtable]) {
+                $labelHashtable = $labels
+            } else {
+                foreach ($property in $labels.PSObject.Properties) {
+                    $labelHashtable[$property.Name] = $property.Value
+                }
+            }
+        }
+
+        # Resource is in the form "instances/vm-01" or "disks/my-disk"
+        $parts = $resource -split '/', 2
+        $resourceName = if ($parts.Count -gt 1) { $parts[1] } else { $resource }
+
+        $record.Kind = 'Tag'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $resourceName
+        $record.Status = if ($labelHashtable.Count -gt 0) { 'Labeled' } else { 'No Labels' }
+        $record.Project = $project
+        $record.Resource = $resource
+        $record.LabelData = $labelHashtable
+        $record.Tags = $labelHashtable
+        $record.Metadata = @{
+            Project  = $project
+            Resource = $resource
+            Labels   = $labelHashtable
+        }
+
+        return $record
+    }
+}

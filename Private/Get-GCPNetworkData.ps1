@@ -1,5 +1,6 @@
 function Get-GCPNetworkData {
     [CmdletBinding()]
+    [OutputType([GCPNetworkRecord])]
     param(
         [string]$Project
     )
@@ -9,15 +10,6 @@ function Get-GCPNetworkData {
     $networks = Invoke-GCloudJson -Arguments @('compute', 'networks', 'list', "--project=$resolvedProject")
 
     foreach ($network in $networks) {
-        ConvertTo-CloudRecord `
-            -Name $network.name `
-            -Provider GCP `
-            -Region 'global' `
-            -Status 'Available' `
-            -Metadata @{
-                Project               = $resolvedProject
-                AutoCreateSubnetworks = $network.autoCreateSubnetworks
-                SubnetworkMode        = if ($network.autoCreateSubnetworks) { 'auto' } else { 'custom' }
-            }
+        [GCPNetworkRecord]::FromGCloudJson($network, $resolvedProject)
     }
 }

@@ -45,7 +45,7 @@ Describe 'Get-CloudDisk' {
         It 'calls Get-AzureDiskData for Azure provider' {
             InModuleScope PSCumulus {
                 Mock Get-AzureDiskData {
-                    ConvertTo-CloudRecord -Name 'os-disk-01' -Provider Azure -Region 'eastus'
+                    [AzureDiskRecord]@{ Name = 'os-disk-01'; Provider = 'Azure'; Region = 'eastus' }
                 }
 
                 Get-CloudDisk -Provider Azure -ResourceGroup 'prod-rg'
@@ -57,7 +57,7 @@ Describe 'Get-CloudDisk' {
         It 'infers Azure when Provider is omitted' {
             InModuleScope PSCumulus {
                 Mock Get-AzureDiskData {
-                    ConvertTo-CloudRecord -Name 'os-disk-01' -Provider Azure -Region 'eastus'
+                    [AzureDiskRecord]@{ Name = 'os-disk-01'; Provider = 'Azure'; Region = 'eastus' }
                 }
 
                 Get-CloudDisk -ResourceGroup 'prod-rg'
@@ -70,7 +70,7 @@ Describe 'Get-CloudDisk' {
             InModuleScope PSCumulus {
                 Mock Get-AzureDiskData {
                     param([string]$ResourceGroup)
-                    ConvertTo-CloudRecord -Name 'os-disk-01' -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                    [AzureDiskRecord]@{ Name = 'os-disk-01'; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
                 }
 
                 $result = Get-CloudDisk -Provider Azure -ResourceGroup 'my-rg'
@@ -81,7 +81,7 @@ Describe 'Get-CloudDisk' {
         It 'returns CloudRecord objects' {
             InModuleScope PSCumulus {
                 Mock Get-AzureDiskData {
-                    ConvertTo-CloudRecord -Name 'os-disk-01' -Provider Azure -Region 'eastus' -Size '128 GB'
+                    [AzureDiskRecord]@{ Name = 'os-disk-01'; Provider = 'Azure'; Region = 'eastus'; Size = '128 GB' }
                 }
 
                 $result = Get-CloudDisk -Provider Azure -ResourceGroup 'rg'
@@ -94,7 +94,7 @@ Describe 'Get-CloudDisk' {
         It 'calls Get-AWSDiskData for AWS provider' {
             InModuleScope PSCumulus {
                 Mock Get-AWSDiskData {
-                    ConvertTo-CloudRecord -Name 'data-volume' -Provider AWS -Region 'us-east-1a'
+                    [AWSDiskRecord]@{ Name = 'data-volume'; Provider = 'AWS'; Region = 'us-east-1a' }
                 }
 
                 Get-CloudDisk -Provider AWS -Region 'us-east-1'
@@ -107,7 +107,7 @@ Describe 'Get-CloudDisk' {
             InModuleScope PSCumulus {
                 Mock Get-AWSDiskData {
                     param([string]$Region)
-                    ConvertTo-CloudRecord -Name 'data-volume' -Provider AWS -Region $Region
+                    [AWSDiskRecord]@{ Name = 'data-volume'; Provider = 'AWS'; Region = $Region }
                 }
 
                 $result = Get-CloudDisk -Provider AWS -Region 'eu-west-1'
@@ -118,7 +118,7 @@ Describe 'Get-CloudDisk' {
         It 'infers AWS when Provider is omitted' {
             InModuleScope PSCumulus {
                 Mock Get-AWSDiskData {
-                    ConvertTo-CloudRecord -Name 'data-volume' -Provider AWS -Region 'us-east-1a'
+                    [AWSDiskRecord]@{ Name = 'data-volume'; Provider = 'AWS'; Region = 'us-east-1a' }
                 }
 
                 Get-CloudDisk -Region 'us-east-1'
@@ -132,7 +132,7 @@ Describe 'Get-CloudDisk' {
         It 'calls Get-GCPDiskData for GCP provider' {
             InModuleScope PSCumulus {
                 Mock Get-GCPDiskData {
-                    ConvertTo-CloudRecord -Name 'data-disk-01' -Provider GCP -Region 'us-central1-a'
+                    [GCPDiskRecord]@{ Name = 'data-disk-01'; Provider = 'GCP'; Region = 'us-central1-a' }
                 }
 
                 Get-CloudDisk -Provider GCP -Project 'my-project'
@@ -145,7 +145,7 @@ Describe 'Get-CloudDisk' {
             InModuleScope PSCumulus {
                 Mock Get-GCPDiskData {
                     param([string]$Project)
-                    ConvertTo-CloudRecord -Name 'data-disk-01' -Provider GCP -Metadata @{ Proj = $Project }
+                    [GCPDiskRecord]@{ Name = 'data-disk-01'; Provider = 'GCP'; Metadata = @{ Proj = $Project } }
                 }
 
                 $result = Get-CloudDisk -Provider GCP -Project 'prod-gcp'

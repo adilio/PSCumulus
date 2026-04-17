@@ -88,6 +88,204 @@
       </ListControl>
     </View>
 
+    <!-- PSCumulus.CloudRecord.Instance.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Instance.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureCloudRecord</TypeName>
+        <TypeName>PSCumulus.AWSCloudRecord</TypeName>
+        <TypeName>PSCumulus.GCPCloudRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>Size</PropertyName></ListItem>
+              <ListItem><PropertyName>PrivateIpAddress</PropertyName></ListItem>
+              <ListItem><PropertyName>PublicIpAddress</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
+    <!-- PSCumulus.CloudRecord.Disk.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Disk.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureDiskRecord</TypeName>
+        <TypeName>PSCumulus.AWSDiskRecord</TypeName>
+        <TypeName>PSCumulus.GCPDiskRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>Size</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
+    <!-- PSCumulus.CloudRecord.Storage.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Storage.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureStorageRecord</TypeName>
+        <TypeName>PSCumulus.AWSStorageRecord</TypeName>
+        <TypeName>PSCumulus.GCPStorageRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>Size</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
+    <!-- PSCumulus.CloudRecord.Network.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Network.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureNetworkRecord</TypeName>
+        <TypeName>PSCumulus.AWSNetworkRecord</TypeName>
+        <TypeName>PSCumulus.GCPNetworkRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>AddressSpace</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
+    <!-- PSCumulus.CloudRecord.Function.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Function.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureFunctionRecord</TypeName>
+        <TypeName>PSCumulus.AWSFunctionRecord</TypeName>
+        <TypeName>PSCumulus.GCPFunctionRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>Runtime</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
+    <!-- PSCumulus.CloudRecord.Tag.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Tag.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureTagRecord</TypeName>
+        <TypeName>PSCumulus.AWSTagRecord</TypeName>
+        <TypeName>PSCumulus.GCPTagRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
     <!-- PSCumulus.ConnectionResult -->
     <View>
       <Name>PSCumulus.ConnectionResult</Name>

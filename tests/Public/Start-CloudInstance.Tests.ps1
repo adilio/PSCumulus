@@ -45,7 +45,7 @@ Describe 'Start-CloudInstance' {
         It 'calls Start-AzureInstance for Azure provider' {
             InModuleScope PSCumulus {
                 Mock Start-AzureInstance {
-                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Status 'Starting'
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Status = 'Starting' }
                 }
 
                 Start-CloudInstance -Provider Azure -Name 'vm01' -ResourceGroup 'prod-rg'
@@ -58,7 +58,7 @@ Describe 'Start-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Start-AzureInstance {
                     param([string]$Name, [string]$ResourceGroup)
-                    ConvertTo-CloudRecord -Name $Name -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                    [AzureCloudRecord]@{ Name = $Name; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
                 }
 
                 $result = Start-CloudInstance -Provider Azure -Name 'my-vm' -ResourceGroup 'my-rg'
@@ -70,7 +70,7 @@ Describe 'Start-CloudInstance' {
         It 'infers Azure when Provider is omitted' {
             InModuleScope PSCumulus {
                 Mock Start-AzureInstance {
-                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Status 'Starting'
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Status = 'Starting' }
                 }
 
                 Start-CloudInstance -Name 'vm01' -ResourceGroup 'prod-rg'
@@ -83,10 +83,10 @@ Describe 'Start-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Start-AzureInstance {
                     param([string]$Name, [string]$ResourceGroup)
-                    ConvertTo-CloudRecord -Name $Name -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                    [AzureCloudRecord]@{ Name = $Name; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
                 }
 
-                $inputRecord = ConvertTo-CloudRecord -Name 'web-server-01' -Provider Azure -Metadata @{ ResourceGroup = 'prod-rg' }
+                $inputRecord = [AzureCloudRecord]@{ Name = 'web-server-01'; Provider = 'Azure'; ResourceGroup = 'prod-rg' }
                 $result = $inputRecord | Start-CloudInstance -Confirm:$false
 
                 $result.Name | Should -Be 'web-server-01'
@@ -99,7 +99,7 @@ Describe 'Start-CloudInstance' {
         It 'calls Start-AWSInstance for AWS provider' {
             InModuleScope PSCumulus {
                 Mock Start-AWSInstance {
-                    ConvertTo-CloudRecord -Name 'i-abc' -Provider AWS -Status 'Starting'
+                    [AWSCloudRecord]@{ Name = 'i-abc'; Provider = 'AWS'; Status = 'Starting' }
                 }
 
                 Start-CloudInstance -Provider AWS -InstanceId 'i-abc' -Region 'us-east-1'
@@ -112,7 +112,7 @@ Describe 'Start-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Start-AWSInstance {
                     param([string]$InstanceId)
-                    ConvertTo-CloudRecord -Name $InstanceId -Provider AWS -Status 'Starting'
+                    [AWSCloudRecord]@{ Name = $InstanceId; Provider = 'AWS'; Status = 'Starting' }
                 }
 
                 $result = Start-CloudInstance -Provider AWS -InstanceId 'i-0abc123'
@@ -123,7 +123,7 @@ Describe 'Start-CloudInstance' {
         It 'infers AWS when Provider is omitted' {
             InModuleScope PSCumulus {
                 Mock Start-AWSInstance {
-                    ConvertTo-CloudRecord -Name 'i-abc' -Provider AWS -Status 'Starting'
+                    [AWSCloudRecord]@{ Name = 'i-abc'; Provider = 'AWS'; Status = 'Starting' }
                 }
 
                 Start-CloudInstance -InstanceId 'i-abc' -Region 'us-east-1'
@@ -136,10 +136,10 @@ Describe 'Start-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Start-AWSInstance {
                     param([string]$InstanceId, [string]$Region)
-                    ConvertTo-CloudRecord -Name $InstanceId -Provider AWS -Region $Region -Status 'Starting'
+                    [AWSCloudRecord]@{ Name = $InstanceId; Provider = 'AWS'; Region = $Region; Status = 'Starting' }
                 }
 
-                $inputRecord = ConvertTo-CloudRecord -Name 'app-server-01' -Provider AWS -Metadata @{ InstanceId = 'i-0abc123' }
+                $inputRecord = [AWSCloudRecord]@{ Name = 'app-server-01'; Provider = 'AWS'; InstanceId = 'i-0abc123' }
                 $result = $inputRecord | Start-CloudInstance -Confirm:$false
 
                 $result.Name | Should -Be 'i-0abc123'
@@ -152,7 +152,7 @@ Describe 'Start-CloudInstance' {
         It 'calls Start-GCPInstance for GCP provider' {
             InModuleScope PSCumulus {
                 Mock Start-GCPInstance {
-                    ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP -Status 'Starting'
+                    [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP'; Status = 'Starting' }
                 }
 
                 Start-CloudInstance -Provider GCP -Name 'gcp-vm' -Zone 'us-central1-a' -Project 'my-project'
@@ -165,7 +165,7 @@ Describe 'Start-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Start-GCPInstance {
                     param([string]$Name, [string]$Zone, [string]$Project)
-                    ConvertTo-CloudRecord -Name $Name -Provider GCP -Region $Zone -Metadata @{ Proj = $Project }
+                    [GCPCloudRecord]@{ Name = $Name; Provider = 'GCP'; Region = $Zone; Metadata = @{ Proj = $Project } }
                 }
 
                 $result = Start-CloudInstance -Provider GCP -Name 'gcp-vm' -Zone 'us-central1-a' -Project 'prod-gcp'
@@ -179,10 +179,10 @@ Describe 'Start-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Start-GCPInstance {
                     param([string]$Name, [string]$Zone, [string]$Project)
-                    ConvertTo-CloudRecord -Name $Name -Provider GCP -Region $Zone -Metadata @{ Proj = $Project }
+                    [GCPCloudRecord]@{ Name = $Name; Provider = 'GCP'; Region = $Zone; Metadata = @{ Proj = $Project } }
                 }
 
-                $inputRecord = ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP -Region 'us-central1-a' -Metadata @{ Project = 'prod-gcp'; Zone = 'us-central1-a' }
+                $inputRecord = [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP'; Region = 'us-central1-a'; Project = 'prod-gcp'; Zone = 'us-central1-a' }
                 $result = $inputRecord | Start-CloudInstance -Confirm:$false
 
                 $result.Name | Should -Be 'gcp-vm'

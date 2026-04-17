@@ -1,5 +1,6 @@
 function Get-AzureNetworkData {
     [CmdletBinding()]
+    [OutputType([AzureNetworkRecord])]
     param(
         [string]$ResourceGroup
     )
@@ -15,26 +16,6 @@ function Get-AzureNetworkData {
     }
 
     foreach ($vnet in $vnets) {
-        $addressPrefix = if ($vnet.AddressSpace -and $vnet.AddressSpace.AddressPrefixes) {
-            $vnet.AddressSpace.AddressPrefixes | Select-Object -First 1
-        } else {
-            $null
-        }
-
-        $params = @{
-            Name     = $vnet.Name
-            Provider = 'Azure'
-            Region   = $vnet.Location
-            Status   = $vnet.ProvisioningState
-            Metadata = @{
-                ResourceGroup = $vnet.ResourceGroupName
-                AddressSpace  = $vnet.AddressSpace.AddressPrefixes
-                SubnetCount   = @($vnet.Subnets).Count
-            }
-        }
-
-        if ($addressPrefix) { $params.Size = $addressPrefix }
-
-        ConvertTo-CloudRecord @params
+        [AzureNetworkRecord]::FromAzVirtualNetwork($vnet)
     }
 }

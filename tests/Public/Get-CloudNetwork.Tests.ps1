@@ -45,7 +45,7 @@ Describe 'Get-CloudNetwork' {
         It 'calls Get-AzureNetworkData for Azure provider' {
             InModuleScope PSCumulus {
                 Mock Get-AzureNetworkData {
-                    ConvertTo-CloudRecord -Name 'prod-vnet' -Provider Azure -Region 'eastus'
+                    [AzureNetworkRecord]@{ Name = 'prod-vnet'; Provider = 'Azure'; Region = 'eastus' }
                 }
 
                 Get-CloudNetwork -Provider Azure -ResourceGroup 'prod-rg'
@@ -58,7 +58,7 @@ Describe 'Get-CloudNetwork' {
             InModuleScope PSCumulus {
                 Mock Get-AzureNetworkData {
                     param([string]$ResourceGroup)
-                    ConvertTo-CloudRecord -Name 'prod-vnet' -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                    [AzureNetworkRecord]@{ Name = 'prod-vnet'; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
                 }
 
                 $result = Get-CloudNetwork -Provider Azure -ResourceGroup 'my-rg'
@@ -69,7 +69,7 @@ Describe 'Get-CloudNetwork' {
         It 'returns CloudRecord objects' {
             InModuleScope PSCumulus {
                 Mock Get-AzureNetworkData {
-                    ConvertTo-CloudRecord -Name 'prod-vnet' -Provider Azure -Region 'eastus' -Status 'Succeeded'
+                    [AzureNetworkRecord]@{ Name = 'prod-vnet'; Provider = 'Azure'; Region = 'eastus'; Status = 'Succeeded' }
                 }
 
                 $result = Get-CloudNetwork -Provider Azure -ResourceGroup 'rg'
@@ -82,7 +82,7 @@ Describe 'Get-CloudNetwork' {
         It 'calls Get-AWSNetworkData for AWS provider' {
             InModuleScope PSCumulus {
                 Mock Get-AWSNetworkData {
-                    ConvertTo-CloudRecord -Name 'prod-vpc' -Provider AWS -Region 'us-east-1'
+                    [AWSNetworkRecord]@{ Name = 'prod-vpc'; Provider = 'AWS'; Region = 'us-east-1' }
                 }
 
                 Get-CloudNetwork -Provider AWS -Region 'us-east-1'
@@ -95,7 +95,7 @@ Describe 'Get-CloudNetwork' {
             InModuleScope PSCumulus {
                 Mock Get-AWSNetworkData {
                     param([string]$Region)
-                    ConvertTo-CloudRecord -Name 'prod-vpc' -Provider AWS -Region $Region
+                    [AWSNetworkRecord]@{ Name = 'prod-vpc'; Provider = 'AWS'; Region = $Region }
                 }
 
                 $result = Get-CloudNetwork -Provider AWS -Region 'ap-southeast-1'
@@ -108,7 +108,7 @@ Describe 'Get-CloudNetwork' {
         It 'calls Get-GCPNetworkData for GCP provider' {
             InModuleScope PSCumulus {
                 Mock Get-GCPNetworkData {
-                    ConvertTo-CloudRecord -Name 'prod-network' -Provider GCP -Region 'global'
+                    [GCPNetworkRecord]@{ Name = 'prod-network'; Provider = 'GCP'; Region = 'global' }
                 }
 
                 Get-CloudNetwork -Provider GCP -Project 'my-project'
@@ -121,7 +121,7 @@ Describe 'Get-CloudNetwork' {
             InModuleScope PSCumulus {
                 Mock Get-GCPNetworkData {
                     param([string]$Project)
-                    ConvertTo-CloudRecord -Name 'prod-network' -Provider GCP -Metadata @{ Proj = $Project }
+                    [GCPNetworkRecord]@{ Name = 'prod-network'; Provider = 'GCP'; Metadata = @{ Proj = $Project } }
                 }
 
                 $result = Get-CloudNetwork -Provider GCP -Project 'prod-gcp'

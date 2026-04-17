@@ -27,30 +27,32 @@ Once that clicked, the stages became much easier to define:
 
 ## Current Status
 
-PSCumulus is currently between **Stage 1: Internal Typed Contract** and **Stage 2: Vendor Subclass Records**.
+PSCumulus is currently implementing **Stage 2: Vendor Subclass Records**.
 
-That means the core module still behaves the same way from the outside:
+**Stage 1 is complete:**
+- Internal typed vocabulary is established
+- Status normalization is semantic
+- `Metadata.NativeStatus` preserves provider-native state
+- Tag conversion has a dedicated internal home
 
+**Stage 2 is partially complete:**
+- `CloudRecord` is a real PowerShell base class
+- Instance records (`AzureCloudRecord`, `AWSCloudRecord`, `GCPCloudRecord`) use subclass factory methods
+- `Kind` is populated on instance records
+
+**Stage 2 completion criteria (in progress):**
+- [ ] Every `Get-*Data` backend delegates to a kind-specific subclass factory method
+- [ ] `ConvertTo-CloudRecord` is removed
+- [ ] Start/Stop lifecycle responses return typed records
+- [ ] No `[pscustomobject]` escape hatch remains for creating records
+- [ ] `Kind` is populated on every record type
+- [ ] All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses
+
+The module still behaves the same way from the outside:
 - the public interface is still cmdlet-first
 - `Get-CloudInstance`, `Get-CloudDisk`, `Get-CloudStorage`, and the rest still return `PSCumulus.CloudRecord`
 - the public command surface has not been broken or renamed
 - format and display behavior still target `PSCumulus.CloudRecord`
-
-What changed in Stage 1 is the internal vocabulary and correctness model:
-
-- instance states now normalize semantically instead of just being title-cased
-- the original provider state is preserved in `Metadata.NativeStatus`
-- tag conversion logic now has a dedicated internal home
-- the module has a typed internal foundation that later stages can build on
-
-What Stage 2 changes is the construction path for records themselves:
-
-- `CloudRecord` becomes a real PowerShell base class
-- vendor subclasses become the place of authority for provider-specific fields
-- instance normalization moves into subclass factory methods
-- Azure's old `Ready` fallback is retired in favor of semantic `Unknown`
-
-That distinction matters. PSCumulus is not being rewritten in one dramatic jump. It is being evolved so that each stage can land safely, be tested independently, and remain useful even if the later stages take time or change shape.
 
 ## Why Evolve In Stages
 
@@ -132,8 +134,42 @@ These principles apply to the full roadmap.
 - The core module keeps its PowerShell 5.1-compatible posture.
 - Later navigation work may require PowerShell 7+.
 - New providers and new resource kinds should get easier to add over time, not harder.
+- **Locality of knowledge.** When a piece of provider-specific logic needs to exist, it should live in exactly one place. The vendor subclass is that place. Helpers like `CloudInstanceStatusMap` and `CloudTagHelper` exist to be called *by* subclass factory methods, not to duplicate their responsibility.
 
 That last point is especially important. The roadmap is not only about new user features. It is also about making PSCumulus cheaper to extend without turning it into an over-abstracted framework.
+
+### Hierarchy Design: Kind-Split Flat
+
+The module adopts a **kind-split flat hierarchy**: one class per (vendor, kind) pair. This means fifteen leaf classes total, each small and focused:
+
+- `AzureInstanceRecord : CloudRecord` — Kind='Instance', ResourceGroup, VmId, OsType
+- `AzureDiskRecord : CloudRecord` — Kind='Disk', ResourceGroup, DiskSizeGB, Sku
+- `AzureStorageRecord : CloudRecord` — Kind='Storage', ResourceGroup, AccountName
+- `AzureNetworkRecord : CloudRecord` — Kind='Network', ResourceGroup, AddressSpace
+- `AzureFunctionRecord : CloudRecord` — Kind='Function', ResourceGroup, Runtime
+- `AWSInstanceRecord : CloudRecord` — Kind='Instance', InstanceId, VpcId, SubnetId
+- `AWSDiskRecord : CloudRecord` — Kind='Disk', VolumeId, VolumeType
+- `AWSStorageRecord : CloudRecord` — Kind='Storage', BucketName
+- `AWSNetworkRecord : CloudRecord` — Kind='Network', VpcId, CidrBlock
+- `AWSFunctionRecord : CloudRecord` — Kind='Function', FunctionName, Runtime
+- `GCPInstanceRecord : CloudRecord` — Kind='Instance', Project, Zone, Id
+- `GCPDiskRecord : CloudRecord` — Kind='Disk', Project, Zone, SourceImage
+- `GCPStorageRecord : CloudRecord` — Kind='Storage', BucketName
+- `GCPNetworkRecord : CloudRecord` — Kind='Network', Project, NetworkName
+- `GCPFunctionRecord : CloudRecord` — Kind='Function', Project, Runtime
+
+Each factory method (`AzureInstanceRecord::FromAzVM`, `AzureDiskRecord::FromAzDisk`) owns exactly one parsing contract. This matches the locality principle most faithfully.
+
+### Metadata Backward Compatibility
+
+Fields promoted from `Metadata` to typed properties follow a **dual-write with deprecation** pattern:
+
+- In version 0.2.x: Promoted fields exist both as typed properties AND in `Metadata` for backward compatibility
+- In version 0.3.0: Promoted fields are removed from `Metadata` to eliminate duplication
+
+This gives users time to migrate their scripts without accepting permanent duplication.
+
+User scripts that access `Metadata.ResourceGroup` will continue working in 0.2.x, but should transition to the direct `.ResourceGroup` property before 0.3.0.
 
 ## Stage 1: Internal Typed Contract
 
@@ -181,27 +217,73 @@ That restraint is the point. This stage is about making the existing module more
 
 ### Purpose
 
-Implement Snover's guidance directly: shared base class, vendor subclasses, and factory methods that own normalization.
+Implement Snover's guidance directly: shared base class, kind-split vendor subclasses, and factory methods that own normalization.
+
+### Completion Criteria
+
+Stage 2 is complete only when:
+
+- Every `Get-*Data` backend delegates to a kind-specific subclass factory method
+- `ConvertTo-CloudRecord` is removed (not just unused)
+- Start/Stop lifecycle responses return typed records
+- No `[pscustomobject]` escape hatch remains for creating records
+- `Kind` is populated on every record type
+- All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses
 
 ### What It Introduces
 
 - `CloudRecord` as a real PowerShell base class
-- `AzureCloudRecord`, `AWSCloudRecord`, and `GCPCloudRecord`
-- a `Kind` field on the base class
-- typed first-class provider properties on each vendor subclass
-- subclass `From*` factory methods that perform normalization and record construction
-- instance backends that fetch provider data and delegate construction to those factory methods
-- format/type-name compatibility so `PSCumulus.CloudRecord` remains the public display contract
+- Kind-split vendor subclasses: `AzureInstanceRecord`, `AWSDiskRecord`, `GCPStorageRecord`, etc.
+- A `Kind` field on the base class populated for all records
+- Typed first-class provider properties on each vendor+kind subclass
+- Subclass `From*` factory methods that perform normalization and record construction
+- Instance backends that fetch provider data and delegate construction to those factory methods
+- Format/type-name compatibility so `PSCumulus.CloudRecord` remains the public display contract
+
+### User-Visible Changes
+
+**Tab-completion works on typed properties:**
+```powershell
+$vm = Get-CloudInstance -Provider Azure -ResourceGroup prod-rg -Name web-01
+$vm.Re<tab>   # completes to .ResourceGroup
+$vm.Vm<tab>   # completes to .VmId
+```
+
+**Where-Object shorthand filtering works:**
+```powershell
+Get-CloudInstance -Provider Azure | Where-Object ResourceGroup -eq prod-rg
+# Previously: Where-Object { $_.Metadata.ResourceGroup -eq 'prod-rg' }
+```
+
+**Get-Member is self-documenting:**
+```powershell
+Get-CloudInstance -Provider Azure | Get-Member
+# Shows typed provider-specific properties (ResourceGroup, VmId, OsType)
+```
+
+**Select-Object works against typed fields:**
+```powershell
+Get-CloudInstance -Provider Azure | Select-Object Name, ResourceGroup, Status
+```
 
 ### Why This Stage Exists
 
 Before this stage, normalization knowledge was scattered across backend functions, wrapper converters, tag helpers, and `ConvertTo-CloudRecord`. That made the final output shape harder to reason about and harder to test.
 
-This stage creates one place of authority per provider. If you want to understand what an Azure instance record is, you read `AzureCloudRecord::FromAzVM()`. If you want to understand AWS or GCP, you read the corresponding subclass factory. The backend functions shrink back to their core job: talk to the provider, then delegate.
+This stage creates one place of authority per provider per resource kind. If you want to understand what an Azure instance record is, you read `AzureInstanceRecord::FromAzVM()`. If you want to understand an Azure disk record, you read `AzureDiskRecord::FromAzDisk()`. The backend functions shrink back to their core job: talk to the provider, then delegate.
 
 ### Why It Is Separate
 
 This stage is valuable even if a Provider never lands. It also gives later path and Provider work a better foundation because those layers can return strongly typed records rather than generic property bags.
+
+### Format View Strategy
+
+The module uses **kind-level detailed views** for now:
+- `PSCumulus.CloudRecord.Instance.Detailed` shows instance-specific columns
+- `PSCumulus.CloudRecord.Disk.Detailed` shows disk-specific columns
+- etc.
+
+This provides the biggest UX win per unit of effort. Vendor-specific detailed views can be added later if demand exists.
 
 ## Stage 3: Cloud Path Model
 
@@ -227,7 +309,7 @@ This matters because cloud hierarchies do not line up neatly:
 
 The path model is where PSCumulus decides how to turn those different scope systems into one navigable hierarchy without lying about the underlying structure.
 
-The records returned by that resolver now benefit from Stage 2: a path can resolve to a typed `AzureCloudRecord`, `AWSCloudRecord`, or `GCPCloudRecord` rather than a generic object with implied provider-specific fields hiding in `Metadata`.
+The records returned by that resolver now benefit from Stage 2: a path can resolve to a typed kind-specific record like `AzureInstanceRecord`, `AWSDiskRecord`, or `GCPStorageRecord` rather than a generic object with implied provider-specific fields hiding in `Metadata`.
 
 ### Why It Is Separate
 
@@ -245,6 +327,30 @@ Expose the existing backend engine through a read-only PowerShell navigation lay
 - `Get-ChildItem` over cloud scopes and resource containers
 - `Get-Item` / `Test-Path` style access over cloud paths
 - drive-backed discovery on top of the same backend logic the cmdlets already use
+
+### UX Anchors
+
+**Case sensitivity:**
+- Provider names (Azure, AWS, GCP) are case-insensitive
+- Scope names (resource groups, regions, projects) are case-insensitive
+- Resource names match the underlying provider's casing rules
+
+**Enumeration cost:**
+- `dir Azure:\` lists scopes (resource groups) — cached per session
+- `dir Azure:\prod-rg\Instances\` lists resources — lazy with cache
+- Verbose warning when fanout is expensive
+
+**Top-level container semantics:**
+- `dir Azure:\` shows scopes (resource groups)
+- `dir Azure:\prod-rg\` shows kinds (Instances, Disks, Storage, etc.)
+- `dir Azure:\prod-rg\Instances\` shows resources
+
+**What Get-Item returns:**
+- The typed subclass record (e.g., `AzureInstanceRecord`), not a wrapper
+
+**Tab-completion:**
+- `dir Azure:\prod-rg\<tab>` completes to `Instances`, `Disks`, etc.
+- `dir Azure:\prod-rg\Instances\<tab>` completes to existing resource names
 
 ### Why This Stage Exists
 

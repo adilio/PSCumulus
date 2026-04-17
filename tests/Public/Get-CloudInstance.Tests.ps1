@@ -75,7 +75,7 @@ Describe 'Get-CloudInstance' {
         It 'calls Get-AzureInstanceData for Azure provider' {
             InModuleScope PSCumulus {
                 Mock Get-AzureInstanceData {
-                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Region 'eastus'
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Region = 'eastus' }
                 }
 
                 Get-CloudInstance -Provider Azure -ResourceGroup 'prod-rg'
@@ -88,7 +88,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Get-AzureInstanceData {
                     param([string]$ResourceGroup)
-                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
                 }
 
                 $result = Get-CloudInstance -Provider Azure -ResourceGroup 'my-rg'
@@ -100,7 +100,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Get-AzureInstanceData {
                     param([string]$ResourceGroup, [string]$Name)
-                    ConvertTo-CloudRecord -Name $Name -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                    [AzureCloudRecord]@{ Name = $Name; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
                 }
 
                 $result = Get-CloudInstance -Provider Azure -ResourceGroup 'my-rg' -Name 'vm01'
@@ -111,7 +111,7 @@ Describe 'Get-CloudInstance' {
         It 'infers Azure when Provider is omitted' {
             InModuleScope PSCumulus {
                 Mock Get-AzureInstanceData {
-                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Region 'eastus'
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Region = 'eastus' }
                 }
 
                 Get-CloudInstance -ResourceGroup 'prod-rg'
@@ -123,7 +123,7 @@ Describe 'Get-CloudInstance' {
         It 'returns CloudRecord objects' {
             InModuleScope PSCumulus {
                 Mock Get-AzureInstanceData {
-                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Region 'eastus' -Status 'Running'
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Region = 'eastus'; Status = 'Running' }
                 }
 
                 $result = Get-CloudInstance -Provider Azure -ResourceGroup 'rg'
@@ -134,7 +134,7 @@ Describe 'Get-CloudInstance' {
         It 'adds the detailed type name when Detailed is specified' {
             InModuleScope PSCumulus {
                 Mock Get-AzureInstanceData {
-                    ConvertTo-CloudRecord -Name 'vm01' -Provider Azure -Region 'eastus' -Status 'Running'
+                    [AzureCloudRecord]@{ Name = 'vm01'; Provider = 'Azure'; Region = 'eastus'; Status = 'Running' }
                 }
 
                 $result = Get-CloudInstance -Provider Azure -ResourceGroup 'rg' -Detailed
@@ -147,7 +147,7 @@ Describe 'Get-CloudInstance' {
         It 'calls Get-AWSInstanceData for AWS provider' {
             InModuleScope PSCumulus {
                 Mock Get-AWSInstanceData {
-                    ConvertTo-CloudRecord -Name 'i-abc' -Provider AWS -Region 'us-east-1a'
+                    [AWSCloudRecord]@{ Name = 'i-abc'; Provider = 'AWS'; Region = 'us-east-1a' }
                 }
 
                 Get-CloudInstance -Provider AWS -Region 'us-east-1'
@@ -160,7 +160,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Get-AWSInstanceData {
                     param([string]$Region)
-                    ConvertTo-CloudRecord -Name 'i-abc' -Provider AWS -Region $Region
+                    [AWSCloudRecord]@{ Name = 'i-abc'; Provider = 'AWS'; Region = $Region }
                 }
 
                 $result = Get-CloudInstance -Provider AWS -Region 'ap-southeast-1'
@@ -172,7 +172,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Get-AWSInstanceData {
                     param([string]$Region, [string]$Name)
-                    ConvertTo-CloudRecord -Name $Name -Provider AWS -Region $Region
+                    [AWSCloudRecord]@{ Name = $Name; Provider = 'AWS'; Region = $Region }
                 }
 
                 $result = Get-CloudInstance -Provider AWS -Region 'ap-southeast-1' -Name 'app-server-01'
@@ -183,7 +183,7 @@ Describe 'Get-CloudInstance' {
         It 'infers AWS when Provider is omitted' {
             InModuleScope PSCumulus {
                 Mock Get-AWSInstanceData {
-                    ConvertTo-CloudRecord -Name 'i-abc' -Provider AWS -Region 'us-east-1a'
+                    [AWSCloudRecord]@{ Name = 'i-abc'; Provider = 'AWS'; Region = 'us-east-1a' }
                 }
 
                 Get-CloudInstance -Region 'us-east-1'
@@ -197,7 +197,7 @@ Describe 'Get-CloudInstance' {
         It 'calls Get-GCPInstanceData for GCP provider' {
             InModuleScope PSCumulus {
                 Mock Get-GCPInstanceData {
-                    ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP -Region 'us-central1-a'
+                    [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP'; Region = 'us-central1-a' }
                 }
 
                 Get-CloudInstance -Provider GCP -Project 'my-project'
@@ -210,7 +210,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Get-GCPInstanceData {
                     param([string]$Project)
-                    ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP -Metadata @{ Proj = $Project }
+                    [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP'; Metadata = @{ Proj = $Project } }
                 }
 
                 $result = Get-CloudInstance -Provider GCP -Project 'prod-gcp'
@@ -222,7 +222,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 Mock Get-GCPInstanceData {
                     param([string]$Project, [string]$Name)
-                    ConvertTo-CloudRecord -Name $Name -Provider GCP -Metadata @{ Proj = $Project }
+                    [GCPCloudRecord]@{ Name = $Name; Provider = 'GCP'; Metadata = @{ Proj = $Project } }
                 }
 
                 $result = Get-CloudInstance -Provider GCP -Project 'prod-gcp' -Name 'gcp-vm'
@@ -244,9 +244,9 @@ Describe 'Get-CloudInstance' {
                 $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
                 $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
 
-                Mock Get-AzureInstanceData { ConvertTo-CloudRecord -Name 'az-vm' -Provider Azure }
-                Mock Get-AWSInstanceData   { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
-                Mock Get-GCPInstanceData   { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+                Mock Get-AzureInstanceData { [AzureCloudRecord]@{ Name = 'az-vm'; Provider = 'Azure' } }
+                Mock Get-AWSInstanceData   { [AWSCloudRecord]@{ Name = 'aws-vm'; Provider = 'AWS' } }
+                Mock Get-GCPInstanceData   { [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP' } }
 
                 $null = Get-CloudInstance -All
 
@@ -260,9 +260,9 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 $script:PSCumulusContext.Providers['AWS'] = @{ Region = 'us-east-1'; Scope = $null }
 
-                Mock Get-AzureInstanceData { ConvertTo-CloudRecord -Name 'az-vm' -Provider Azure }
-                Mock Get-AWSInstanceData   { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
-                Mock Get-GCPInstanceData   { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+                Mock Get-AzureInstanceData { [AzureCloudRecord]@{ Name = 'az-vm'; Provider = 'Azure' } }
+                Mock Get-AWSInstanceData   { [AWSCloudRecord]@{ Name = 'aws-vm'; Provider = 'AWS' } }
+                Mock Get-GCPInstanceData   { [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP' } }
 
                 $null = Get-CloudInstance -All
 
@@ -276,7 +276,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 $script:PSCumulusContext.Providers['AWS'] = @{ Region = 'eu-west-1'; Scope = $null }
 
-                Mock Get-AWSInstanceData { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
+                Mock Get-AWSInstanceData { [AWSCloudRecord]@{ Name = 'aws-vm'; Provider = 'AWS' } }
 
                 $null = Get-CloudInstance -All
 
@@ -288,7 +288,7 @@ Describe 'Get-CloudInstance' {
             InModuleScope PSCumulus {
                 $script:PSCumulusContext.Providers['GCP'] = @{ Region = 'us-central1'; Scope = 'my-project' }
 
-                Mock Get-GCPInstanceData { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+                Mock Get-GCPInstanceData { [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP' } }
 
                 $null = Get-CloudInstance -All
 
@@ -302,9 +302,9 @@ Describe 'Get-CloudInstance' {
                 $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
                 $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
 
-                Mock Get-AzureInstanceData { ConvertTo-CloudRecord -Name 'az-vm'  -Provider Azure }
-                Mock Get-AWSInstanceData   { ConvertTo-CloudRecord -Name 'aws-vm' -Provider AWS }
-                Mock Get-GCPInstanceData   { ConvertTo-CloudRecord -Name 'gcp-vm' -Provider GCP }
+                Mock Get-AzureInstanceData { [AzureCloudRecord]@{ Name = 'az-vm';  Provider = 'Azure' } }
+                Mock Get-AWSInstanceData   { [AWSCloudRecord]@{ Name = 'aws-vm'; Provider = 'AWS' } }
+                Mock Get-GCPInstanceData   { [GCPCloudRecord]@{ Name = 'gcp-vm'; Provider = 'GCP' } }
 
                 $results = @(Get-CloudInstance -All)
                 $results.Count | Should -Be 3

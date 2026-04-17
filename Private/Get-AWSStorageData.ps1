@@ -1,5 +1,6 @@
 function Get-AWSStorageData {
     [CmdletBinding()]
+    [OutputType([AWSStorageRecord])]
     param(
         [string]$Region
     )
@@ -26,18 +27,6 @@ function Get-AWSStorageData {
             continue
         }
 
-        $params = @{
-            Name     = $bucket.BucketName
-            Provider = 'AWS'
-            Region   = $bucketRegion
-            Status   = 'Available'
-            Metadata = @{
-                BucketName = $bucket.BucketName
-            }
-        }
-
-        if ($bucket.CreationDate) { $params.CreatedAt = $bucket.CreationDate }
-
-        ConvertTo-CloudRecord @params
+        [AWSStorageRecord]::FromS3Bucket($bucket, $bucketRegion)
     }
 }

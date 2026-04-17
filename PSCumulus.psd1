@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.2.0'
+    ModuleVersion     = '0.3.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -41,6 +41,17 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.3.0
+- Completed Stage 2: Vendor Subclass Records for all resource types (Instance, Disk, Storage, Network, Function, Tag)
+- Implemented kind-split flat hierarchy with 15 vendor-specific record classes (AzureInstanceRecord, AWSDiskRecord, GCPStorageRecord, etc.)
+- Each resource kind now has typed first-class provider properties accessible via tab-completion (e.g., $vm.ResourceGroup, $disk.VolumeType, $bucket.BucketName)
+- All Get-*Data backends now delegate to subclass factory methods for normalization
+- Start/Stop lifecycle commands now return typed subclass records
+- Removed ConvertTo-CloudRecord and wrapper converter functions in favor of typed record classes
+- Added kind-level detailed format views for better display experience
+- Promoted provider identity fields from Metadata to typed properties with dual-write for backward compatibility
+- UX improvements: Where-Object shorthand filtering, Get-Member discoverability, Select-Object support
+
 0.2.0
 - Marked a major architectural step in PSCumulus: the module now follows the corrected Snover direction of a shared base record with vendor subclasses, and normalization owned by subclass factory methods
 - Implemented Stage 2 for instance inventory: Get-CloudInstance now returns class-based Azure, AWS, and GCP instance records while preserving the PSCumulus.CloudRecord contract for formatting and pipeline use

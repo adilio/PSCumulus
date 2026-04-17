@@ -5,6 +5,7 @@ function Stop-GCPInstance {
         Justification = 'This internal helper is invoked only by Stop-CloudInstance, which implements ShouldProcess.'
     )]
     [CmdletBinding()]
+    [OutputType([GCPCloudRecord])]
     param(
         [Parameter(Mandatory)]
         [string]$Name,
@@ -24,13 +25,18 @@ function Stop-GCPInstance {
         "--project=$resolvedProject"
     )
 
-    ConvertTo-CloudRecord `
-        -Name $Name `
-        -Provider GCP `
-        -Region $Zone `
-        -Status 'Stopping' `
-        -Metadata @{
-            Project = $resolvedProject
-            Zone    = $Zone
-        }
+    $record = [GCPCloudRecord]::new()
+    $record.Kind = 'Instance'
+    $record.Provider = [CloudProvider]::GCP.ToString()
+    $record.Name = $Name
+    $record.Region = $Zone
+    $record.Status = 'Stopping'
+    $record.Project = $resolvedProject
+    $record.Zone = $Zone
+    $record.Metadata = @{
+        Project = $resolvedProject
+        Zone    = $Zone
+    }
+
+    return $record
 }

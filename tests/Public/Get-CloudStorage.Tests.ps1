@@ -54,7 +54,7 @@ Describe 'Get-CloudStorage' {
             InModuleScope PSCumulus {
                 Mock Get-AzureStorageData {
                     param([string]$ResourceGroup)
-                    ConvertTo-CloudRecord -Name 'storage01' -Provider Azure -Metadata @{ RG = $ResourceGroup }
+                    [AzureStorageRecord]@{ Name = 'storage01'; Provider = 'Azure'; Metadata = @{ RG = $ResourceGroup } }
                 }
 
                 $result = Get-CloudStorage -Provider Azure -ResourceGroup 'my-rg'
@@ -76,7 +76,7 @@ Describe 'Get-CloudStorage' {
             InModuleScope PSCumulus {
                 Mock Get-AWSStorageData {
                     param([string]$Region)
-                    ConvertTo-CloudRecord -Name 'my-bucket' -Provider AWS -Region $Region
+                    [AWSStorageRecord]@{ Name = 'my-bucket'; Provider = 'AWS'; Region = $Region }
                 }
 
                 $result = Get-CloudStorage -Provider AWS -Region 'eu-west-1'
@@ -98,7 +98,7 @@ Describe 'Get-CloudStorage' {
             InModuleScope PSCumulus {
                 Mock Get-GCPStorageData {
                     param([string]$Project)
-                    ConvertTo-CloudRecord -Name 'my-bucket' -Provider GCP -Metadata @{ Proj = $Project }
+                    [GCPStorageRecord]@{ Name = 'my-bucket'; Provider = 'GCP'; Metadata = @{ Proj = $Project } }
                 }
 
                 $result = Get-CloudStorage -Provider GCP -Project 'prod-gcp'

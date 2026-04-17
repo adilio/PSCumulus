@@ -5,6 +5,7 @@ function Stop-AWSInstance {
         Justification = 'This internal helper is invoked only by Stop-CloudInstance, which implements ShouldProcess.'
     )]
     [CmdletBinding()]
+    [OutputType([AWSCloudRecord])]
     param(
         [Parameter(Mandatory)]
         [string]$InstanceId,
@@ -23,12 +24,16 @@ function Stop-AWSInstance {
 
     $null = Stop-EC2Instance @stopParams -ErrorAction Stop
 
-    ConvertTo-CloudRecord `
-        -Name $InstanceId `
-        -Provider AWS `
-        -Region $Region `
-        -Status 'Stopping' `
-        -Metadata @{
-            InstanceId = $InstanceId
-        }
+    $record = [AWSCloudRecord]::new()
+    $record.Kind = 'Instance'
+    $record.Provider = [CloudProvider]::AWS.ToString()
+    $record.Name = $InstanceId
+    $record.Region = $Region
+    $record.Status = 'Stopping'
+    $record.InstanceId = $InstanceId
+    $record.Metadata = @{
+        InstanceId = $InstanceId
+    }
+
+    return $record
 }

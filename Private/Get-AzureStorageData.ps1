@@ -1,5 +1,6 @@
 function Get-AzureStorageData {
     [CmdletBinding()]
+    [OutputType([AzureStorageRecord])]
     param(
         [string]$ResourceGroup
     )
@@ -15,27 +16,6 @@ function Get-AzureStorageData {
     }
 
     foreach ($account in $accounts) {
-        $status = if ($account.StatusOfPrimary) {
-            $account.StatusOfPrimary.ToString()
-        } else {
-            $null
-        }
-
-        $params = @{
-            Name     = $account.StorageAccountName
-            Provider = 'Azure'
-            Region   = $account.PrimaryLocation
-            Size     = $account.Sku.Name
-            Metadata = @{
-                ResourceGroup = $account.ResourceGroupName
-                Kind          = if ($account.Kind) { $account.Kind.ToString() } else { $null }
-                AccessTier    = if ($account.AccessTier) { $account.AccessTier.ToString() } else { $null }
-            }
-        }
-
-        if ($status) { $params.Status = $status }
-        if ($account.CreationTime) { $params.CreatedAt = $account.CreationTime }
-
-        ConvertTo-CloudRecord @params
+        [AzureStorageRecord]::FromAzStorageAccount($account)
     }
 }
