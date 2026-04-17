@@ -49,3 +49,5 @@ Set-Alias -Name sci   -Value Start-CloudInstance -Scope Script
 Set-Alias -Name tci   -Value Stop-CloudInstance -Scope Script
 Set-Alias -Name ncd   -Value New-CloudDrive -Scope Script
 Set-Alias -Name rcd   -Value Remove-CloudDrive -Scope Script
+Set-Alias -Name ncad  -Value New-CloudAggregationDrive -Scope Script
+Set-Alias -Name rcad  -Value Remove-CloudAggregationDrive -Scope Script

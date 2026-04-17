@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.5.1'
+    ModuleVersion     = '0.6.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -25,7 +25,9 @@
         'Stop-CloudInstance',
         'Resolve-CloudPath',
         'New-CloudDrive',
-        'Remove-CloudDrive'
+        'Remove-CloudDrive',
+        'New-CloudAggregationDrive',
+        'Remove-CloudAggregationDrive'
     )
 
     CmdletsToExport   = @()
@@ -37,7 +39,9 @@
         'sci',
         'tci',
         'ncd',
-        'rcd'
+        'rcd',
+        'ncad',
+        'rcad'
     )
 
     PrivateData = @{
@@ -46,6 +50,17 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.6.0
+- Completed Stage 6: Cross-Cloud Aggregation Drive
+- Added CloudAggregationRoot SHiPS class for cross-cloud browsing
+- Added New-CloudAggregationDrive and Remove-CloudAggregationDrive cmdlets
+- Added ncad and rcad aliases for aggregation drive management
+- Cloud:\ drive shows all connected providers as top-level containers
+- Auto-creates provider drives on Connect-Cloud when SHiPS available (PS 7+)
+- Auto-removes provider drives on Disconnect-Cloud
+- Enables navigation: dir Cloud:\Azure\prod-rg\Instances, dir Cloud:\AWS\us-east-1\Disks
+- Bump version to 0.6.0
+
 0.5.1
 - Completed Stage 5: Path-Aware Lifecycle Operations
 - Added Path parameter set to Start-CloudInstance and Stop-CloudInstance

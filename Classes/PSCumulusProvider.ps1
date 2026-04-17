@@ -100,3 +100,21 @@ class CloudResourceLeaf : SHiPSLeaf {
         $this.Record = $record
     }
 }
+
+class CloudAggregationRoot : SHiPSDirectory {
+    CloudAggregationRoot([string]$name) : base($name) {}
+
+    [object[]] GetChildItem() {
+        $results = [System.Collections.Generic.List[object]]::new()
+
+        foreach ($providerName in 'Azure', 'AWS', 'GCP') {
+            $ctx = $null
+            $ctx = $script:PSCumulusContext.Providers[$providerName]
+            if ($null -ne $ctx) {
+                $results.Add([CloudProviderRoot]::new($providerName))
+            }
+        }
+
+        return $results.ToArray()
+    }
+}

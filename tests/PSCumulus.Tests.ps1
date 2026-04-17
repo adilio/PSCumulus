@@ -25,11 +25,13 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Resolve-CloudPath'
             $commands | Should -Contain 'New-CloudDrive'
             $commands | Should -Contain 'Remove-CloudDrive'
+            $commands | Should -Contain 'New-CloudAggregationDrive'
+            $commands | Should -Contain 'Remove-CloudAggregationDrive'
         }
 
-        It 'exports exactly fourteen public functions' {
+        It 'exports exactly sixteen public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 14
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 16
         }
 
         It 'does not export variables' {
@@ -39,7 +41,7 @@ Describe 'PSCumulus module' {
 
         It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci', 'ncd', 'rcd')
+            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci', 'ncd', 'rcd', 'ncad', 'rcad')
         }
 
         It 'declares a module version' {
@@ -133,7 +135,7 @@ Describe 'PSCumulus module' {
     Context 'aliases' {
         It 'exports the expected interactive aliases' {
             (Get-Command -Module PSCumulus -CommandType Alias).Name |
-                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci', 'ncd', 'rcd')
+                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci', 'ncd', 'rcd', 'ncad', 'rcad')
         }
     }
 
