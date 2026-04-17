@@ -1,4 +1,8 @@
 BeforeAll {
+    # Import SHiPS first if available to avoid parser errors in PSCumulusProvider.ps1
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        Import-Module SHiPS -ErrorAction SilentlyContinue
+    }
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\PSCumulus.psd1')).Path -Force
 }
 
@@ -19,11 +23,13 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Start-CloudInstance'
             $commands | Should -Contain 'Stop-CloudInstance'
             $commands | Should -Contain 'Resolve-CloudPath'
+            $commands | Should -Contain 'New-CloudDrive'
+            $commands | Should -Contain 'Remove-CloudDrive'
         }
 
-        It 'exports exactly twelve public functions' {
+        It 'exports exactly fourteen public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 12
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 14
         }
 
         It 'does not export variables' {
@@ -33,7 +39,7 @@ Describe 'PSCumulus module' {
 
         It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci')
+            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci', 'ncd', 'rcd')
         }
 
         It 'declares a module version' {
@@ -127,7 +133,7 @@ Describe 'PSCumulus module' {
     Context 'aliases' {
         It 'exports the expected interactive aliases' {
             (Get-Command -Module PSCumulus -CommandType Alias).Name |
-                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci')
+                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci', 'ncd', 'rcd')
         }
     }
 

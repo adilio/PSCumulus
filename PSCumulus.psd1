@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.4.0'
+    ModuleVersion     = '0.5.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -23,7 +23,9 @@
         'Get-CloudFunction',
         'Start-CloudInstance',
         'Stop-CloudInstance',
-        'Resolve-CloudPath'
+        'Resolve-CloudPath',
+        'New-CloudDrive',
+        'Remove-CloudDrive'
     )
 
     CmdletsToExport   = @()
@@ -33,7 +35,9 @@
         'gcont',
         'gcin',
         'sci',
-        'tci'
+        'tci',
+        'ncd',
+        'rcd'
     )
 
     PrivateData = @{
@@ -42,6 +46,16 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.5.0
+- Completed Stage 4: Read-only SHiPS Provider with per-provider drives
+- Added CloudProviderRoot, CloudScopeNode, CloudKindNode, and CloudResourceLeaf SHiPS classes
+- Added Get-AzureScopes, Get-AWSScopes, Get-GCPScopes private functions for scope enumeration
+- Added New-CloudDrive and Remove-CloudDrive cmdlets for drive management
+- Added ncd and rcd aliases for drive management
+- SHiPS provider conditionally loads in PS 7+ when SHiPS module is available
+- Supports navigation: dir Azure:\prod-rg\Instances, Get-Item AWS:\us-east-1\Disks\vol-123
+- Module loader updated to exclude PSCumulusProvider.ps1 from standard loop and load conditionally
+
 0.4.0
 - Completed Stage 3: Cloud Path Model
 - Added CloudPathDepth enum (Root, Scope, Kind, Resource)
