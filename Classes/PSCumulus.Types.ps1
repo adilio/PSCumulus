@@ -233,6 +233,9 @@ class AzureCloudRecord : CloudRecord {
         $record.OsType = $resolvedOsType
         $record.Metadata = @{
             NativeStatus = $powerState
+            ResourceGroup = $vm.ResourceGroupName
+            VmId = $vm.VmId
+            OsType = $resolvedOsType
         }
 
         return $record
@@ -285,6 +288,9 @@ class AWSCloudRecord : CloudRecord {
         $record.SubnetId = $instance.SubnetId
         $record.Metadata = @{
             NativeStatus = $nativeStatus
+            InstanceId = $instance.InstanceId
+            VpcId = $instance.VpcId
+            SubnetId = $instance.SubnetId
         }
 
         return $record
@@ -345,6 +351,9 @@ class GCPCloudRecord : CloudRecord {
         $record.Id = $instance.id
         $record.Metadata = @{
             NativeStatus = $instance.status
+            Project = $project
+            Zone = $zoneName
+            Id = $instance.id
         }
 
         return $record

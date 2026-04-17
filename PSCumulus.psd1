@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.3.0'
+    ModuleVersion     = '0.3.1'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -41,6 +41,13 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.3.1
+- Enhanced detailed format views to display all vendor-specific properties for Function and Tag resource types
+- Function.Detailed view now shows: ResourceGroup, FunctionName, Project, EntryPoint
+- Tag.Detailed view now shows: ResourceId, Project, Resource
+- Aligned Metadata dual-write consistency across all resource types - Instance records now include promoted fields in Metadata for backward compatibility
+- All 524 tests passing
+
 0.3.0
 - Completed Stage 2: Vendor Subclass Records for all resource types (Instance, Disk, Storage, Network, Function, Tag)
 - Implemented kind-split flat hierarchy with 15 vendor-specific record classes (AzureInstanceRecord, AWSDiskRecord, GCPStorageRecord, etc.)

@@ -107,6 +107,15 @@
               <ListItem><PropertyName>Size</PropertyName></ListItem>
               <ListItem><PropertyName>PrivateIpAddress</PropertyName></ListItem>
               <ListItem><PropertyName>PublicIpAddress</PropertyName></ListItem>
+              <ListItem><PropertyName>ResourceGroup</PropertyName></ListItem>
+              <ListItem><PropertyName>InstanceId</PropertyName></ListItem>
+              <ListItem><PropertyName>VmId</PropertyName></ListItem>
+              <ListItem><PropertyName>VpcId</PropertyName></ListItem>
+              <ListItem><PropertyName>SubnetId</PropertyName></ListItem>
+              <ListItem><PropertyName>OsType</PropertyName></ListItem>
+              <ListItem><PropertyName>Project</PropertyName></ListItem>
+              <ListItem><PropertyName>Zone</PropertyName></ListItem>
+              <ListItem><PropertyName>Id</PropertyName></ListItem>
               <ListItem>
                 <Label>Tags</Label>
                 <ScriptBlock>
@@ -140,6 +149,13 @@
               <ListItem><PropertyName>Region</PropertyName></ListItem>
               <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
               <ListItem><PropertyName>Size</PropertyName></ListItem>
+              <ListItem><PropertyName>DiskSizeGB</PropertyName></ListItem>
+              <ListItem><PropertyName>Sku</PropertyName></ListItem>
+              <ListItem><PropertyName>VolumeType</PropertyName></ListItem>
+              <ListItem><PropertyName>VolumeId</PropertyName></ListItem>
+              <ListItem><PropertyName>OsType</PropertyName></ListItem>
+              <ListItem><PropertyName>Encrypted</PropertyName></ListItem>
+              <ListItem><PropertyName>Zone</PropertyName></ListItem>
               <ListItem>
                 <Label>Tags</Label>
                 <ScriptBlock>
@@ -173,6 +189,12 @@
               <ListItem><PropertyName>Region</PropertyName></ListItem>
               <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
               <ListItem><PropertyName>Size</PropertyName></ListItem>
+              <ListItem><PropertyName>ResourceGroup</PropertyName></ListItem>
+              <ListItem><PropertyName>AccountName</PropertyName></ListItem>
+              <ListItem><PropertyName>BucketName</PropertyName></ListItem>
+              <ListItem><PropertyName>StorageClass</PropertyName></ListItem>
+              <ListItem><PropertyName>Location</PropertyName></ListItem>
+              <ListItem><PropertyName>Project</PropertyName></ListItem>
               <ListItem>
                 <Label>Tags</Label>
                 <ScriptBlock>
@@ -206,6 +228,12 @@
               <ListItem><PropertyName>Region</PropertyName></ListItem>
               <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
               <ListItem><PropertyName>AddressSpace</PropertyName></ListItem>
+              <ListItem><PropertyName>ResourceGroup</PropertyName></ListItem>
+              <ListItem><PropertyName>VnetId</PropertyName></ListItem>
+              <ListItem><PropertyName>CidrBlock</PropertyName></ListItem>
+              <ListItem><PropertyName>VpcId</PropertyName></ListItem>
+              <ListItem><PropertyName>IsDefault</PropertyName></ListItem>
+              <ListItem><PropertyName>NetworkName</PropertyName></ListItem>
               <ListItem>
                 <Label>Tags</Label>
                 <ScriptBlock>
@@ -239,6 +267,10 @@
               <ListItem><PropertyName>Region</PropertyName></ListItem>
               <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
               <ListItem><PropertyName>Runtime</PropertyName></ListItem>
+              <ListItem><PropertyName>ResourceGroup</PropertyName></ListItem>
+              <ListItem><PropertyName>FunctionName</PropertyName></ListItem>
+              <ListItem><PropertyName>Project</PropertyName></ListItem>
+              <ListItem><PropertyName>EntryPoint</PropertyName></ListItem>
               <ListItem>
                 <Label>Tags</Label>
                 <ScriptBlock>
@@ -270,6 +302,9 @@
               <ListItem><PropertyName>Name</PropertyName></ListItem>
               <ListItem><PropertyName>Provider</PropertyName></ListItem>
               <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>ResourceId</PropertyName></ListItem>
+              <ListItem><PropertyName>Project</PropertyName></ListItem>
+              <ListItem><PropertyName>Resource</PropertyName></ListItem>
               <ListItem>
                 <Label>Tags</Label>
                 <ScriptBlock>
