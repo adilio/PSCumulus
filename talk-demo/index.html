@@ -23,7 +23,7 @@
     
     
       
-        <title>PSCumulus Talk Demo — Cheat Sheet - PSCumulus</title>
+        <title>PSCumulus Talk Demo: Cheat Sheet - PSCumulus</title>
       
     
     
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSCumulus Talk Demo — Cheat Sheet
+              PSCumulus Talk Demo: Cheat Sheet
             
           </span>
         </div>
@@ -961,12 +961,12 @@
   <a href="#1-demo-a-native-vs-unified-slide-7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. DEMO A — Native vs. Unified (Slide 7)
+        1. DEMO A: Native vs. Unified (Slide 7)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. DEMO A — Native vs. Unified (Slide 7)">
+    <nav class="md-nav" aria-label="1. DEMO A: Native vs. Unified (Slide 7)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1006,7 +1006,7 @@
   <a href="#same-question-three-clouds-same-shape-every-time" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Same question, three clouds — same shape every time
+        Same question, three clouds, same shape every time
       
     </span>
   </a>
@@ -1022,12 +1022,12 @@
   <a href="#2-demo-b-one-pipe-three-clouds-slide-8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. DEMO B — One Pipe, Three Clouds (Slide 8)
+        2. DEMO B: One Pipe, Three Clouds (Slide 8)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. DEMO B — One Pipe, Three Clouds (Slide 8)">
+    <nav class="md-nav" aria-label="2. DEMO B: One Pipe, Three Clouds (Slide 8)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1045,7 +1045,7 @@
   <a href="#tagging-compliance-untagged-production-assets-across-every-cloud-slide-verbatim" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tagging compliance — untagged production assets across every cloud (slide verbatim)
+        Tagging compliance: untagged production assets across every cloud (slide verbatim)
       
     </span>
   </a>
@@ -1056,7 +1056,7 @@
   <a href="#fleet-health-running-vs-not-running-by-provider" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fleet health — running vs. not-running by provider
+        Fleet health: running vs. not-running by provider
       
     </span>
   </a>
@@ -1106,7 +1106,7 @@
   <a href="#stale-instances-stoppedterminated-30-days" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stale instances — stopped/terminated &gt; 30 days
+        Stale instances: stopped/terminated &gt; 30 days
       
     </span>
   </a>
@@ -1277,7 +1277,7 @@
   <a href="#reference-demo-helpers-exposed-by-demo-setupps1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reference — demo helpers exposed by demo-setup.ps1
+        Reference: demo helpers exposed by demo-setup.ps1
       
     </span>
   </a>
@@ -1304,7 +1304,7 @@
   
 
 
-<h1 id="pscumulus-talk-demo-cheat-sheet">PSCumulus Talk Demo — Cheat Sheet<a class="headerlink" href="#pscumulus-talk-demo-cheat-sheet" title="Permanent link">&para;</a></h1>
+<h1 id="pscumulus-talk-demo-cheat-sheet">PSCumulus Talk Demo: Cheat Sheet<a class="headerlink" href="#pscumulus-talk-demo-cheat-sheet" title="Permanent link">&para;</a></h1>
 <p>Copy-paste blocks aligned to <em>Cross-Cloud without Crossed Fingers</em> (Summit 2026). <code>demo-setup.ps1</code> injects simulated data, so every command below runs offline and returns the same output every time.</p>
 <p>Ordering mirrors the slide deck: setup → <strong>Demo A</strong> (Slide 7) → <strong>Demo B</strong> (Slide 8) → bonus queries → per-resource spot checks (Slide 11) → start/stop → cleanup.</p>
 <hr />
@@ -1321,7 +1321,7 @@
 </code></pre></div>
 <p>Dot-sourcing <code>demo-setup.ps1</code> pre-seeds context via <code>Connect-Cloud -Provider Azure, AWS, GCP</code> (output suppressed). On stage, run <code>Connect-Cloud</code> again interactively so the audience sees it.</p>
 <hr />
-<h2 id="1-demo-a-native-vs-unified-slide-7">1. DEMO A — Native vs. Unified <em>(Slide 7)</em><a class="headerlink" href="#1-demo-a-native-vs-unified-slide-7" title="Permanent link">&para;</a></h2>
+<h2 id="1-demo-a-native-vs-unified-slide-7">1. DEMO A: Native vs. Unified <em>(Slide 7)</em><a class="headerlink" href="#1-demo-a-native-vs-unified-slide-7" title="Permanent link">&para;</a></h2>
 <h3 id="native-shown-on-slide-not-run-on-stage">Native (shown on slide, not run on stage)<a class="headerlink" href="#native-shown-on-slide-not-run-on-stage" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-AzVM</span>
 <span class="nb">Get-EC2Instance</span>
@@ -1333,7 +1333,7 @@
 <h3 id="show-the-contexts">Show the contexts<a class="headerlink" href="#show-the-contexts" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudContext</span>
 </code></pre></div>
-<h3 id="same-question-three-clouds-same-shape-every-time">Same question, three clouds — same shape every time<a class="headerlink" href="#same-question-three-clouds-same-shape-every-time" title="Permanent link">&para;</a></h3>
+<h3 id="same-question-three-clouds-same-shape-every-time">Same question, three clouds, same shape every time<a class="headerlink" href="#same-question-three-clouds-same-shape-every-time" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="n">-ResourceGroup</span> <span class="n">prod-rg</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">AWS</span> <span class="n">-Region</span> <span class="n">us-east</span><span class="p">-</span><span class="n">1</span>
@@ -1341,16 +1341,16 @@
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-Provider</span> <span class="n">GCP</span> <span class="n">-Project</span> <span class="n">contoso-prod</span>
 </code></pre></div>
 <hr />
-<h2 id="2-demo-b-one-pipe-three-clouds-slide-8">2. DEMO B — One Pipe, Three Clouds <em>(Slide 8)</em><a class="headerlink" href="#2-demo-b-one-pipe-three-clouds-slide-8" title="Permanent link">&para;</a></h2>
+<h2 id="2-demo-b-one-pipe-three-clouds-slide-8">2. DEMO B: One Pipe, Three Clouds <em>(Slide 8)</em><a class="headerlink" href="#2-demo-b-one-pipe-three-clouds-slide-8" title="Permanent link">&para;</a></h2>
 <h3 id="the-all-stream">The <code>-All</code> stream<a class="headerlink" href="#the-all-stream" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-All</span>
 </code></pre></div>
-<h3 id="tagging-compliance-untagged-production-assets-across-every-cloud-slide-verbatim">Tagging compliance — untagged production assets across every cloud <em>(slide verbatim)</em><a class="headerlink" href="#tagging-compliance-untagged-production-assets-across-every-cloud-slide-verbatim" title="Permanent link">&para;</a></h3>
+<h3 id="tagging-compliance-untagged-production-assets-across-every-cloud-slide-verbatim">Tagging compliance: untagged production assets across every cloud <em>(slide verbatim)</em><a class="headerlink" href="#tagging-compliance-untagged-production-assets-across-every-cloud-slide-verbatim" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudInstance</span> <span class="n">-All</span> <span class="p">|</span>
   <span class="nb">Where-Object</span> <span class="p">{</span> <span class="o">-not</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Tags</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">|</span>
   <span class="nb">Format-Table</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Provider</span><span class="p">,</span> <span class="n">Region</span> <span class="n">-AutoSize</span>
 </code></pre></div>
-<h3 id="fleet-health-running-vs-not-running-by-provider">Fleet health — running vs. not-running by provider<a class="headerlink" href="#fleet-health-running-vs-not-running-by-provider" title="Permanent link">&para;</a></h3>
+<h3 id="fleet-health-running-vs-not-running-by-provider">Fleet health: running vs. not-running by provider<a class="headerlink" href="#fleet-health-running-vs-not-running-by-provider" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Show-FleetHealth</span>
 </code></pre></div>
 <h3 id="group-by-provider-fallback-for-show-fleethealth">Group by provider (fallback for Show-FleetHealth)<a class="headerlink" href="#group-by-provider-fallback-for-show-fleethealth" title="Permanent link">&para;</a></h3>
@@ -1361,7 +1361,7 @@
 <h3 id="untagged-owner-tag-same-logic-as-the-demo-b-pipeline-wrapped">Untagged owner tag (same logic as the Demo B pipeline, wrapped)<a class="headerlink" href="#untagged-owner-tag-same-logic-as-the-demo-b-pipeline-wrapped" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Find-UntaggedInstances</span>
 </code></pre></div>
-<h3 id="stale-instances-stoppedterminated-30-days">Stale instances — stopped/terminated &gt; 30 days<a class="headerlink" href="#stale-instances-stoppedterminated-30-days" title="Permanent link">&para;</a></h3>
+<h3 id="stale-instances-stoppedterminated-30-days">Stale instances: stopped/terminated &gt; 30 days<a class="headerlink" href="#stale-instances-stoppedterminated-30-days" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nb">Find-StaleInstances</span>
 </code></pre></div>
 <h3 id="cost-center-rollup">Cost-center rollup<a class="headerlink" href="#cost-center-rollup" title="Permanent link">&para;</a></h3>
@@ -1418,7 +1418,7 @@
 <span class="nb">Remove-DemoSetup</span> <span class="n">-Uninstall</span>  <span class="c"># also uninstall PSCumulus</span>
 </code></pre></div>
 <hr />
-<h2 id="reference-demo-helpers-exposed-by-demo-setupps1">Reference — demo helpers exposed by <code>demo-setup.ps1</code><a class="headerlink" href="#reference-demo-helpers-exposed-by-demo-setupps1" title="Permanent link">&para;</a></h2>
+<h2 id="reference-demo-helpers-exposed-by-demo-setupps1">Reference: demo helpers exposed by <code>demo-setup.ps1</code><a class="headerlink" href="#reference-demo-helpers-exposed-by-demo-setupps1" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

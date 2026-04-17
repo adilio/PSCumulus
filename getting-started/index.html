@@ -1145,7 +1145,7 @@
 <span class="nb">Connect-Cloud</span> <span class="n">-Provider</span> <span class="n">AWS</span> <span class="n">-Region</span> <span class="s2">&quot;us-east-1&quot;</span>
 <span class="nb">Connect-Cloud</span> <span class="n">-Provider</span> <span class="n">GCP</span> <span class="n">-Project</span> <span class="s2">&quot;my-project&quot;</span>
 </code></pre></div>
-<p><code>Connect-Cloud</code> does more than set a provider — it checks whether you are already authenticated and triggers the provider-native login flow automatically if not. If you are already logged in, it skips login and stores the session context directly.</p>
+<p><code>Connect-Cloud</code> does more than set a provider. It checks whether you are already authenticated and triggers the provider-native login flow automatically if not. If you are already logged in, it skips login and stores the session context directly.</p>
 <p><code>Connect-Cloud</code> remembers the active provider for the current session. In interactive use, many later commands can omit <code>-Provider</code> when the remaining parameters already imply the target cloud or when the current provider makes the intent clear.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Connect-Cloud</span> <span class="n">-Provider</span> <span class="n">AWS</span> <span class="n">-Region</span> <span class="s2">&quot;us-east-1&quot;</span>
 
