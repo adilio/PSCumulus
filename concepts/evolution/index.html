@@ -2319,23 +2319,24 @@
 <li>keep the Provider additive rather than foundational</li>
 </ul>
 <h2 id="current-status">Current Status<a class="headerlink" href="#current-status" title="Permanent link">&para;</a></h2>
-<p>PSCumulus is currently implementing <strong>Stage 2: Vendor Subclass Records</strong>.</p>
+<p>PSCumulus has completed <strong>Stage 2: Vendor Subclass Records</strong> (v0.3.2).</p>
 <p><strong>Stage 1 is complete:</strong>
 - Internal typed vocabulary is established
-- Status normalization is semantic
+- Status normalization is semantic for all resource types
 - <code>Metadata.NativeStatus</code> preserves provider-native state
 - Tag conversion has a dedicated internal home</p>
-<p><strong>Stage 2 is partially complete:</strong>
-- <code>CloudRecord</code> is a real PowerShell base class
-- Instance records (<code>AzureCloudRecord</code>, <code>AWSCloudRecord</code>, <code>GCPCloudRecord</code>) use subclass factory methods
-- <code>Kind</code> is populated on instance records</p>
-<p><strong>Stage 2 completion criteria (in progress):</strong>
-- [ ] Every <code>Get-*Data</code> backend delegates to a kind-specific subclass factory method
-- [ ] <code>ConvertTo-CloudRecord</code> is removed
-- [ ] Start/Stop lifecycle responses return typed records
-- [ ] No <code>[pscustomobject]</code> escape hatch remains for creating records
-- [ ] <code>Kind</code> is populated on every record type
-- [ ] All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses</p>
+<p><strong>Stage 2 is complete:</strong>
+- Every <code>Get-*Data</code> backend delegates to a kind-specific subclass factory method
+- <code>ConvertTo-CloudRecord</code> is removed
+- Start/Stop lifecycle responses return typed records
+- No <code>[pscustomobject]</code> escape hatch remains for creating records
+- <code>Kind</code> is populated on every record type
+- All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses
+- 15 vendor-specific record classes with promoted first-class properties
+- Metadata dual-write consistency across all resource kinds
+- Kind-level detailed format views showing vendor-specific properties
+- Semantic status normalization for all resource types with enum-based status maps
+- Native status preserved in <code>Metadata.NativeStatus</code> for all resource types</p>
 <p>The module still behaves the same way from the outside:
 - the public interface is still cmdlet-first
 - <code>Get-CloudInstance</code>, <code>Get-CloudDisk</code>, <code>Get-CloudStorage</code>, and the rest still return <code>PSCumulus.CloudRecord</code>
