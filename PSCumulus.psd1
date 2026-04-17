@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.3.2'
+    ModuleVersion     = '0.4.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -22,7 +22,8 @@
         'Get-CloudDisk',
         'Get-CloudFunction',
         'Start-CloudInstance',
-        'Stop-CloudInstance'
+        'Stop-CloudInstance',
+        'Resolve-CloudPath'
     )
 
     CmdletsToExport   = @()
@@ -41,6 +42,16 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.4.0
+- Completed Stage 3: Cloud Path Model
+- Added CloudPathDepth enum (Root, Scope, Kind, Resource)
+- Added CloudPath class for structured path parsing and validation
+- Added CloudPathResolver class for mapping paths to backend commands
+- Path format: {Provider}:\{Scope}\{Kind}\{ResourceName} (e.g., Azure:\prod-rg\Instances\web-server-01)
+- Added Resolve-CloudPath cmdlet for parsing path strings
+- Supports case-insensitive provider names and singular/plural kind normalization
+- All path model components fully tested with Pester
+
 0.3.2
 - Implemented semantic status normalization for all non-Instance resource types (Disk, Storage, Network, Function)
 - Added CloudDiskStatus, CloudStorageStatus, CloudNetworkStatus, and CloudFunctionStatus enums

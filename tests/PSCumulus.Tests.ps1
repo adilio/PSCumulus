@@ -18,11 +18,12 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Get-CloudFunction'
             $commands | Should -Contain 'Start-CloudInstance'
             $commands | Should -Contain 'Stop-CloudInstance'
+            $commands | Should -Contain 'Resolve-CloudPath'
         }
 
-        It 'exports exactly eleven public functions' {
+        It 'exports exactly twelve public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 11
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 12
         }
 
         It 'does not export variables' {
