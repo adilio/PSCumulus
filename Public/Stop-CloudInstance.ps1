@@ -34,11 +34,17 @@ function Stop-CloudInstance {
         [Parameter(Mandatory, ParameterSetName = 'Piped', ValueFromPipeline)]
         [psobject]$InputObject,
 
+        # A cloud path string (e.g., 'Azure:\prod-rg\Instances\web-server-01')
+        [Parameter(Mandatory, ParameterSetName = 'Path', ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Path,
+
         # The cloud provider to target.
         [Parameter(ParameterSetName = 'Azure', ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'AWS', ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'GCP', ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'Path', ValueFromPipelineByPropertyName)]
         [string]$Provider,
 
         # The instance name (Azure and GCP).
@@ -79,6 +85,60 @@ function Stop-CloudInstance {
     )
 
     process {
+        if ($PSCmdlet.ParameterSetName -eq 'Path') {
+            $cloudPath = [CloudPath]::Parse($Path)
+
+            if ($cloudPath.Depth -ne [CloudPathDepth]::Resource) {
+                throw [System.ArgumentException]::new(
+                    "Path must resolve to a specific resource. Got depth: $($cloudPath.Depth)"
+                )
+            }
+
+            if ($cloudPath.Kind -ne 'Instances') {
+                throw [System.ArgumentException]::new(
+                    "Stop-CloudInstance is only supported for Instances. Got kind: $($cloudPath.Kind)"
+                )
+            }
+
+            $resolvedProvider = $cloudPath.Provider
+            $argumentMap = @{}
+
+            switch ($resolvedProvider) {
+                'Azure' {
+                    $argumentMap.Name          = $cloudPath.ResourceName
+                    $argumentMap.ResourceGroup = $cloudPath.Scope
+                }
+                'AWS' {
+                    $argumentMap.InstanceId = $cloudPath.ResourceName
+                    $argumentMap.Region      = $cloudPath.Scope
+                }
+                'GCP' {
+                    $argumentMap.Name    = $cloudPath.ResourceName
+                    $argumentMap.Project = $cloudPath.Scope
+
+                    $lookupRecords = Get-GCPInstanceData -Project $cloudPath.Scope -Name $cloudPath.ResourceName -ErrorAction SilentlyContinue
+                    if (-not $lookupRecords) {
+                        throw [System.InvalidOperationException]::new(
+                            "Instance '$($cloudPath.ResourceName)' not found in project '$($cloudPath.Scope)'."
+                        )
+                    }
+                    $argumentMap.Zone = $lookupRecords.Zone
+                }
+            }
+
+            $target = $cloudPath.ToString()
+            $commandMap = @{
+                Azure = 'Stop-AzureInstance'
+                AWS   = 'Stop-AWSInstance'
+                GCP   = 'Stop-GCPInstance'
+            }
+
+            if ($PSCmdlet.ShouldProcess($target, 'Stop-CloudInstance')) {
+                Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+            }
+            return
+        }
+
         $resolvedInput = Resolve-CloudInstanceInput `
             -InputObject $InputObject `
             -Provider $Provider `

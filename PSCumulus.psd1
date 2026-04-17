@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.5.0'
+    ModuleVersion     = '0.5.1'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -46,6 +46,14 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.5.1
+- Completed Stage 5: Path-Aware Lifecycle Operations
+- Added Path parameter set to Start-CloudInstance and Stop-CloudInstance
+- Supports starting/stopping instances using cloud paths: Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
+- Path parameter validates kind (must be Instances) and depth (must be Resource)
+- GCP paths automatically resolve Zone via instance lookup
+- Maintains backward compatibility with existing parameter sets
+
 0.5.0
 - Completed Stage 4: Read-only SHiPS Provider with per-provider drives
 - Added CloudProviderRoot, CloudScopeNode, CloudKindNode, and CloudResourceLeaf SHiPS classes
