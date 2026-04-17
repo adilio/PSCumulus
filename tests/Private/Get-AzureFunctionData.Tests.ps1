@@ -95,7 +95,7 @@ Describe 'Get-AzureFunctionData' {
                 Mock Get-AzFunctionApp { @($MockApp) }
 
                 $result = Get-AzureFunctionData -ResourceGroup 'prod-rg'
-                $result.Status | Should -Be 'Running'
+                $result.Status | Should -Be 'Active'
             }
         }
 

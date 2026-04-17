@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.3.1'
+    ModuleVersion     = '0.3.2'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -41,6 +41,14 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.3.2
+- Implemented semantic status normalization for all non-Instance resource types (Disk, Storage, Network, Function)
+- Added CloudDiskStatus, CloudStorageStatus, CloudNetworkStatus, and CloudFunctionStatus enums
+- Added CloudDiskStatusMap, CloudStorageStatusMap, CloudNetworkStatusMap, and CloudFunctionStatusMap helpers
+- Status values are now semantic (Available, Attached, Active, etc.) while preserving native status in Metadata.NativeStatus
+- All resource types now have consistent status normalization matching Stage 1 philosophy
+- All 524 tests passing
+
 0.3.1
 - Enhanced detailed format views to display all vendor-specific properties for Function and Tag resource types
 - Function.Detailed view now shows: ResourceGroup, FunctionName, Project, EntryPoint

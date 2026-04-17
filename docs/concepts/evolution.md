@@ -27,26 +27,26 @@ Once that clicked, the stages became much easier to define:
 
 ## Current Status
 
-PSCumulus is currently implementing **Stage 2: Vendor Subclass Records**.
+PSCumulus has completed **Stage 2: Vendor Subclass Records** (v0.3.2).
 
 **Stage 1 is complete:**
 - Internal typed vocabulary is established
-- Status normalization is semantic
+- Status normalization is semantic for all resource types
 - `Metadata.NativeStatus` preserves provider-native state
 - Tag conversion has a dedicated internal home
 
-**Stage 2 is partially complete:**
-- `CloudRecord` is a real PowerShell base class
-- Instance records (`AzureCloudRecord`, `AWSCloudRecord`, `GCPCloudRecord`) use subclass factory methods
-- `Kind` is populated on instance records
-
-**Stage 2 completion criteria (in progress):**
-- [ ] Every `Get-*Data` backend delegates to a kind-specific subclass factory method
-- [ ] `ConvertTo-CloudRecord` is removed
-- [ ] Start/Stop lifecycle responses return typed records
-- [ ] No `[pscustomobject]` escape hatch remains for creating records
-- [ ] `Kind` is populated on every record type
-- [ ] All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses
+**Stage 2 is complete:**
+- Every `Get-*Data` backend delegates to a kind-specific subclass factory method
+- `ConvertTo-CloudRecord` is removed
+- Start/Stop lifecycle responses return typed records
+- No `[pscustomobject]` escape hatch remains for creating records
+- `Kind` is populated on every record type
+- All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses
+- 15 vendor-specific record classes with promoted first-class properties
+- Metadata dual-write consistency across all resource kinds
+- Kind-level detailed format views showing vendor-specific properties
+- Semantic status normalization for all resource types with enum-based status maps
+- Native status preserved in `Metadata.NativeStatus` for all resource types
 
 The module still behaves the same way from the outside:
 - the public interface is still cmdlet-first

@@ -98,7 +98,7 @@ Describe 'Get-AzureNetworkData' {
                 Mock Get-AzVirtualNetwork { @($MockVnet) }
 
                 $result = Get-AzureNetworkData -ResourceGroup 'prod-rg'
-                $result.Status | Should -Be 'Succeeded'
+                $result.Status | Should -Be 'Available'
             }
         }
 

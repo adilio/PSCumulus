@@ -129,7 +129,7 @@ Describe 'Get-AWSDiskData' {
                 Mock Get-EC2Volume { @($MockVolume) }
 
                 $result = Get-AWSDiskData -Region 'us-east-1'
-                $result.Status | Should -Be 'in-use'
+                $result.Status | Should -Be 'Attached'
             }
         }
 

@@ -17,6 +17,34 @@ enum CloudInstanceStatus {
     Terminated
 }
 
+enum CloudDiskStatus {
+    Unknown
+    Available
+    Attached
+    Busy
+    Failed
+}
+
+enum CloudStorageStatus {
+    Unknown
+    Available
+    Configured
+    Failed
+}
+
+enum CloudNetworkStatus {
+    Unknown
+    Available
+    Failed
+}
+
+enum CloudFunctionStatus {
+    Unknown
+    Active
+    Inactive
+    Failed
+}
+
 class CloudInstanceStatusMap {
     static [object] FromAws([string]$stateName) {
         if ([string]::IsNullOrWhiteSpace($stateName)) {
@@ -76,6 +104,185 @@ class CloudInstanceStatusMap {
         }
 
         return [CloudInstanceStatus]::Unknown
+    }
+}
+
+class CloudDiskStatusMap {
+    static [object] FromAzure([string]$diskState) {
+        if ([string]::IsNullOrWhiteSpace($diskState)) {
+            return $null
+        }
+
+        switch ($diskState.Trim().ToUpperInvariant()) {
+            'ATTACHED'     { return [CloudDiskStatus]::Attached }
+            'UNATTACHED'   { return [CloudDiskStatus]::Available }
+            'ACTIVESAS'    { return [CloudDiskStatus]::Busy }
+            'READY'        { return [CloudDiskStatus]::Available }
+            default        { return [CloudDiskStatus]::Unknown }
+        }
+
+        return [CloudDiskStatus]::Unknown
+    }
+
+    static [object] FromAws([string]$volumeState) {
+        if ([string]::IsNullOrWhiteSpace($volumeState)) {
+            return $null
+        }
+
+        switch ($volumeState.Trim().ToLowerInvariant()) {
+            'available'    { return [CloudDiskStatus]::Available }
+            'in-use'       { return [CloudDiskStatus]::Attached }
+            'creating'     { return [CloudDiskStatus]::Busy }
+            'deleting'     { return [CloudDiskStatus]::Busy }
+            'deleted'      { return [CloudDiskStatus]::Unknown }
+            'error'        { return [CloudDiskStatus]::Failed }
+            default        { return [CloudDiskStatus]::Unknown }
+        }
+
+        return [CloudDiskStatus]::Unknown
+    }
+
+    static [object] FromGcp([string]$diskStatus) {
+        if ([string]::IsNullOrWhiteSpace($diskStatus)) {
+            return $null
+        }
+
+        switch ($diskStatus.Trim().ToUpperInvariant()) {
+            'READY'        { return [CloudDiskStatus]::Available }
+            'CREATING'     { return [CloudDiskStatus]::Busy }
+            'DELETING'     { return [CloudDiskStatus]::Busy }
+            'RESTORING'    { return [CloudDiskStatus]::Busy }
+            'FAILED'       { return [CloudDiskStatus]::Failed }
+            default        { return [CloudDiskStatus]::Unknown }
+        }
+
+        return [CloudDiskStatus]::Unknown
+    }
+}
+
+class CloudStorageStatusMap {
+    static [object] FromAzure([string]$provisioningState, [string]$statusOfPrimary) {
+        $stateToCheck = if (-not [string]::IsNullOrWhiteSpace($statusOfPrimary)) { $statusOfPrimary } elseif (-not [string]::IsNullOrWhiteSpace($provisioningState)) { $provisioningState } else { $null }
+
+        if ([string]::IsNullOrWhiteSpace($stateToCheck)) {
+            return $null
+        }
+
+        switch ($stateToCheck.Trim().ToUpperInvariant()) {
+            'SUCCEEDED'    { return [CloudStorageStatus]::Available }
+            'AVAILABLE'    { return [CloudStorageStatus]::Available }
+            'CREATING'     { return [CloudStorageStatus]::Unknown }
+            'DELETING'     { return [CloudStorageStatus]::Unknown }
+            'RESOLVINGDNS' { return [CloudStorageStatus]::Unknown }
+            default        { return [CloudStorageStatus]::Unknown }
+        }
+
+        return [CloudStorageStatus]::Unknown
+    }
+
+    static [object] FromAws([string]$bucketStatus) {
+        if ([string]::IsNullOrWhiteSpace($bucketStatus)) {
+            return $null
+        }
+
+        switch ($bucketStatus.Trim().ToLowerInvariant()) {
+            'available'    { return [CloudStorageStatus]::Available }
+            default        { return [CloudStorageStatus]::Unknown }
+        }
+
+        return [CloudStorageStatus]::Unknown
+    }
+
+    static [object] FromGcp([bool]$hasLifecycleRules) {
+        if ($hasLifecycleRules) {
+            return [CloudStorageStatus]::Configured
+        }
+        return [CloudStorageStatus]::Available
+    }
+}
+
+class CloudNetworkStatusMap {
+    static [object] FromAzure([string]$provisioningState) {
+        if ([string]::IsNullOrWhiteSpace($provisioningState)) {
+            return $null
+        }
+
+        switch ($provisioningState.Trim().ToUpperInvariant()) {
+            'SUCCEEDED'    { return [CloudNetworkStatus]::Available }
+            'FAILED'       { return [CloudNetworkStatus]::Failed }
+            'UPDATING'     { return [CloudNetworkStatus]::Unknown }
+            'DELETING'     { return [CloudNetworkStatus]::Unknown }
+            default        { return [CloudNetworkStatus]::Unknown }
+        }
+
+        return [CloudNetworkStatus]::Unknown
+    }
+
+    static [object] FromAws([string]$vpcState) {
+        if ([string]::IsNullOrWhiteSpace($vpcState)) {
+            return $null
+        }
+
+        switch ($vpcState.Trim().ToLowerInvariant()) {
+            'available'    { return [CloudNetworkStatus]::Available }
+            default        { return [CloudNetworkStatus]::Unknown }
+        }
+
+        return [CloudNetworkStatus]::Unknown
+    }
+
+    static [object] FromGcp() {
+        return [CloudNetworkStatus]::Available
+    }
+}
+
+class CloudFunctionStatusMap {
+    static [object] FromAzure([string]$functionState) {
+        if ([string]::IsNullOrWhiteSpace($functionState)) {
+            return $null
+        }
+
+        switch ($functionState.Trim().ToUpperInvariant()) {
+            'RUNNING'      { return [CloudFunctionStatus]::Active }
+            'STOPPED'      { return [CloudFunctionStatus]::Inactive }
+            'DISABLED'     { return [CloudFunctionStatus]::Inactive }
+            'DEFAULT'      { return [CloudFunctionStatus]::Unknown }
+            default        { return [CloudFunctionStatus]::Unknown }
+        }
+
+        return [CloudFunctionStatus]::Unknown
+    }
+
+    static [object] FromAws([string]$functionState) {
+        if ([string]::IsNullOrWhiteSpace($functionState)) {
+            return $null
+        }
+
+        switch ($functionState.Trim().ToLowerInvariant()) {
+            'active'       { return [CloudFunctionStatus]::Active }
+            'pending'      { return [CloudFunctionStatus]::Unknown }
+            'inactive'     { return [CloudFunctionStatus]::Inactive }
+            default        { return [CloudFunctionStatus]::Unknown }
+        }
+
+        return [CloudFunctionStatus]::Unknown
+    }
+
+    static [object] FromGcp([string]$functionStatus) {
+        if ([string]::IsNullOrWhiteSpace($functionStatus)) {
+            return $null
+        }
+
+        switch ($functionStatus.Trim().ToUpperInvariant()) {
+            'ACTIVE'       { return [CloudFunctionStatus]::Active }
+            'OFFLINE'      { return [CloudFunctionStatus]::Inactive }
+            'DEPLOYING'    { return [CloudFunctionStatus]::Unknown }
+            'DEPLOYED'     { return [CloudFunctionStatus]::Active }
+            'UNDEPLOYED'   { return [CloudFunctionStatus]::Inactive }
+            default        { return [CloudFunctionStatus]::Unknown }
+        }
+
+        return [CloudFunctionStatus]::Unknown
     }
 }
 
@@ -373,14 +580,18 @@ class AzureDiskRecord : CloudRecord {
 
     static [AzureDiskRecord] FromAzDisk([object]$disk) {
         $record = [AzureDiskRecord]::new()
-        $status = if ($disk.DiskState) { $disk.DiskState.ToString() } else { $null }
+        $nativeStatus = if ($disk.DiskState) { $disk.DiskState.ToString() } else { $null }
+        $normalizedStatus = [CloudDiskStatusMap]::FromAzure($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudDiskStatus]::Unknown
+        }
         $resolvedOsType = if ($disk.OsType) { $disk.OsType.ToString() } else { $null }
 
         $record.Kind = 'Disk'
         $record.Provider = [CloudProvider]::Azure.ToString()
         $record.Name = $disk.Name
         $record.Region = $disk.Location
-        $record.Status = $status
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = "$($disk.DiskSizeGB) GB"
         $record.CreatedAt = $disk.TimeCreated
         $record.ResourceGroup = $disk.ResourceGroupName
@@ -388,6 +599,7 @@ class AzureDiskRecord : CloudRecord {
         $record.Sku = $disk.Sku.Name
         $record.OsType = $resolvedOsType
         $record.Metadata = @{
+            NativeStatus   = $nativeStatus
             ResourceGroup = $disk.ResourceGroupName
             DiskSizeGB    = $disk.DiskSizeGB
             OsType        = $resolvedOsType
@@ -427,11 +639,17 @@ class AWSDiskRecord : CloudRecord {
             $null
         }
 
+        $nativeStatus = if ($volume.State -and $volume.State.Value) { $volume.State.Value } else { $null }
+        $normalizedStatus = [CloudDiskStatusMap]::FromAws($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudDiskStatus]::Unknown
+        }
+
         $record.Kind = 'Disk'
         $record.Provider = [CloudProvider]::AWS.ToString()
         $record.Name = $resolvedName
         $record.Region = $volume.AvailabilityZone
-        $record.Status = $volume.State.Value
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = "$($volume.Size) GB"
         $record.CreatedAt = $volume.CreateTime
         $record.VolumeId = $volume.VolumeId
@@ -439,6 +657,7 @@ class AWSDiskRecord : CloudRecord {
         $record.Encrypted = $volume.Encrypted
         $record.InstanceId = $attachedInstanceId
         $record.Metadata = @{
+            NativeStatus = $nativeStatus
             VolumeId   = $volume.VolumeId
             VolumeType = $volume.VolumeType.Value
             Encrypted  = $volume.Encrypted
@@ -474,10 +693,10 @@ class GCPDiskRecord : CloudRecord {
             $null
         }
 
-        $status = if ($disk.status) {
-            (Get-Culture).TextInfo.ToTitleCase($disk.status.ToLower())
-        } else {
-            $null
+        $nativeStatus = if ($disk.status) { $disk.status } else { $null }
+        $normalizedStatus = [CloudDiskStatusMap]::FromGcp($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudDiskStatus]::Unknown
         }
 
         $createdAt = $null
@@ -489,7 +708,7 @@ class GCPDiskRecord : CloudRecord {
         $record.Provider = [CloudProvider]::GCP.ToString()
         $record.Name = $disk.name
         $record.Region = $zoneName
-        $record.Status = $status
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = "$($disk.sizeGb) GB"
         $record.CreatedAt = $createdAt
         $record.Project = $project
@@ -497,6 +716,7 @@ class GCPDiskRecord : CloudRecord {
         $record.DiskType = $resolvedDiskType
         $record.SizeGb = $disk.sizeGb
         $record.Metadata = @{
+            NativeStatus = $nativeStatus
             Project  = $project
             Zone     = $zoneName
             DiskType = $resolvedDiskType
@@ -519,17 +739,25 @@ class AzureStorageRecord : CloudRecord {
     static [AzureStorageRecord] FromAzStorageAccount([object]$account) {
         $record = [AzureStorageRecord]::new()
 
+        $nativeStatusOfPrimary = if ($account.StatusOfPrimary) { $account.StatusOfPrimary.ToString() } else { $null }
+        $nativeProvisioningState = if ($account.ProvisioningState) { $account.ProvisioningState.ToString() } else { $null }
+        $normalizedStatus = [CloudStorageStatusMap]::FromAzure($nativeProvisioningState, $nativeStatusOfPrimary)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudStorageStatus]::Unknown
+        }
+
         $record.Kind = 'Storage'
         $record.Provider = [CloudProvider]::Azure.ToString()
         $record.Name = $account.StorageAccountName
         $record.Region = if ($account.PrimaryLocation) { $account.PrimaryLocation } elseif ($account.Location) { $account.Location } else { $null }
-        $record.Status = if ($account.StatusOfPrimary) { $account.StatusOfPrimary.ToString() } elseif ($account.ProvisioningState) { $account.ProvisioningState.ToString() } else { $null }
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = if ($account.Sku) { $account.Sku.Name.ToString() } else { $null }
         $record.CreatedAt = $account.CreationTime
         $record.ResourceGroup = $account.ResourceGroupName
         $record.AccountName = $account.StorageAccountName
         $record.Tags = [CloudTagHelper]::FromAzureTags($account.Tags)
         $record.Metadata = @{
+            NativeStatus = $nativeStatusOfPrimary
             ResourceGroup = $account.ResourceGroupName
             AccountName   = $account.StorageAccountName
         }
@@ -549,11 +777,16 @@ class AWSStorageRecord : CloudRecord {
     static [AWSStorageRecord] FromS3Bucket([object]$bucket, [string]$bucketRegion) {
         $record = [AWSStorageRecord]::new()
 
+        $normalizedStatus = [CloudStorageStatusMap]::FromAws('available')
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudStorageStatus]::Available
+        }
+
         $record.Kind = 'Storage'
         $record.Provider = [CloudProvider]::AWS.ToString()
         $record.Name = $bucket.BucketName
         $record.Region = $bucketRegion
-        $record.Status = 'Available'
+        $record.Status = $normalizedStatus.ToString()
         $record.CreatedAt = $bucket.CreationDate
         $record.BucketName = $bucket.BucketName
         $record.Metadata = @{
@@ -585,6 +818,12 @@ class GCPStorageRecord : CloudRecord {
             $null
         }
 
+        $hasLifecycleRules = if ($bucket.lifecycle) { $true } else { $false }
+        $normalizedStatus = [CloudStorageStatusMap]::FromGcp($hasLifecycleRules)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudStorageStatus]::Available
+        }
+
         $createdAt = $null
         if (-not [string]::IsNullOrWhiteSpace($bucket.timeCreated)) {
             $createdAt = [datetime]::Parse($bucket.timeCreated)
@@ -594,7 +833,7 @@ class GCPStorageRecord : CloudRecord {
         $record.Provider = [CloudProvider]::GCP.ToString()
         $record.Name = $resolvedBucketName
         $record.Region = $bucket.location
-        $record.Status = if ($bucket.lifecycle) { 'Configured' } else { 'Available' }
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = if ($bucket.storageClass) { $bucket.storageClass } else { $null }
         $record.CreatedAt = $createdAt
         $record.BucketName = $resolvedBucketName
@@ -650,17 +889,24 @@ class AzureNetworkRecord : CloudRecord {
             0
         }
 
+        $nativeProvisioningState = if ($vnet.ProvisioningState) { $vnet.ProvisioningState.ToString() } else { $null }
+        $normalizedStatus = [CloudNetworkStatusMap]::FromAzure($nativeProvisioningState)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudNetworkStatus]::Unknown
+        }
+
         $record.Kind = 'Network'
         $record.Provider = [CloudProvider]::Azure.ToString()
         $record.Name = $vnet.Name
         $record.Region = $vnet.Location
-        $record.Status = if ($vnet.ProvisioningState) { $vnet.ProvisioningState.ToString() } else { $null }
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = $firstAddressPrefix
         $record.ResourceGroup = $vnet.ResourceGroupName
         $record.AddressSpace = $addressSpaceString
         $record.VnetId = $vnet.Id
         $record.Tags = [CloudTagHelper]::FromAzureTags($vnet.Tags)
         $record.Metadata = @{
+            NativeStatus  = $nativeProvisioningState
             ResourceGroup = $vnet.ResourceGroupName
             AddressSpace  = $addressSpaceString
             VnetId        = $vnet.Id
@@ -703,27 +949,32 @@ class AWSNetworkRecord : CloudRecord {
             $null
         }
 
-        $status = if ($vpc.State) {
+        $nativeStatus = if ($vpc.State) {
             if ($vpc.State.Value) {
                 $vpc.State.Value
             } else {
                 $vpc.State.ToString()
             }
         } else {
-            'Available'
+            $null
+        }
+        $normalizedStatus = [CloudNetworkStatusMap]::FromAws($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudNetworkStatus]::Available
         }
 
         $record.Kind = 'Network'
         $record.Provider = [CloudProvider]::AWS.ToString()
         $record.Name = $resolvedName
         $record.Region = if ($vpc.RegionName) { $vpc.RegionName } else { $null }
-        $record.Status = $status
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = $cidrBlocks
         $record.VpcId = $vpc.VpcId
         $record.CidrBlock = $cidrBlocks
         $record.IsDefault = $vpc.IsDefault
         $record.Tags = [CloudTagHelper]::FromAwsTags($vpc.Tags)
         $record.Metadata = @{
+            NativeStatus = $nativeStatus
             VpcId    = $vpc.VpcId
             CidrBlock = $cidrBlocks
             IsDefault = $vpc.IsDefault
@@ -746,6 +997,11 @@ class GCPNetworkRecord : CloudRecord {
     static [GCPNetworkRecord] FromGCloudJson([object]$network, [string]$project) {
         $record = [GCPNetworkRecord]::new()
 
+        $normalizedStatus = [CloudNetworkStatusMap]::FromGcp()
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudNetworkStatus]::Available
+        }
+
         $createdAt = $null
         if (-not [string]::IsNullOrWhiteSpace($network.creationTimestamp)) {
             $createdAt = [datetime]::Parse($network.creationTimestamp)
@@ -757,7 +1013,7 @@ class GCPNetworkRecord : CloudRecord {
         $record.Provider = [CloudProvider]::GCP.ToString()
         $record.Name = $network.name
         $record.Region = 'global'
-        $record.Status = 'Available'
+        $record.Status = $normalizedStatus.ToString()
         $record.CreatedAt = $createdAt
         $record.Project = $project
         $record.NetworkName = $network.name
@@ -793,16 +1049,23 @@ class AzureFunctionRecord : CloudRecord {
             $null
         }
 
+        $nativeStatus = if ($functionApp.State) { $functionApp.State.ToString() } else { $null }
+        $normalizedStatus = [CloudFunctionStatusMap]::FromAzure($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudFunctionStatus]::Unknown
+        }
+
         $record.Kind = 'Function'
         $record.Provider = [CloudProvider]::Azure.ToString()
         $record.Name = $functionApp.Name
         $record.Region = $functionApp.Location
-        $record.Status = if ($functionApp.State) { $functionApp.State.ToString() } else { 'Running' }
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = $resolvedRuntime
         $record.ResourceGroup = $functionApp.ResourceGroupName
         $record.Runtime = $resolvedRuntime
         $record.Tags = [CloudTagHelper]::FromAzureTags($functionApp.Tags)
         $record.Metadata = @{
+            NativeStatus    = $nativeStatus
             ResourceGroup  = $functionApp.ResourceGroupName
             Runtime        = $resolvedRuntime
             RuntimeVersion = if ($functionApp.RuntimeVersion) { $functionApp.RuntimeVersion } else { $null }
@@ -844,17 +1107,24 @@ class AWSFunctionRecord : CloudRecord {
             $null
         }
 
+        $nativeStatus = if ($function.State) { $function.State } else { $null }
+        $normalizedStatus = [CloudFunctionStatusMap]::FromAws($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudFunctionStatus]::Unknown
+        }
+
         $record.Kind = 'Function'
         $record.Provider = [CloudProvider]::AWS.ToString()
         $record.Name = $function.FunctionName
         $record.Region = $resolvedRegion
-        $record.Status = if ($function.State) { (Get-Culture).TextInfo.ToTitleCase($function.State.ToLower()) } else { 'Active' }
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = $runtimeValue
         $record.CreatedAt = $function.LastModified
         $record.FunctionName = $function.FunctionName
         $record.Runtime = $runtimeValue
         $record.Tags = [CloudTagHelper]::FromAwsTags($function.Tags)
         $record.Metadata = @{
+            NativeStatus = $nativeStatus
             FunctionName = $function.FunctionName
             Runtime      = $runtimeValue
             FunctionArn  = $function.FunctionArn
@@ -881,11 +1151,10 @@ class GCPFunctionRecord : CloudRecord {
         $shortName = $nameParts[-1]
         $region = if ($nameParts.Count -ge 4) { $nameParts[-3] } else { $null }
 
-        $rawStatus = if ($function.state) { $function.state } elseif ($function.status) { $function.status } else { $null }
-        $status = if ($rawStatus) {
-            (Get-Culture).TextInfo.ToTitleCase($rawStatus.ToLower())
-        } else {
-            $null
+        $nativeStatus = if ($function.state) { $function.state } elseif ($function.status) { $function.status } else { $null }
+        $normalizedStatus = [CloudFunctionStatusMap]::FromGcp($nativeStatus)
+        if ($null -eq $normalizedStatus) {
+            $normalizedStatus = [CloudFunctionStatus]::Unknown
         }
 
         $createdAt = $null
@@ -897,13 +1166,14 @@ class GCPFunctionRecord : CloudRecord {
         $record.Provider = [CloudProvider]::GCP.ToString()
         $record.Name = $shortName
         $record.Region = $region
-        $record.Status = $status
+        $record.Status = $normalizedStatus.ToString()
         $record.Size = if ($function.runtime) { $function.runtime } else { $null }
         $record.CreatedAt = $createdAt
         $record.Project = $project
         $record.Runtime = if ($function.runtime) { $function.runtime } else { $null }
         $record.EntryPoint = if ($function.entryPoint) { $function.entryPoint } else { $null }
         $record.Metadata = @{
+            NativeStatus = $nativeStatus
             Project    = $project
             Runtime    = $function.runtime
             EntryPoint = $function.entryPoint

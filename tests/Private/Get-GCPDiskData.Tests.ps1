@@ -78,7 +78,7 @@ Describe 'Get-GCPDiskData' {
             }
         }
 
-        It 'title-cases the disk status' {
+        It 'normalizes disk status to semantic value' {
             InModuleScope PSCumulus -Parameters @{ Account = $script:activeAccount; Disk = $script:mockDisk } {
                 param($Account, $Disk)
                 Mock Assert-GCloudAuthenticated { $Account }
@@ -86,7 +86,7 @@ Describe 'Get-GCPDiskData' {
                 Mock Invoke-GCloudJson { @($Disk) }
 
                 $result = Get-GCPDiskData -Project 'my-project'
-                $result.Status | Should -Be 'Ready'
+                $result.Status | Should -Be 'Available'
             }
         }
 

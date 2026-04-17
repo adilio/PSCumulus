@@ -40,6 +40,7 @@ Describe 'Get-AWSFunctionData' {
                 MemorySize   = 512
                 Timeout      = 30
                 LastModified = '2026-03-15T09:00:00.000+0000'
+                State        = 'Active'
             }
         }
 
