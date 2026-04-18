@@ -23,6 +23,7 @@
         'Get-CloudFunction',
         'Start-CloudInstance',
         'Stop-CloudInstance',
+        'Restart-CloudInstance',
         'Resolve-CloudPath'
     )
 
@@ -33,7 +34,8 @@
         'gcont',
         'gcin',
         'sci',
-        'tci'
+        'tci',
+        'rci'
     )
 
     PrivateData = @{
