@@ -26,7 +26,7 @@ function Set-CloudTag {
         [Parameter(Mandatory, ParameterSetName = 'Path')]
         [string]$Path,
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName = $true, ParameterSetName = 'Piped')]
+        [Parameter(Mandatory, ValueFromPipeline = $true, ParameterSetName = 'Piped')]
         [PSTypeName('PSCumulus.CloudRecord')]
         [psobject]$InputObject,
 

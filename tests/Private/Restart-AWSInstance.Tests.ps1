@@ -6,11 +6,11 @@ Describe 'Restart-AWSInstance' {
 
     It 'restarts an AWS EC2 instance by InstanceId' {
         InModuleScope PSCumulus {
-            Mock Restart-EC2Instance { }
+            Mock Stop-EC2Instance { }
 
             Restart-AWSInstance -InstanceId 'i-12345678'
 
-            Should -Invoke Restart-EC2Instance -Times 1 -ParameterFilter {
+            Should -Invoke Stop-EC2Instance -Times 1 -ParameterFilter {
                 $InstanceId -eq 'i-12345678'
             }
         }
@@ -18,7 +18,7 @@ Describe 'Restart-AWSInstance' {
 
     It 'returns an AWSCloudRecord with Status Stopping' {
         InModuleScope PSCumulus {
-            Mock Restart-EC2Instance { }
+            Mock Stop-EC2Instance { }
 
             $result = Restart-AWSInstance -InstanceId 'i-12345678' -Region 'us-east-1'
 

@@ -14,15 +14,15 @@ function Restart-AWSInstance {
     )
 
     Assert-CommandAvailable `
-        -CommandName 'Restart-EC2Instance' `
+        -CommandName 'Stop-EC2Instance' `
         -InstallHint "Install the AWS.Tools.EC2 module with: Install-Module AWS.Tools.EC2 -Scope CurrentUser"
 
-    $restartParams = @{
+    $stopParams = @{
         InstanceId = $InstanceId
         ErrorAction = 'Stop'
     }
 
-    Restart-EC2Instance @restartParams
+    Stop-EC2Instance @stopParams
 
     $record = [AWSCloudRecord]::new()
     $record.Kind = 'Instance'

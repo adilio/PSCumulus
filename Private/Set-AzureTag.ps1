@@ -21,13 +21,7 @@ function Set-AzureTag {
 
     $existingTags = Get-AzTag -ResourceId $ResourceId -ErrorAction SilentlyContinue
 
-    if ($Merge -and $existingTags) {
-        foreach ($key in $existingTags.Properties.Name) {
-            if (-not $Tags.ContainsKey($key)) {
-                $Tags[$key] = $existingTags.Properties[$key].Value
-            }
-        }
-    }
+    $operation = if ($Merge) { 'Merge' } else { 'Replace' }
 
-    Update-AzTag -ResourceId $ResourceId -Tag $Tags -ErrorAction Stop
+    Update-AzTag -ResourceId $ResourceId -Tag $Tags -Operation $operation -ErrorAction Stop
 }
