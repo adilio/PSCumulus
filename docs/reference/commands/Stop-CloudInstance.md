@@ -19,7 +19,8 @@ Stops a compute instance on a selected cloud provider.
 ### Azure (Default)
 
 ```
-Stop-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-WhatIf] [-Confirm]
+Stop-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-Wait]
+ [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
@@ -28,26 +29,30 @@ Stop-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [
 ```
 Stop-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>]
  [-ResourceGroup <string>] [-InstanceId <string>] [-Region <string>] [-Project <string>]
- [-Zone <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Zone <string>] [-Wait] [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Path
 
 ```
-Stop-CloudInstance -Path <string> [-Provider <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Stop-CloudInstance -Path <string> [-Provider <string>] [-Wait] [-TimeoutSeconds <int>]
+ [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Stop-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Stop-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>] [-Wait]
+ [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Stop-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-WhatIf] [-Confirm]
+Stop-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-Wait]
+ [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
@@ -99,6 +104,90 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases:
 - cf
+ParameterSets:
+- Name: (All)
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -PassThru
+
+Returns the resulting CloudRecord after the stop operation.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: (All)
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -PollingIntervalSeconds
+
+How often to poll for status changes when using -Wait. Default is 5 seconds.
+
+```yaml
+Type: System.Int32
+DefaultValue: '5'
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: (All)
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -TimeoutSeconds
+
+Maximum time to wait for the instance to reach the target status when using -Wait. Default is 300 seconds.
+
+```yaml
+Type: System.Int32
+DefaultValue: '300'
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: (All)
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Wait
+
+Wait for the instance to reach the Stopped state before returning.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
 ParameterSets:
 - Name: (All)
   Position: Named

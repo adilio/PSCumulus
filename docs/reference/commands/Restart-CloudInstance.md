@@ -5,92 +5,88 @@ HelpUri: ''
 Locale: en-US
 Module Name: PSCumulus
 PlatyPS schema version: 2024-05-01
-title: Start-CloudInstance
+title: Restart-CloudInstance
 ---
 
-# Start-CloudInstance
+# Restart-CloudInstance
 
 ## SYNOPSIS
 
-Starts a compute instance on a selected cloud provider.
+Restarts a compute instance on a selected cloud provider.
 
 ## SYNTAX
 
 ### Azure (Default)
 
 ```
-Start-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-Wait]
- [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Restart-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-PassThru]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Piped
 
 ```
-Start-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>]
+Restart-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>]
  [-ResourceGroup <string>] [-InstanceId <string>] [-Region <string>] [-Project <string>]
- [-Zone <string>] [-Wait] [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Zone <string>] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Path
 
 ```
-Start-CloudInstance -Path <string> [-Provider <string>] [-Wait] [-TimeoutSeconds <int>]
- [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
+Restart-CloudInstance -Path <string> [-Provider <string>] [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Start-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>] [-Wait]
- [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Restart-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>]
+ [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Start-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-Wait]
- [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Restart-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-PassThru]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## ALIASES
 
 This cmdlet has the following aliases,
-  sci
+  rci
 
 ## DESCRIPTION
 
-Routes instance start requests to the matching provider backend and
-returns a normalized cloud record confirming the start operation.
+Routes instance restart requests to the matching provider backend and
+returns a normalized cloud record confirming the restart operation.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 
-Start-CloudInstance -Provider Azure -Name 'web-server-01' -ResourceGroup 'prod-rg'
+Restart-CloudInstance -Provider Azure -Name 'web-server-01' -ResourceGroup 'prod-rg'
 
-Starts an Azure VM.
+Restarts an Azure VM.
 
 ### EXAMPLE 2
 
-Start-CloudInstance -Provider AWS -InstanceId 'i-0123456789abcdef0' -Region 'us-east-1'
+Restart-CloudInstance -Provider AWS -InstanceId 'i-0123456789abcdef0' -Region 'us-east-1'
 
-Starts an AWS EC2 instance.
+Restarts an AWS EC2 instance.
 
 ### EXAMPLE 3
 
-Start-CloudInstance -Provider GCP -Name 'gcp-vm-01' -Zone 'us-central1-a' -Project 'my-project'
+Restart-CloudInstance -Provider GCP -Name 'gcp-vm-01' -Zone 'us-central1-a' -Project 'my-project'
 
-Starts a GCP compute instance.
+Restarts a GCP compute instance.
 
 ### EXAMPLE 4
 
-Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Start-CloudInstance
+Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Restart-CloudInstance
 
-Starts the Azure VM using piped PSCumulus instance output.
+Restarts the Azure VM using piped PSCumulus instance output.
 
 ## PARAMETERS
 
@@ -104,90 +100,6 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases:
 - cf
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -PassThru
-
-Returns the resulting CloudRecord after the start operation.
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -PollingIntervalSeconds
-
-How often to poll for status changes when using -Wait. Default is 5 seconds.
-
-```yaml
-Type: System.Int32
-DefaultValue: '5'
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -TimeoutSeconds
-
-Maximum time to wait for the instance to reach the target status when using -Wait. Default is 300 seconds.
-
-```yaml
-Type: System.Int32
-DefaultValue: '300'
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -Wait
-
-Wait for the instance to reach the Running state before returning.
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
 ParameterSets:
 - Name: (All)
   Position: Named
@@ -275,6 +187,27 @@ ParameterSets:
   IsRequired: true
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -PassThru
+
+Returns the resulting CloudRecord after the restart operation.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: (All)
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -505,5 +438,4 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
-
 

@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.4.0'
+    ModuleVersion     = '0.5.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -47,6 +47,11 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.5.0
+- Updated command reference documentation for Start-CloudInstance and Stop-CloudInstance to include -Wait, -PassThru, -TimeoutSeconds, and -PollingIntervalSeconds parameters
+- Added command reference documentation for Restart-CloudInstance, Set-CloudTag, and Test-CloudConnection
+- All 634 tests passing
+
 0.4.0
 - Added progress reporting to all Get-* cmdlets with -All parameter
 - Added -All parameter to Get-CloudStorage, Get-CloudDisk, Get-CloudNetwork, Get-CloudFunction, Get-CloudTag
