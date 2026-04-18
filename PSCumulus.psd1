@@ -24,6 +24,7 @@
         'Start-CloudInstance',
         'Stop-CloudInstance',
         'Restart-CloudInstance',
+        'Test-CloudConnection',
         'Resolve-CloudPath'
     )
 
