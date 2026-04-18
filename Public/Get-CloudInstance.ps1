@@ -122,8 +122,15 @@ function Get-CloudInstance {
 
         if ($PSCmdlet.ParameterSetName -eq 'All') {
             $skippedProviders = New-Object System.Collections.Generic.List[string]
+            $providers = @('Azure', 'AWS', 'GCP')
+            $providerIndex = 0
 
-            foreach ($providerName in 'Azure', 'AWS', 'GCP') {
+            foreach ($providerName in $providers) {
+                $providerIndex++
+                $percentComplete = [int] (($providerIndex / $providers.Count) * 100)
+
+                Write-Progress -Activity "Get-CloudInstance -All" -Status "Querying $providerName..." -PercentComplete $percentComplete -CurrentOperation "Fetching instances from $providerName"
+
                 $ctx = $script:PSCumulusContext.Providers[$providerName]
                 if ($null -eq $ctx) {
                     $skippedProviders.Add("$providerName (no active session context)")
@@ -152,6 +159,8 @@ function Get-CloudInstance {
 
                 & $decorateRecord (Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap)
             }
+
+            Write-Progress -Activity "Get-CloudInstance -All" -Completed
 
             if ($skippedProviders.Count -gt 0) {
                 Write-Verbose ("Get-CloudInstance -All skipped: " + ($skippedProviders -join '; ') + '.')
