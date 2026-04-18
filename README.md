@@ -21,21 +21,24 @@ The module is evidence for an argument. The argument is that a deliberately narr
 
 ## The public surface
 
-Eleven commands. Verb-noun, normalized output, no provider marketing in the noun.
+Fourteen commands. Verb-noun, normalized output, no provider marketing in the noun.
 
 | Command | Intent |
 |---|---|
 | `Connect-Cloud` | Detect or trigger a provider-native login and store a normalized session context |
 | `Disconnect-Cloud` | Clear stored session context for a selected provider |
-| `Get-CloudContext` | List established provider sessions for the current shell |
-| `Get-CloudInstance` | Compute instances (supports `-All` across every connected provider) |
-| `Get-CloudStorage` | Storage accounts / buckets |
-| `Get-CloudDisk` | Disks / volumes |
-| `Get-CloudNetwork` | Virtual networks / VPCs |
-| `Get-CloudFunction` | Serverless functions |
-| `Get-CloudTag` | Tags / labels |
-| `Start-CloudInstance` | Start a compute instance |
-| `Stop-CloudInstance` | Stop a compute instance |
+| `Get-CloudContext` | List established provider sessions for the current shell (includes credential expiry warnings) |
+| `Get-CloudInstance` | Compute instances (supports `-All`, `-Status`, `-Tag` filters) |
+| `Get-CloudStorage` | Storage accounts / buckets (supports `-All`, `-Status`, `-Tag` filters) |
+| `Get-CloudDisk` | Disks / volumes (supports `-All`, `-Status`, `-Tag` filters) |
+| `Get-CloudNetwork` | Virtual networks / VPCs (supports `-All`, `-Status`, `-Tag` filters) |
+| `Get-CloudFunction` | Serverless functions (supports `-All`, `-Status`, `-Tag` filters) |
+| `Get-CloudTag` | Tags / labels (supports `-All`) |
+| `Set-CloudTag` | Set tags/labels on cloud resources (supports `-Merge`) |
+| `Start-CloudInstance` | Start a compute instance (supports `-Wait`, `-PassThru`) |
+| `Stop-CloudInstance` | Stop a compute instance (supports `-Wait`, `-PassThru`) |
+| `Restart-CloudInstance` | Restart a compute instance |
+| `Test-CloudConnection` | Test connectivity to all connected providers |
 
 Read commands return `PSCumulus.CloudRecord`-compatible records with a stable shared shape. For instance inventory, that contract is now implemented with a real base class plus vendor subclasses.
 
@@ -48,6 +51,13 @@ Import-Module PSCumulus
 Connect-Cloud -Provider AWS, Azure, GCP
 Get-CloudContext
 Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
+
+# New features
+Test-CloudConnection                    # Verify all provider connections
+Get-CloudInstance -All -Status Running  # Filter by status
+Get-CloudTag -All                       # Query tags across all providers
+Set-CloudTag -Path 'Azure:\rg\Instances\vm01' -Tags @{Owner = 'adil'} -Merge
+Start-CloudInstance -Name 'web01' -ResourceGroup 'prod-rg' -Wait -PassThru
 ```
 
 `Connect-Cloud` does more than set a flag: it verifies the required provider tools are present, detects whether an authenticated session already exists, triggers the provider-native login flow only if one is needed, and stores a normalized context for each provider. Per-provider context persists side by side so a single shell can talk to all three clouds without re-authenticating every time.
@@ -179,7 +189,7 @@ This module is intentionally not a full cloud framework. It does not cover:
 - **IAM.** The underlying philosophies don't overlap. AWS thinks in policy documents, Azure in hierarchical role assignments, GCP in bindings. A unified `Get-CloudPermission` would either flatten the scoping that makes the answer useful or stuff the real answer into `Metadata` and hand you an empty wrapper. Use the provider-native commands.
 - **Cost.** Each cloud's billing model is structured differently enough that a shared surface would be more misleading than helpful.
 - **Provisioning.** Terraform exists and is the right tool. PSCumulus standardizes *interaction* with infrastructure; Terraform standardizes the infrastructure itself.
-- **Write commands for most inventory.** The read path landed first. `Start/Stop-CloudInstance` are the two lifecycle commands currently in the public surface.
+- **Write commands for most inventory.** The read path landed first. `Start/Stop/Restart-CloudInstance` and `Set-CloudTag` are the lifecycle commands currently in the public surface.
 - **Cross-cloud search by name.** On the roadmap.
 
 The rule behind every decision above: *if the normalized object would be mostly `Metadata`, the abstraction is too weak to deserve a first-class public command.*

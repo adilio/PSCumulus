@@ -419,11 +419,15 @@
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>Scope</Label>
-            <Width>25</Width>
+            <Width>20</Width>
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>Region</Label>
-            <Width>20</Width>
+            <Width>15</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>ExpiresAt</Label>
+            <Width>16</Width>
           </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
@@ -434,6 +438,15 @@
               <TableColumnItem><PropertyName>Account</PropertyName></TableColumnItem>
               <TableColumnItem><PropertyName>Scope</PropertyName></TableColumnItem>
               <TableColumnItem><PropertyName>Region</PropertyName></TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  if ($_.ExpiresAt) {
+                    $_.ExpiresAt.ToString("HH:mm")
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
         </TableRowEntries>

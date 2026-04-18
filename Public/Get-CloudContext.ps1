@@ -27,6 +27,62 @@ function Get-CloudContext {
 
             if ($null -eq $entry) { continue }
 
+            $expiresAt = $null
+            $warningThreshold = [TimeSpan]::FromMinutes(5)
+
+            try {
+                switch ($provider) {
+                    'Azure' {
+                        $azContext = Get-AzContext -ErrorAction SilentlyContinue
+                        if ($azContext -and $azContext.Token -and $azContext.Token.ExpiresOn) {
+                            $expiresAt = $azContext.Token.ExpiresOn.LocalDateTime
+                            $timeToExpiry = $expiresAt - [DateTime]::Now
+
+                            if ($timeToExpiry -le $warningThreshold -and $timeToExpiry -gt [TimeSpan]::Zero) {
+                                Write-Warning "Azure credentials for $($entry.Account) will expire in $($timeToExpiry.Minutes) minutes at $($expiresAt:HH:mm)."
+                            } elseif ($timeToExpiry -le [TimeSpan]::Zero) {
+                                Write-Warning "Azure credentials for $($entry.Account) have expired. Please run Connect-Cloud -Provider Azure."
+                            }
+                        }
+                    }
+                    'AWS' {
+                        $profile = Get-AWSCredential -ListProfileDetail -ErrorAction SilentlyContinue |
+                            Where-Object { $_.ProfileName -eq $entry.Account }
+                        if ($profile -and $profile.Expiration) {
+                            $expiresAt = $profile.Expiration.ToLocalTime()
+                            $timeToExpiry = $expiresAt - [DateTime]::Now
+
+                            if ($timeToExpiry -le $warningThreshold -and $timeToExpiry -gt [TimeSpan]::Zero) {
+                                Write-Warning "AWS credentials for profile $($entry.Account) will expire in $($timeToExpiry.Minutes) minutes at $($expiresAt:HH:mm)."
+                            } elseif ($timeToExpiry -le [TimeSpan]::Zero) {
+                                Write-Warning "AWS credentials for profile $($entry.Account) have expired. Please run Connect-Cloud -Provider AWS."
+                            }
+                        }
+                    }
+                    'GCP' {
+                        $tokenInfo = Invoke-GCloudJson -Arguments @('auth', 'print-access-token') -ErrorAction SilentlyContinue
+                        if ($tokenInfo) {
+                            $tokenBytes = [System.Convert]::FromBase64String($tokenInfo)
+                            $tokenJson = [System.Text.Encoding]::UTF8.GetString($tokenBytes)
+                            $tokenData = $tokenJson | ConvertFrom-Json -ErrorAction SilentlyContinue
+
+                            if ($tokenData -and $tokenData.exp) {
+                                $expiresAt = [DateTimeOffset]::FromUnixTimeSeconds($tokenData.exp).LocalDateTime
+                                $timeToExpiry = $expiresAt - [DateTime]::Now
+
+                                if ($timeToExpiry -le $warningThreshold -and $timeToExpiry -gt [TimeSpan]::Zero) {
+                                    Write-Warning "GCP credentials for $($entry.Account) will expire in $($timeToExpiry.Minutes) minutes at $($expiresAt:HH:mm)."
+                                } elseif ($timeToExpiry -le [TimeSpan]::Zero) {
+                                    Write-Warning "GCP credentials for $($entry.Account) have expired. Please run Connect-Cloud -Provider GCP."
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch {
+                Write-Verbose "Failed to retrieve credential expiry for $provider`: $_"
+            }
+
             [pscustomobject]@{
                 PSTypeName  = 'PSCumulus.CloudContext'
                 Provider    = $provider
@@ -36,6 +92,7 @@ function Get-CloudContext {
                 Scope       = $entry.Scope
                 Region      = $entry.Region
                 ConnectedAt = $entry.ConnectedAt
+                ExpiresAt   = $expiresAt
             }
         }
     }

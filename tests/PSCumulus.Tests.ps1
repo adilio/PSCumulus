@@ -19,11 +19,14 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Start-CloudInstance'
             $commands | Should -Contain 'Stop-CloudInstance'
             $commands | Should -Contain 'Resolve-CloudPath'
+            $commands | Should -Contain 'Restart-CloudInstance'
+            $commands | Should -Contain 'Set-CloudTag'
+            $commands | Should -Contain 'Test-CloudConnection'
         }
 
-        It 'exports exactly twelve public functions' {
+        It 'exports exactly fifteen public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 12
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 15
         }
 
         It 'does not export variables' {
@@ -33,7 +36,9 @@ Describe 'PSCumulus module' {
 
         It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci')
+            $expected = @('conc', 'gcont', 'gcin', 'sci', 'tci', 'rci', 'sct') | Sort-Object
+            $actual = $manifest.AliasesToExport | Sort-Object
+            $actual | Should -Be $expected
         }
 
         It 'declares a module version' {
@@ -102,6 +107,18 @@ Describe 'PSCumulus module' {
         It 'Stop-CloudInstance declares pscustomobject OutputType' {
             (Get-Command Stop-CloudInstance).OutputType | Should -Not -BeNullOrEmpty
         }
+
+        It 'Restart-CloudInstance declares pscustomobject OutputType' {
+            (Get-Command Restart-CloudInstance).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Set-CloudTag declares pscustomobject OutputType' {
+            (Get-Command Set-CloudTag).OutputType | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Test-CloudConnection declares pscustomobject OutputType' {
+            (Get-Command Test-CloudConnection).OutputType | Should -Not -BeNullOrEmpty
+        }
     }
 
     Context 'private helpers are accessible within the module' {
@@ -127,7 +144,7 @@ Describe 'PSCumulus module' {
     Context 'aliases' {
         It 'exports the expected interactive aliases' {
             (Get-Command -Module PSCumulus -CommandType Alias).Name |
-                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci')
+                Should -Be @('conc', 'gcin', 'gcont', 'rci', 'sci', 'sct', 'tci')
         }
     }
 

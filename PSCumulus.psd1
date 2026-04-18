@@ -24,6 +24,7 @@
         'Start-CloudInstance',
         'Stop-CloudInstance',
         'Restart-CloudInstance',
+        'Set-CloudTag',
         'Test-CloudConnection',
         'Resolve-CloudPath'
     )
@@ -35,6 +36,7 @@
         'gcont',
         'gcin',
         'sci',
+        'sct',
         'tci',
         'rci'
     )
@@ -46,16 +48,17 @@
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
 0.4.0
-- Completed Stage 3: Cloud Path Model
-- Added CloudPath class for structured path parsing and validation
-- Added CloudPathResolver for mapping paths to backend commands
-- Path format: {Provider}:\{Scope}\{Kind}\{ResourceName}
-- Added Resolve-CloudPath public cmdlet
-- Added Path parameter set to Start-CloudInstance and Stop-CloudInstance
-- Path parameter validates kind (must be Instances) and depth (must be Resource)
-- GCP paths auto-resolve Zone via instance lookup
-- Supports case-insensitive provider names and singular/plural kind normalization
-- All path model components fully tested with Pester
+- Added progress reporting to all Get-* cmdlets with -All parameter
+- Added -All parameter to Get-CloudStorage, Get-CloudDisk, Get-CloudNetwork, Get-CloudFunction, Get-CloudTag
+- Added -Status (enum) and -Tag (hashtable) filter parameters to all Get-* cmdlets
+- Added Restart-CloudInstance cmdlet with alias rci
+- Added -Wait, -TimeoutSeconds, -PollingIntervalSeconds to Start-CloudInstance and Stop-CloudInstance
+- Added Set-CloudTag cmdlet with alias sct for cross-cloud tag management
+- Added -PassThru switch to Start-CloudInstance, Stop-CloudInstance, Restart-CloudInstance
+- Added Test-CloudConnection cmdlet with alias tci for connectivity testing
+- Added argument completers for -Region (static lists), -ResourceGroup (from Azure), -Project (from GCP)
+- Added ExpiresAt property to Get-CloudContext with credential expiry warnings
+- All 634 tests passing
 
 0.3.2
 - Implemented semantic status normalization for all non-Instance resource types (Disk, Storage, Network, Function)
