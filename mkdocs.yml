@@ -45,5 +45,9 @@ nav:
           - Get-CloudNetwork: reference/commands/Get-CloudNetwork.md
           - Get-CloudStorage: reference/commands/Get-CloudStorage.md
           - Get-CloudTag: reference/commands/Get-CloudTag.md
+          - Resolve-CloudPath: reference/commands/Resolve-CloudPath.md
+          - Restart-CloudInstance: reference/commands/Restart-CloudInstance.md
+          - Set-CloudTag: reference/commands/Set-CloudTag.md
           - Start-CloudInstance: reference/commands/Start-CloudInstance.md
           - Stop-CloudInstance: reference/commands/Stop-CloudInstance.md
+          - Test-CloudConnection: reference/commands/Test-CloudConnection.md
