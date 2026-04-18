@@ -87,6 +87,14 @@ Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Start-CloudIn
 
 Starts the Azure VM using piped PSCumulus instance output.
 
+### EXAMPLE 5
+
+Get-CloudInstance -All |
+  Where-Object { $_.Status -eq 'Stopped' -and $_.Tags['environment'] -eq 'dev' } |
+  Start-CloudInstance -WhatIf
+
+Bulk cross-cloud preview: shows which stopped dev instances would be started. Remove -WhatIf to commit. Use -Confirm to approve each instance individually.
+
 ## PARAMETERS
 
 ### -Confirm

@@ -403,7 +403,7 @@ There's no cost surface. Cost across these three clouds is its own multi-hour ta
 
 There's no unified health or status surface. The provider status signals are shaped too differently to compose honestly.
 
-The module is read-oriented. Most inventory queries do not have corresponding write commands. The ones that do — `Start-CloudInstance` and `Stop-CloudInstance` — are on the roadmap to gain `-WhatIf` support. They should already have it. That one is on me.
+The module is read-oriented. Most inventory queries do not have corresponding write commands. `Start-CloudInstance` and `Stop-CloudInstance` both ship with full `-WhatIf` and `-Confirm` support. Running a bulk pipeline with `-WhatIf` previews every operation across all three clouds before anything executes — this is one of the most important safety features for cross-cloud lifecycle operations.
 
 There's no cross-cloud search by name. And there's no IAM, for the reasons we just spent five minutes on.
 

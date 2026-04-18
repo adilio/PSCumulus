@@ -64,6 +64,28 @@ GCP      Connected      adil@example.com   my-project
 `ConnectionState` shows which provider is active right now without making the
 others look disconnected. Providers not yet connected are omitted from the output.
 
+## Common Scenarios
+
+### Governance: find all untagged instances
+```powershell
+Get-CloudInstance -All |
+  Where-Object { -not $_.Tags['owner'] } |
+  Format-Table Name, Provider, Region -AutoSize
+```
+
+### Incident response: find by name across all clouds
+```powershell
+Get-CloudInstance -All | Where-Object Name -eq 'web-01'
+```
+
+### Safe bulk operations: preview before committing
+```powershell
+Get-CloudInstance -All |
+  Where-Object { $_.Status -eq 'Stopped' -and $_.Tags['environment'] -eq 'dev' } |
+  Start-CloudInstance -WhatIf
+# Remove -WhatIf when ready. Add -Confirm to approve each instance individually.
+```
+
 ## Common Examples
 
 ```powershell

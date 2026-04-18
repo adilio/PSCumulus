@@ -87,6 +87,14 @@ Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Stop-CloudIns
 
 Stops the Azure VM using piped PSCumulus instance output.
 
+### EXAMPLE 5
+
+Get-CloudInstance -All |
+  Where-Object { $_.Status -eq 'Running' -and $_.Tags['environment'] -eq 'dev' } |
+  Stop-CloudInstance -WhatIf
+
+Bulk cross-cloud preview: shows which running dev instances would be stopped. Remove -WhatIf to commit. Use -Confirm to approve each instance individually.
+
 ## PARAMETERS
 
 ### -Confirm

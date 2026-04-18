@@ -81,29 +81,36 @@ That last one is intentional: GCP native `TERMINATED` means the instance is stop
 
 When Azure does not expose a readable power state, PSCumulus now emits `Unknown` rather than the older `Ready` fallback so instance status stays aligned with the semantic status vocabulary.
 
-## Cross-cloud pipelines
+## Common Scenarios
 
-The demo beat of the Summit session is a single pipeline that queries every connected provider:
+### Governance: find all untagged resources across every cloud
 
 ```powershell
-# Untagged production assets across every cloud
 Get-CloudInstance -All |
   Where-Object { -not $_.Tags['owner'] } |
   Format-Table Name, Provider, Region -AutoSize
-
-# Fleet health by provider
-Get-CloudInstance -All |
-  Group-Object Provider, Status |
-  Select-Object Name, Count |
-  Sort-Object Count -Descending
-
-# Stale/forgotten instances across clouds
-$cutoff = (Get-Date).AddDays(-30)
-Get-CloudInstance -All |
-  Where-Object { $_.Status -ne 'Running' -and $_.CreatedAt -lt $cutoff }
 ```
 
-`-All` iterates every provider with stored context, calls each backend in turn, and streams one pipeline of `CloudRecord` objects. Filters, grouping, and projection work exactly like they do on any other PowerShell pipeline.
+### Incident response: find an instance when you don't know which cloud it's in
+
+```powershell
+Get-CloudInstance -All | Where-Object Name -eq 'web-01'
+```
+
+### Ops awareness: see your entire fleet's state
+
+```powershell
+Get-CloudInstance -All | Group-Object Provider, Status | Format-Table Name, Count
+```
+
+### Lifecycle ops: start or stop resources across clouds with a safety net
+
+```powershell
+Get-CloudInstance -All |
+  Where-Object { $_.Status -eq 'Stopped' -and $_.Tags['environment'] -eq 'dev' } |
+  Start-CloudInstance -WhatIf
+# Remove -WhatIf when ready to commit. Use -Confirm to approve each instance individually.
+```
 
 ## Evolution Roadmap
 
@@ -121,22 +128,40 @@ The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 
    Purpose: introduce a real `CloudRecord` base class, vendor subclasses, subclass-owned factory methods, and a `Kind` field.  
    Additive capability: instance normalization now lives in one place per provider, and future path or Provider work can build on typed records instead of generic property bags.  
    Why separate: it fixes the record model directly and absorbs resource-kind awareness into the same stage.
-3. **Stage 3: Cloud Path Model**  
-   Purpose: define and resolve hierarchical cloud paths independently of any Provider implementation.  
-   Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.  
+3. **Stage 3: Cloud Path Model**
+   Purpose: define and resolve hierarchical cloud paths independently of any Provider implementation.
+   Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.
    Why separate: path parsing and resolution are useful and testable on their own, and they are the hardest part of Provider work to get right.
-4. **Stage 4: The Provider (Read-Only)**  
-   Purpose: make cloud resources navigable through PowerShell drives, building on the Stage 3 path model.  
-   Additive capability: read-only navigation layered over the same backend engine the cmdlets already use.  
-   Why separate: the Provider is additive, belongs in a PS 7+ companion module, and the implementation path has not been chosen.
-5. **Stage 5: Write Operations Through the Provider**  
-   Purpose: let lifecycle actions flow through path context once navigation is stable.  
-   Additive capability: path-driven start/stop style operations with `ShouldProcess` behavior preserved.  
-   Why separate: write operations need careful `-WhatIf` and confirmation behavior, so the read-only Provider needs to prove itself first.
-6. **Stage 6: Cross-Cloud Aggregation**  
-   Purpose: expose the existing cross-cloud aggregation story through navigation as well as cmdlets.  
-   Additive capability: a synthetic cross-cloud view such as `Cloud:\Instances` spanning all connected providers.  
-   Why separate: it depends on the earlier path and Provider work being stable, and it carries the highest performance and UX risk.
+
+## What's Coming Next
+
+Development priorities are driven by user problems, not architectural layers.
+
+**Tag writes — close the find-and-fix loop**
+
+The module's core scenario is finding untagged or misconfigured resources across all three clouds. Right now you find them in PSCumulus and fix them in three separate native CLIs. `Set-CloudTag` will close this loop.
+
+```powershell
+Get-CloudInstance -All |
+  Where-Object { -not $_.Tags['owner'] } |
+  Set-CloudTag -Tags @{ owner = 'platform-team'; environment = 'prod' }
+```
+
+**Smarter search — name and tag filtering at query time**
+
+`Get-CloudInstance -All -Name 'web-01'` and `Get-CloudInstance -All -Tag @{ environment = 'prod' }` will filter at the source rather than fetching everything and piping to `Where-Object`. Essential for incident response and governance at scale.
+
+**`Get-CloudSummary` — fleet state in one command**
+
+Resource counts by provider and kind, with status breakdown. The on-call operator's first command when they open a terminal.
+
+**`Find-CloudResource` — search across all resource types**
+
+When something is broken, you don't always know whether it's an instance, disk, function, or network resource. `Find-CloudResource -Name 'web-01' -All` searches across everything.
+
+**Pipeline-safe bulk lifecycle**
+
+`Get-CloudInstance -All | Where-Object Status -eq 'Stopped' | Start-CloudInstance -WhatIf` already works through the `Piped` parameter set. Full documentation and prominent examples are coming.
 
 ## Per-provider usage
 
@@ -179,7 +204,7 @@ This module is intentionally not a full cloud framework. It does not cover:
 - **IAM.** The underlying philosophies don't overlap. AWS thinks in policy documents, Azure in hierarchical role assignments, GCP in bindings. A unified `Get-CloudPermission` would either flatten the scoping that makes the answer useful or stuff the real answer into `Metadata` and hand you an empty wrapper. Use the provider-native commands.
 - **Cost.** Each cloud's billing model is structured differently enough that a shared surface would be more misleading than helpful.
 - **Provisioning.** Terraform exists and is the right tool. PSCumulus standardizes *interaction* with infrastructure; Terraform standardizes the infrastructure itself.
-- **Write commands for most inventory.** The read path landed first. `Start/Stop-CloudInstance` are the two lifecycle commands currently in the public surface.
+- **Write commands for most inventory.** The read path landed first. `Start-CloudInstance` and `Stop-CloudInstance` are the two lifecycle commands currently in the public surface, and both ship with full `-WhatIf` and `-Confirm` support for safe bulk operations.
 - **Cross-cloud search by name.** On the roadmap.
 
 The rule behind every decision above: *if the normalized object would be mostly `Metadata`, the abstraction is too weak to deserve a first-class public command.*

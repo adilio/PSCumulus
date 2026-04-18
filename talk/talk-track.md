@@ -157,6 +157,8 @@ The first time this worked end to end, I stared at it for about a minute. Then I
 
 *[Run: `Show-FleetHealth` or `Get-CloudInstance -All | Group-Object Provider`]*
 
+And here's what makes this actually trustworthy in production: every one of these operations supports `-WhatIf`. You can run the entire pipeline — across all three clouds — with `-WhatIf` first, see exactly what would happen, and then commit when you're ready. I didn't have to build that safety net. PowerShell gave it to me.
+
 And this is the part I care about most. This isn't one trick. The `CloudRecord` shape composes into any pipeline you already know how to write. `Group-Object`. `Sort-Object`. `Where-Object`. `Select-Object`. The mental model is PowerShell, which you already have. The data is multi-cloud, which you didn't used to.
 
 *[Back to slides. Advance to Slide 8 — The Shared Shape.]*
@@ -255,7 +257,7 @@ There's no cost surface. Cost across these three clouds is its own multi-hour ta
 
 There's no unified health or status surface. The provider status signals are shaped too differently to compose honestly.
 
-The module is read-oriented. Most inventory queries do not have corresponding write commands. The ones that do — `Start-CloudInstance` and `Stop-CloudInstance` — are on the roadmap to gain `-WhatIf` support. They should already have it. That one is on me.
+`Start-CloudInstance` and `Stop-CloudInstance` both ship with full `-WhatIf` and `-Confirm` support. Build a pipeline that touches instances across all three clouds, run it with `-WhatIf`, and you see exactly what would happen before anything executes. That's the safety net that makes bulk cross-cloud operations trustworthy — and it's available today.
 
 There's no cross-cloud search by name. And there's no IAM, for the reasons we just spent five minutes on.
 
@@ -327,5 +329,5 @@ Repo's at `github.com/adilio/PSCumulus`. Slides and the talk track are in there 
 - *Why not `Google.Cloud.PowerShell`?* — It's effectively unmaintained. The `gcloud` CLI is the honest adapter.
 - *Why are aliases exported?* — They're interactive conveniences. Full names are canonical in scripts and docs.
 - *Does `-All` respect some ordering?* — Yes, alphabetical by provider name, deliberately fixed so output is predictable regardless of connect order.
-- *Why no `ShouldProcess` on `Start/Stop-CloudInstance`?* — Coming. Should already be there. It's on the short-list roadmap, and on me.
+- *Why no `ShouldProcess` on `Start/Stop-CloudInstance`?* — `ShouldProcess` is already implemented. Both commands support `-WhatIf` and `-Confirm` for safe bulk operations.
 - *Isn't this just another wrapper?* — It is *a* wrapper, honestly stated as such. The discipline is in what it refuses to wrap. See the dash.

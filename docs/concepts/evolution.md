@@ -325,127 +325,43 @@ The records returned by that resolver now benefit from Stage 2: a path can resol
 
 A Provider built without a clean path model would be fragile. Pulling the model out into its own stage means the hard part can be reasoned about and tested without mixing it with PowerShell Provider mechanics.
 
-## Stage 4: The Provider (Read-Only)
+## Where This Goes Next
 
-### Purpose
+The next phase of development is shaped by one question: what does a multi-cloud operator need to do at a terminal that PSCumulus currently forces them to do in three separate CLIs?
 
-Expose the existing backend engine through a read-only PowerShell navigation layer,
-making cloud resources browsable with familiar filesystem-style commands.
+### Tag writes: close the find-and-fix loop
 
-### What It Would Introduce
+The module's strongest scenario is finding untagged or misconfigured resources across all three clouds. But right now PSCumulus's help ends at the finding step — you fix the problem in the native CLIs.
 
-- navigable drives (`dir Azure:\prod-rg\Instances\`)
-- `Get-ChildItem` over cloud scopes and resource containers
-- `Get-Item` / `Test-Path` style access over cloud paths
-- drive-backed discovery on top of the same backend logic the cmdlets already use
-
-### Why This Stage Exists
-
-The CloudPath model (Stage 3) is the prerequisite. A Provider built without a clean path
-model would be fragile — the hard work of path parsing and identity resolution is already
-done, and any Provider implementation can now delegate directly to `CloudPathResolver`.
-
-### Status
-
-Not yet implemented. Stage 3 provides the foundation. The implementation path has not been
-chosen. Any Provider work belongs in PowerShell 7+ where provider class infrastructure is
-more reliable; the core module's PS 5.1 posture must stay intact.
-
-## Stage 5: Write Operations
-
-### Purpose
-
-Let lifecycle actions flow through path context and, eventually, through Provider navigation.
-
-### What Has Landed (Stage 3 / v0.4.0)
-
-Path-based start and stop are already available via the `Path` parameter set on
-`Start-CloudInstance` and `Stop-CloudInstance`:
+`Set-CloudTag` will accept pipeline input from any `Get-Cloud*` command and write tags back through the appropriate provider API. Tags map cleanly to a hashtable across all three clouds. This is one of the few write surfaces where the cross-cloud answer is honest.
 
 ```powershell
-Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
-Stop-CloudInstance  -Path 'AWS:\us-east-1\Instances\i-0abc123'
+Get-CloudInstance -All |
+  Where-Object { -not $_.Tags['owner'] } |
+  Set-CloudTag -Tags @{ owner = 'platform-team'; environment = 'prod' }
 ```
 
-This works today with no external dependencies — it uses `CloudPath::Parse()` from Stage 3.
+### Smarter search: name and tag filtering at query time
 
-### What Is Not Yet Implemented
+`Get-CloudInstance -All` currently fetches everything and lets PowerShell filter downstream. For large fleets this is wasteful. More importantly, it's not how operators think during incident response — they think "find me the thing named web-01, I don't know which cloud it's in."
 
-Provider-driven write operations (acting on a resource discovered via `Get-Item` or
-directory navigation) depend on Stage 4 being stable first. Write operations need reliable
-identity resolution, clear `-WhatIf` behavior, and strong confirmation semantics.
+Two additions:
+- `-Name` on `Get-CloudInstance -All`: translates to each provider's native name filter before making API calls
+- `-Tag` on `Get-CloudInstance -All`: pass a hashtable, get back only matching records
 
-## Stage 6: Cross-Cloud Aggregation
+Both filter at the source, not in the pipeline.
 
-### Purpose
+### Fleet overview: one command to assess multi-cloud state
 
-Expose the existing multi-provider aggregation story through navigation as well as through cmdlets.
+`Get-CloudSummary` will return a single table showing resource counts by provider and kind with status breakdown. When an on-call operator connects to their multi-cloud environment, this is the first command they need. Right now they have to run six.
 
-### What It Would Introduce
+### `Find-CloudResource`: search across all resource types
 
-- a synthetic cross-cloud view
-- navigable multi-provider containers
-- a path-based form of the same "query all connected providers" story that `-All` already provides today
+When something is broken, operators don't know if the thing they're looking for is an instance, disk, function, or network resource. `Find-CloudResource -Name 'web-01' -All` searches across everything and returns whatever matches.
 
-### Why This Stage Exists
+### Bulk pipeline lifecycle: document what already works
 
-PSCumulus already shines when it can say:
-
-```powershell
-Get-CloudInstance -All | Group-Object Provider, Status
-```
-
-Stage 6 asks what the navigation equivalent of that should look like.
-
-### Why It Is Last
-
-Because it depends on every prior stage being correct:
-
-- typed vocabulary
-- self-describing records
-- stable path model
-- reliable read-only Provider behavior
-
-It also has the highest potential for surprising performance behavior, because a single navigation command can fan out across multiple connected providers.
-
-## What The Plan Deliberately Does Not Prioritize
-
-Some ideas are intentionally deferred even though they are interesting.
-
-### Record methods
-
-Methods like `.Start()` or `.Stop()` on records may sound attractive, but the cmdlet and Provider surfaces already map more naturally onto PowerShell's `ShouldProcess` and pipeline behavior.
-
-### Abstract backend class hierarchies
-
-The current function-based routing is repetitive, but it is also very readable and proportional to the module's size. More abstraction is only worth it when it clearly reduces complexity.
-
-### Full context-object refactors
-
-The session context can remain simple until later stages genuinely require stronger structure.
-
-### A compiled provider-first architecture
-
-That is a valid future option if the Provider direction becomes central. It is not the right first move while the module is still proving its staged architecture.
-
-### A SHiPS dependency for the Provider layer
-
-SHiPS (Simple Hierarchy in PowerShell) simplifies building `NavigationCmdletProvider`
-subclasses. It is not the right dependency for PSCumulus: it is barely maintained, requires
-PS 6+, and exporting cmdlets that silently fail on PS 5.1 contradicts the module's
-compatibility posture. If a Provider is built, it will use a raw `CmdletProvider` subclass
-in a separate PS 7+ companion module.
-
-## What Success Looks Like
-
-The roadmap is working if PSCumulus becomes:
-
-- more correct internally
-- easier to extend
-- more expressive for users
-- still recognizably the same module from the outside
-
-That last point matters. A good evolution plan should make the module feel more capable, not unfamiliar.
+`Start-CloudInstance` and `Stop-CloudInstance` already accept pipeline input from `Get-CloudInstance` via the `Piped` parameter set, and both support `-WhatIf` and `-Confirm`. The combination — bulk cross-cloud lifecycle with a preview safety net — is one of the most powerful things the module can do. It needs prominent examples and end-to-end verification before it can be relied on at scale.
 
 ## The Through-Line
 

@@ -35,6 +35,8 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 | `Start-CloudInstance` | Start a compute instance |
 | `Stop-CloudInstance` | Stop a compute instance |
 
+All write commands in PSCumulus implement `ShouldProcess`. `-WhatIf` and `-Confirm` are available on `Start-CloudInstance`, `Stop-CloudInstance`, and `Disconnect-Cloud`. This is a design commitment, not an afterthought: write operations are always ShouldProcess-safe.
+
 ## What This Repo Already Was
 
 Before the recent typed-contract and record-model work, PSCumulus was already a working cmdlet-first module with a clear shape:
@@ -175,9 +177,16 @@ Broad outline:
 1. **Stage 1: Internal Typed Contract**: strengthen internal correctness without changing the public cmdlet surface.
 2. **Stage 2: Vendor Subclass Records**: introduce a real base record class, vendor subclasses, subclass-owned normalization factories, and `Kind`.
 3. **Stage 3: Cloud Path Model**: define a structured path/resolver layer independent of any Provider mechanics.
-4. **Stage 4: The Provider (Read-Only)**: add additive navigation over the same backend engine.
-5. **Stage 5: Write Operations Through the Provider**: let lifecycle actions flow through path context once navigation is stable.
-6. **Stage 6: Cross-Cloud Aggregation**: expose multi-provider views through navigation as well as cmdlets.
+
+## Upcoming Work
+
+Priorities are set by user problems, not architectural sequence:
+
+- **Tag writes** (`Set-CloudTag`): Pipeline input from any `Get-Cloud*` command; write tags back through provider APIs. Closes the find-and-fix loop that the untagged-resource scenario opens.
+- **Query-time filtering**: `-Name` and `-Tag` parameters on `Get-CloudInstance -All`. Filter at the source, not in the pipeline.
+- **`Get-CloudSummary`**: Fleet-wide resource count and status in one command.
+- **`Find-CloudResource`**: Cross-type search by name or tag across all connected providers.
+- **Bulk lifecycle documentation**: `Start/Stop-CloudInstance` pipeline patterns with `-WhatIf` are already implemented; they need prominent examples and verification.
 
 For the full stage-by-stage plan, rationale, origin story, and decision details, see [Evolution](evolution.md).
 
