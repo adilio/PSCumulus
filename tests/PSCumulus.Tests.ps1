@@ -1,8 +1,4 @@
 BeforeAll {
-    # Import SHiPS first if available to avoid parser errors in PSCumulusProvider.ps1
-    if ($PSVersionTable.PSVersion.Major -ge 7) {
-        Import-Module SHiPS -ErrorAction SilentlyContinue
-    }
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\PSCumulus.psd1')).Path -Force
 }
 
@@ -23,15 +19,11 @@ Describe 'PSCumulus module' {
             $commands | Should -Contain 'Start-CloudInstance'
             $commands | Should -Contain 'Stop-CloudInstance'
             $commands | Should -Contain 'Resolve-CloudPath'
-            $commands | Should -Contain 'New-CloudDrive'
-            $commands | Should -Contain 'Remove-CloudDrive'
-            $commands | Should -Contain 'New-CloudAggregationDrive'
-            $commands | Should -Contain 'Remove-CloudAggregationDrive'
         }
 
-        It 'exports exactly sixteen public functions' {
+        It 'exports exactly twelve public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 16
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 12
         }
 
         It 'does not export variables' {
@@ -41,7 +33,7 @@ Describe 'PSCumulus module' {
 
         It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci', 'ncd', 'rcd', 'ncad', 'rcad')
+            $manifest.AliasesToExport | Should -Be @('conc', 'gcont', 'gcin', 'sci', 'tci')
         }
 
         It 'declares a module version' {
@@ -135,7 +127,7 @@ Describe 'PSCumulus module' {
     Context 'aliases' {
         It 'exports the expected interactive aliases' {
             (Get-Command -Module PSCumulus -CommandType Alias).Name |
-                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci', 'ncd', 'rcd', 'ncad', 'rcad')
+                Should -Be @('conc', 'gcin', 'gcont', 'sci', 'tci')
         }
     }
 

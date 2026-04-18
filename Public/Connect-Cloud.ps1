@@ -142,14 +142,6 @@ function Connect-Cloud {
 
             $null = Update-CloudContextActiveProvider -PreferredProvider $p
 
-            # Auto-create provider drive if SHiPS is available
-            if ($PSVersionTable.PSVersion.Major -ge 7 -and (Get-Module SHiPS -ErrorAction SilentlyContinue)) {
-                $existingDrive = Get-PSDrive -Name $p -ErrorAction SilentlyContinue
-                if (-not $existingDrive) {
-                    $null = New-PSDrive -Name $p -PSProvider SHiPS -Root "PSCumulus#CloudProviderRoot" -Scope Script -ErrorAction SilentlyContinue
-                }
-            }
-
             $result
         }
     }

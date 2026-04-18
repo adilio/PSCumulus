@@ -187,12 +187,6 @@ function Disconnect-Cloud {
             $script:PSCumulusContext.Providers[$Provider] = $null
             $null = Update-CloudContextActiveProvider
 
-            # Remove provider drive if it exists
-            $existingDrive = Get-PSDrive -Name $Provider -ErrorAction SilentlyContinue
-            if ($existingDrive -and $existingDrive.Provider.Name -eq 'SHiPS') {
-                Remove-PSDrive -Name $Provider -ErrorAction SilentlyContinue
-            }
-
             [pscustomobject]@{
                 PSTypeName   = 'PSCumulus.ConnectionResult'
                 Provider     = $Provider

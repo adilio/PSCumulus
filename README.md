@@ -111,8 +111,7 @@ PSCumulus is being evolved in stages so each step ships independently, delivers 
 
 The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the key insight that unlocked the next move: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the plan, but it now follows that corrected object-model foundation rather than defining it. The longer-form rationale lives in the [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) doc.
 
-**Current status:** Stage 1 is complete and Stage 2 is underway for instance records.  
-**Current implementation focus:** Stage 2: Vendor Subclass Records.
+**Current status:** Stages 1, 2, and 3 are complete (v0.4.0).
 
 1. **Stage 1: Internal Typed Contract**  
    Purpose: establish a typed internal vocabulary without changing the public cmdlet surface.  
@@ -127,9 +126,9 @@ The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 
    Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.  
    Why separate: path parsing and resolution are useful and testable on their own, and they are the hardest part of Provider work to get right.
 4. **Stage 4: The Provider (Read-Only)**  
-   Purpose: make cloud resources navigable through PowerShell drives.  
-   Additive capability: read-only navigation such as `dir Azure:\prod-rg\Instances`, layered over the same backend engine the cmdlets already use.  
-   Why separate: the Provider is additive, not a replacement, and it likely belongs in a PS 7+ path where provider classes are more reliable.
+   Purpose: make cloud resources navigable through PowerShell drives, building on the Stage 3 path model.  
+   Additive capability: read-only navigation layered over the same backend engine the cmdlets already use.  
+   Why separate: the Provider is additive, belongs in a PS 7+ companion module, and the implementation path has not been chosen.
 5. **Stage 5: Write Operations Through the Provider**  
    Purpose: let lifecycle actions flow through path context once navigation is stable.  
    Additive capability: path-driven start/stop style operations with `ShouldProcess` behavior preserved.  

@@ -16,7 +16,7 @@ The real unlock came in the room: **Jeffrey Snover sat in the front row and offe
 
 That advice was initially misremembered as being primarily about a future Provider layer. The corrected reading is more precise and more useful: the next architectural move is to fix the **record model** first, then let later navigation work build on top of that stronger foundation.
 
-It reframed the roadmap from “what should this module become instead?” to “how can this module grow without betraying the thing that already makes it useful?”
+It reframed the roadmap from "what should this module become instead?" to "how can this module grow without betraying the thing that already makes it useful?"
 
 Once that clicked, the stages became much easier to define:
 
@@ -27,7 +27,7 @@ Once that clicked, the stages became much easier to define:
 
 ## Current Status
 
-PSCumulus has completed **Stage 6: Cross-Cloud Aggregation** (v0.6.0).
+PSCumulus has completed **Stage 3: Cloud Path Model** (v0.4.0).
 
 **Stage 1 is complete:**
 - Internal typed vocabulary is established
@@ -49,32 +49,14 @@ PSCumulus has completed **Stage 6: Cross-Cloud Aggregation** (v0.6.0).
 - Native status preserved in `Metadata.NativeStatus` for all resource types
 
 **Stage 3 is complete:**
-- `CloudPath` model with structured parsing
+- `CloudPath` model with structured parsing and depth tracking
 - `CloudPathResolver` maps paths to backend commands
 - Case-insensitive provider and kind name handling
 - Singular/plural kind normalization
-- Comprehensive path validation and depth tracking
-
-**Stage 4 is complete:**
-- Read-only SHiPS provider with navigable drives
-- CloudProviderRoot → CloudScopeNode → CloudKindNode → CloudResourceLeaf hierarchy
-- Provider-aware scope enumeration (Azure resource groups, AWS/GCP context)
-- Dynamic resource discovery per kind
-- PowerShell 5.1-compatible with conditional SHiPS loading
-
-**Stage 5 is complete:**
+- `Resolve-CloudPath` public cmdlet
 - Path parameter set on `Start-CloudInstance` and `Stop-CloudInstance`
-- Path-aware lifecycle operations with depth and kind validation
-- GCP Zone auto-resolution via instance lookup
-- `ShouldProcess` and `-WhatIf` support for path-based operations
-- Provider inference from path syntax
-
-**Stage 6 is complete:**
-- `CloudAggregationRoot` for cross-cloud navigation
-- `Connect-CloudDrive` and `Disconnect-CloudDrive` cmdlets
-- Per-provider drive management (Azure:, AWS:, GCP:)
-- Automatic drive creation on connect, cleanup on disconnect
-- Connected provider filtering in aggregation root
+- GCP Zone auto-resolution via instance lookup for path-based lifecycle ops
+- Comprehensive path validation tested with Pester
 
 The module still behaves the same way from the outside:
 - the public interface is still cmdlet-first
@@ -224,7 +206,7 @@ Before this stage, the module had a stable public shape, but some of its semanti
 
 Examples:
 
-- AWS `shutting-down` should not remain effectively “just a prettified string”; it should normalize to `Terminating`
+- AWS `shutting-down` should not remain effectively "just a prettified string"; it should normalize to `Terminating`
 - Azure `VM deallocated` should normalize to `Stopped`
 - GCP `TERMINATED` should normalize to `Stopped`, because in GCP it means stopped-but-restartable, not permanently gone
 
@@ -347,86 +329,51 @@ A Provider built without a clean path model would be fragile. Pulling the model 
 
 ### Purpose
 
-Expose the existing backend engine through a read-only PowerShell navigation layer.
+Expose the existing backend engine through a read-only PowerShell navigation layer,
+making cloud resources browsable with familiar filesystem-style commands.
 
-### What It Introduces
+### What It Would Introduce
 
-- navigable drives
+- navigable drives (`dir Azure:\prod-rg\Instances\`)
 - `Get-ChildItem` over cloud scopes and resource containers
 - `Get-Item` / `Test-Path` style access over cloud paths
 - drive-backed discovery on top of the same backend logic the cmdlets already use
 
-### UX Anchors
-
-**Case sensitivity:**
-- Provider names (Azure, AWS, GCP) are case-insensitive
-- Scope names (resource groups, regions, projects) are case-insensitive
-- Resource names match the underlying provider's casing rules
-
-**Enumeration cost:**
-- `dir Azure:\` lists scopes (resource groups) — cached per session
-- `dir Azure:\prod-rg\Instances\` lists resources — lazy with cache
-- Verbose warning when fanout is expensive
-
-**Top-level container semantics:**
-- `dir Azure:\` shows scopes (resource groups)
-- `dir Azure:\prod-rg\` shows kinds (Instances, Disks, Storage, etc.)
-- `dir Azure:\prod-rg\Instances\` shows resources
-
-**What Get-Item returns:**
-- The typed subclass record (e.g., `AzureInstanceRecord`), not a wrapper
-
-**Tab-completion:**
-- `dir Azure:\prod-rg\<tab>` completes to `Instances`, `Disks`, etc.
-- `dir Azure:\prod-rg\Instances\<tab>` completes to existing resource names
-
 ### Why This Stage Exists
 
-This is the Provider stage. It turns cloud inventory into something you can browse.
+The CloudPath model (Stage 3) is the prerequisite. A Provider built without a clean path
+model would be fragile — the hard work of path parsing and identity resolution is already
+done, and any Provider implementation can now delegate directly to `CloudPathResolver`.
 
-The attraction is obvious:
+### Status
 
-- `dir Azure:\`
-- `dir Azure:\prod-rg\Instances`
-- `Get-Item AWS:\us-east-1\Instances\...`
+Not yet implemented. Stage 3 provides the foundation. The implementation path has not been
+chosen. Any Provider work belongs in PowerShell 7+ where provider class infrastructure is
+more reliable; the core module's PS 5.1 posture must stay intact.
 
-This does not replace the cmdlets. It adds a second, more exploratory way of working with the same data.
-
-### Why It Comes After Stage 3
-
-Because the Provider should be thin.
-
-It should not invent a new engine. It should delegate to the same internal logic that already powers the cmdlets. That only works cleanly once the path model and resolver already exist.
-
-### Version Philosophy
-
-This is also the stage where PowerShell version reality matters most. Provider-oriented class infrastructure is a much more natural fit for PowerShell 7+ than for 5.1. That is why the roadmap treats the Provider as future-facing and additive, not as something the core module must force into 5.1 prematurely.
-
-## Stage 5: Write Operations Through The Provider
+## Stage 5: Write Operations
 
 ### Purpose
 
-Let path context drive lifecycle operations after read-only navigation is already stable.
+Let lifecycle actions flow through path context and, eventually, through Provider navigation.
 
-### What It Introduces
+### What Has Landed (Stage 3 / v0.4.0)
 
-- path-based start/stop style actions
-- Provider-aware lifecycle operations
-- `ShouldProcess` and confirmation semantics carried into the navigation model
+Path-based start and stop are already available via the `Path` parameter set on
+`Start-CloudInstance` and `Stop-CloudInstance`:
 
-### Why This Stage Exists
+```powershell
+Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
+Stop-CloudInstance  -Path 'AWS:\us-east-1\Instances\i-0abc123'
+```
 
-Once users can navigate to a resource, the next natural question is whether they can act on it from that context.
+This works today with no external dependencies — it uses `CloudPath::Parse()` from Stage 3.
 
-That is appealing, but also the moment when convenience can become dangerous. Write operations need:
+### What Is Not Yet Implemented
 
-- reliable identity resolution
-- clear `-WhatIf` behavior
-- strong confirmation semantics
-
-### Why It Is Not Earlier
-
-Because a write-capable Provider built on an unstable read model would be reckless. Read-only navigation needs to be correct and predictable before any destructive or state-changing operations are layered on top.
+Provider-driven write operations (acting on a resource discovered via `Get-Item` or
+directory navigation) depend on Stage 4 being stable first. Write operations need reliable
+identity resolution, clear `-WhatIf` behavior, and strong confirmation semantics.
 
 ## Stage 6: Cross-Cloud Aggregation
 
@@ -434,11 +381,11 @@ Because a write-capable Provider built on an unstable read model would be reckle
 
 Expose the existing multi-provider aggregation story through navigation as well as through cmdlets.
 
-### What It Introduces
+### What It Would Introduce
 
 - a synthetic cross-cloud view
 - navigable multi-provider containers
-- a path-based form of the same “query all connected providers” story that `-All` already provides today
+- a path-based form of the same "query all connected providers" story that `-All` already provides today
 
 ### Why This Stage Exists
 
@@ -467,11 +414,11 @@ Some ideas are intentionally deferred even though they are interesting.
 
 ### Record methods
 
-Methods like `.Start()` or `.Stop()` on records may sound attractive, but the cmdlet and Provider surfaces already map more naturally onto PowerShell’s `ShouldProcess` and pipeline behavior.
+Methods like `.Start()` or `.Stop()` on records may sound attractive, but the cmdlet and Provider surfaces already map more naturally onto PowerShell's `ShouldProcess` and pipeline behavior.
 
 ### Abstract backend class hierarchies
 
-The current function-based routing is repetitive, but it is also very readable and proportional to the module’s size. More abstraction is only worth it when it clearly reduces complexity.
+The current function-based routing is repetitive, but it is also very readable and proportional to the module's size. More abstraction is only worth it when it clearly reduces complexity.
 
 ### Full context-object refactors
 
@@ -480,6 +427,14 @@ The session context can remain simple until later stages genuinely require stron
 ### A compiled provider-first architecture
 
 That is a valid future option if the Provider direction becomes central. It is not the right first move while the module is still proving its staged architecture.
+
+### A SHiPS dependency for the Provider layer
+
+SHiPS (Simple Hierarchy in PowerShell) simplifies building `NavigationCmdletProvider`
+subclasses. It is not the right dependency for PSCumulus: it is barely maintained, requires
+PS 6+, and exporting cmdlets that silently fail on PS 5.1 contradicts the module's
+compatibility posture. If a Provider is built, it will use a raw `CmdletProvider` subclass
+in a separate PS 7+ companion module.
 
 ## What Success Looks Like
 

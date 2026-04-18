@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.6.0'
+    ModuleVersion     = '0.4.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -23,11 +23,7 @@
         'Get-CloudFunction',
         'Start-CloudInstance',
         'Stop-CloudInstance',
-        'Resolve-CloudPath',
-        'New-CloudDrive',
-        'Remove-CloudDrive',
-        'New-CloudAggregationDrive',
-        'Remove-CloudAggregationDrive'
+        'Resolve-CloudPath'
     )
 
     CmdletsToExport   = @()
@@ -37,11 +33,7 @@
         'gcont',
         'gcin',
         'sci',
-        'tci',
-        'ncd',
-        'rcd',
-        'ncad',
-        'rcad'
+        'tci'
     )
 
     PrivateData = @{
@@ -50,42 +42,15 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
-0.6.0
-- Completed Stage 6: Cross-Cloud Aggregation Drive
-- Added CloudAggregationRoot SHiPS class for cross-cloud browsing
-- Added New-CloudAggregationDrive and Remove-CloudAggregationDrive cmdlets
-- Added ncad and rcad aliases for aggregation drive management
-- Cloud:\ drive shows all connected providers as top-level containers
-- Auto-creates provider drives on Connect-Cloud when SHiPS available (PS 7+)
-- Auto-removes provider drives on Disconnect-Cloud
-- Enables navigation: dir Cloud:\Azure\prod-rg\Instances, dir Cloud:\AWS\us-east-1\Disks
-- Bump version to 0.6.0
-
-0.5.1
-- Completed Stage 5: Path-Aware Lifecycle Operations
-- Added Path parameter set to Start-CloudInstance and Stop-CloudInstance
-- Supports starting/stopping instances using cloud paths: Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
-- Path parameter validates kind (must be Instances) and depth (must be Resource)
-- GCP paths automatically resolve Zone via instance lookup
-- Maintains backward compatibility with existing parameter sets
-
-0.5.0
-- Completed Stage 4: Read-only SHiPS Provider with per-provider drives
-- Added CloudProviderRoot, CloudScopeNode, CloudKindNode, and CloudResourceLeaf SHiPS classes
-- Added Get-AzureScopes, Get-AWSScopes, Get-GCPScopes private functions for scope enumeration
-- Added New-CloudDrive and Remove-CloudDrive cmdlets for drive management
-- Added ncd and rcd aliases for drive management
-- SHiPS provider conditionally loads in PS 7+ when SHiPS module is available
-- Supports navigation: dir Azure:\prod-rg\Instances, Get-Item AWS:\us-east-1\Disks\vol-123
-- Module loader updated to exclude PSCumulusProvider.ps1 from standard loop and load conditionally
-
 0.4.0
 - Completed Stage 3: Cloud Path Model
-- Added CloudPathDepth enum (Root, Scope, Kind, Resource)
 - Added CloudPath class for structured path parsing and validation
-- Added CloudPathResolver class for mapping paths to backend commands
-- Path format: {Provider}:\{Scope}\{Kind}\{ResourceName} (e.g., Azure:\prod-rg\Instances\web-server-01)
-- Added Resolve-CloudPath cmdlet for parsing path strings
+- Added CloudPathResolver for mapping paths to backend commands
+- Path format: {Provider}:\{Scope}\{Kind}\{ResourceName}
+- Added Resolve-CloudPath public cmdlet
+- Added Path parameter set to Start-CloudInstance and Stop-CloudInstance
+- Path parameter validates kind (must be Instances) and depth (must be Resource)
+- GCP paths auto-resolve Zone via instance lookup
 - Supports case-insensitive provider names and singular/plural kind normalization
 - All path model components fully tested with Pester
 
