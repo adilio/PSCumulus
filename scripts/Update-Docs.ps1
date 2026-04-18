@@ -39,6 +39,15 @@ try {
     }
 
     Import-Module Microsoft.PowerShell.PlatyPS -Force
+
+    # Load classes first before importing the module
+    $classesPath = Join-Path $repoRoot 'Classes'
+    if (Test-Path $classesPath) {
+        Get-ChildItem -Path $classesPath -Filter '*.ps1' -File |
+            Sort-Object -Property Name |
+            ForEach-Object { . $_.FullName }
+    }
+
     Import-Module $modulePath -Force
 
     $module = Get-Module PSCumulus
