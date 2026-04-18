@@ -92,7 +92,7 @@ Describe 'Set-CloudTag' {
 
                 # Create mock record at script level so it's available outside InModuleScope
                 $script:mockRecord = [PSCustomObject]@{
-                    PSTypeName    = 'PSCumulus.AzureCloudRecord'
+                    PSTypeName    = 'PSCumulus.CloudRecord'
                     Name          = 'vm01'
                     Provider      = 'Azure'
                     ResourceGroup = 'rg-test'
