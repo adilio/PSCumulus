@@ -19,8 +19,6 @@ function Set-AzureTag {
         -CommandName 'Update-AzTag' `
         -InstallHint "Install the Az.Resources module with: Install-Module Az.Resources -Scope CurrentUser"
 
-    $existingTags = Get-AzTag -ResourceId $ResourceId -ErrorAction SilentlyContinue
-
     $operation = if ($Merge) { 'Merge' } else { 'Replace' }
 
     Update-AzTag -ResourceId $ResourceId -Tag $Tags -Operation $operation -ErrorAction Stop
