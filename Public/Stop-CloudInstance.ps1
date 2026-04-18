@@ -7,6 +7,8 @@ function Stop-CloudInstance {
             Routes instance stop requests to the matching provider backend and
             returns a normalized cloud record confirming the stop operation.
 
+            Use -Wait to block until the instance reaches the Stopped state.
+
         .EXAMPLE
             Stop-CloudInstance -Provider Azure -Name 'web-server-01' -ResourceGroup 'prod-rg'
 
@@ -26,6 +28,11 @@ function Stop-CloudInstance {
             Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Stop-CloudInstance
 
             Stops the Azure VM using piped PSCumulus instance output.
+
+        .EXAMPLE
+            Stop-CloudInstance -Provider Azure -Name 'web-server-01' -ResourceGroup 'prod-rg' -Wait -TimeoutSeconds 600
+
+            Stops an Azure VM and waits up to 10 minutes for it to reach Stopped state.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure', SupportsShouldProcess)]
     [OutputType([pscustomobject])]
@@ -81,7 +88,28 @@ function Stop-CloudInstance {
         [Parameter(Mandatory, ParameterSetName = 'GCP', ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [string]$Zone
+        [string]$Zone,
+
+        # Wait for the instance to reach the Stopped state before returning.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [switch]$Wait,
+
+        # Maximum time to wait for the instance to reach the target state (in seconds).
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [int]$TimeoutSeconds = 300,
+
+        # Polling interval to check instance status (in seconds).
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [int]$PollingIntervalSeconds = 5
     )
 
     process {
@@ -135,6 +163,42 @@ function Stop-CloudInstance {
 
             if ($PSCmdlet.ShouldProcess($target, 'Stop-CloudInstance')) {
                 Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+
+                if ($Wait -and -not $WhatIf) {
+                    $startTime = Get-Date
+                    $targetStatus = 'Stopped'
+
+                    while ($true) {
+                        $elapsed = ((Get-Date) - $startTime).TotalSeconds
+
+                        if ($elapsed -ge $TimeoutSeconds) {
+                            throw [System.TimeoutException]::new(
+                                "Instance did not reach '$targetStatus' state within $TimeoutSeconds seconds."
+                            )
+                        }
+
+                        Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Status "Current status: checking... - ${elapsed}s elapsed" -PercentComplete ([int] (($elapsed / $TimeoutSeconds) * 100))
+
+                        Start-Sleep -Seconds $PollingIntervalSeconds
+
+                        switch ($resolvedProvider) {
+                            'Azure' {
+                                $currentRecord = Get-AzureInstanceData -ResourceGroup $argumentMap.ResourceGroup -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                            }
+                            'AWS' {
+                                $currentRecord = Get-AWSInstanceData -Region $argumentMap.Region -Name $argumentMap.InstanceId -ErrorAction SilentlyContinue | Select-Object -First 1
+                            }
+                            'GCP' {
+                                $currentRecord = Get-GCPInstanceData -Project $argumentMap.Project -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                            }
+                        }
+
+                        if ($currentRecord -and $currentRecord.Status -eq $targetStatus) {
+                            Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Completed
+                            break
+                        }
+                    }
+                }
             }
             return
         }
@@ -189,6 +253,49 @@ function Stop-CloudInstance {
 
         if ($PSCmdlet.ShouldProcess($target, 'Stop-CloudInstance')) {
             Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+
+            if ($Wait -and -not $WhatIf) {
+                $startTime = Get-Date
+                $targetStatus = 'Stopped'
+
+                while ($true) {
+                    $elapsed = ((Get-Date) - $startTime).TotalSeconds
+
+                    if ($elapsed -ge $TimeoutSeconds) {
+                        throw [System.TimeoutException]::new(
+                            "Instance did not reach '$targetStatus' state within $TimeoutSeconds seconds."
+                        )
+                    }
+
+                    $currentRecord = $null
+                    $currentStatus = 'Unknown'
+
+                    switch ($resolvedProvider) {
+                        'Azure' {
+                            $currentRecord = Get-AzureInstanceData -ResourceGroup $argumentMap.ResourceGroup -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                        }
+                        'AWS' {
+                            $currentRecord = Get-AWSInstanceData -Region $argumentMap.Region -Name $argumentMap.InstanceId -ErrorAction SilentlyContinue | Select-Object -First 1
+                        }
+                        'GCP' {
+                            $currentRecord = Get-GCPInstanceData -Project $argumentMap.Project -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                        }
+                    }
+
+                    if ($currentRecord) {
+                        $currentStatus = $currentRecord.Status
+                    }
+
+                    Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Status "Current status: $currentStatus - ${elapsed}s elapsed" -PercentComplete ([int] (($elapsed / $TimeoutSeconds) * 100))
+
+                    if ($currentStatus -eq $targetStatus) {
+                        Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Completed
+                        break
+                    }
+
+                    Start-Sleep -Seconds $PollingIntervalSeconds
+                }
+            }
         }
     }
 }
