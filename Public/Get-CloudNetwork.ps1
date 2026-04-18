@@ -30,6 +30,11 @@ function Get-CloudNetwork {
 
             Gets networks from all providers with an established session context.
             Use after Connect-Cloud -Provider AWS, Azure, GCP.
+
+        .EXAMPLE
+            Get-CloudNetwork -All -Status Available -Tag @{ environment = 'production' }
+
+            Gets all available networks with the production environment tag across all connected clouds.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure')]
     [OutputType([pscustomobject])]
@@ -57,7 +62,21 @@ function Get-CloudNetwork {
 
         # Query all providers with an established session context.
         [Parameter(Mandatory, ParameterSetName = 'All')]
-        [switch]$All
+        [switch]$All,
+
+        # Filter results by network status.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'All')]
+        [CloudNetworkStatus]$Status,
+
+        # Filter results by tag key-value pairs. All specified tags must match.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'All')]
+        [hashtable]$Tag
     )
 
     process {
@@ -71,6 +90,7 @@ function Get-CloudNetwork {
             $skippedProviders = New-Object System.Collections.Generic.List[string]
             $providers = @('Azure', 'AWS', 'GCP')
             $providerIndex = 0
+            $allResults = [System.Collections.Generic.List[psobject]]::new()
 
             foreach ($providerName in $providers) {
                 $providerIndex++
@@ -104,7 +124,10 @@ function Get-CloudNetwork {
                     continue
                 }
 
-                Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap
+                $providerResults = Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap
+                foreach ($result in $providerResults) {
+                    $allResults.Add($result)
+                }
             }
 
             Write-Progress -Activity "Get-CloudNetwork -All" -Completed
@@ -112,6 +135,26 @@ function Get-CloudNetwork {
             if ($skippedProviders.Count -gt 0) {
                 Write-Verbose ("Get-CloudNetwork -All skipped: " + ($skippedProviders -join '; ') + '.')
             }
+
+            $results = $allResults
+
+            if ($PSBoundParameters.ContainsKey('Status')) {
+                $results = $results | Where-Object { $_.Status -eq $Status.ToString() }
+            }
+
+            if ($PSBoundParameters.ContainsKey('Tag')) {
+                $results = $results | Where-Object {
+                    $recordTags = $_.Tags
+                    if ($null -eq $recordTags) { return $false }
+                    foreach ($key in $Tag.Keys) {
+                        if (-not $recordTags.ContainsKey($key)) { return $false }
+                        if ($recordTags[$key] -ne $Tag[$key]) { return $false }
+                    }
+                    return $true
+                }
+            }
+
+            $results
 
             return
         }
@@ -132,6 +175,24 @@ function Get-CloudNetwork {
             $argumentMap.Project = $Project
         }
 
-        Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+        $results = Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+
+        if ($PSBoundParameters.ContainsKey('Status')) {
+            $results = $results | Where-Object { $_.Status -eq $Status.ToString() }
+        }
+
+        if ($PSBoundParameters.ContainsKey('Tag')) {
+            $results = $results | Where-Object {
+                $recordTags = $_.Tags
+                if ($null -eq $recordTags) { return $false }
+                foreach ($key in $Tag.Keys) {
+                    if (-not $recordTags.ContainsKey($key)) { return $false }
+                    if ($recordTags[$key] -ne $Tag[$key]) { return $false }
+                }
+                return $true
+            }
+        }
+
+        $results
     }
 }

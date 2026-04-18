@@ -55,6 +55,11 @@ function Get-CloudInstance {
             Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 
             Gets all prod-tagged instances across every connected cloud.
+
+        .EXAMPLE
+            Get-CloudInstance -All -Status Running -Tag @{ environment = 'production' }
+
+            Gets all running instances with the production environment tag across all connected clouds.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure')]
     [OutputType([pscustomobject])]
@@ -96,7 +101,21 @@ function Get-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'All')]
-        [switch]$Detailed
+        [switch]$Detailed,
+
+        # Filter results by instance status.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'All')]
+        [CloudInstanceStatus]$Status,
+
+        # Filter results by tag key-value pairs. All specified tags must match.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'All')]
+        [hashtable]$Tag
     )
 
     process {
@@ -124,6 +143,7 @@ function Get-CloudInstance {
             $skippedProviders = New-Object System.Collections.Generic.List[string]
             $providers = @('Azure', 'AWS', 'GCP')
             $providerIndex = 0
+            $allResults = [System.Collections.Generic.List[psobject]]::new()
 
             foreach ($providerName in $providers) {
                 $providerIndex++
@@ -157,7 +177,10 @@ function Get-CloudInstance {
                     continue
                 }
 
-                & $decorateRecord (Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap)
+                $providerResults = & $decorateRecord (Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap)
+                foreach ($result in $providerResults) {
+                    $allResults.Add($result)
+                }
             }
 
             Write-Progress -Activity "Get-CloudInstance -All" -Completed
@@ -165,6 +188,26 @@ function Get-CloudInstance {
             if ($skippedProviders.Count -gt 0) {
                 Write-Verbose ("Get-CloudInstance -All skipped: " + ($skippedProviders -join '; ') + '.')
             }
+
+            $results = $allResults
+
+            if ($PSBoundParameters.ContainsKey('Status')) {
+                $results = $results | Where-Object { $_.Status -eq $Status.ToString() }
+            }
+
+            if ($PSBoundParameters.ContainsKey('Tag')) {
+                $results = $results | Where-Object {
+                    $recordTags = $_.Tags
+                    if ($null -eq $recordTags) { return $false }
+                    foreach ($key in $Tag.Keys) {
+                        if (-not $recordTags.ContainsKey($key)) { return $false }
+                        if ($recordTags[$key] -ne $Tag[$key]) { return $false }
+                    }
+                    return $true
+                }
+            }
+
+            $results
 
             return
         }
@@ -197,6 +240,24 @@ function Get-CloudInstance {
             $argumentMap.Name = $Name
         }
 
-        & $decorateRecord (Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap)
+        $results = & $decorateRecord (Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap)
+
+        if ($PSBoundParameters.ContainsKey('Status')) {
+            $results = $results | Where-Object { $_.Status -eq $Status.ToString() }
+        }
+
+        if ($PSBoundParameters.ContainsKey('Tag')) {
+            $results = $results | Where-Object {
+                $recordTags = $_.Tags
+                if ($null -eq $recordTags) { return $false }
+                foreach ($key in $Tag.Keys) {
+                    if (-not $recordTags.ContainsKey($key)) { return $false }
+                    if ($recordTags[$key] -ne $Tag[$key]) { return $false }
+                }
+                return $true
+            }
+        }
+
+        $results
     }
 }
