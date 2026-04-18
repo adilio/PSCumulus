@@ -46,9 +46,9 @@ function Get-CloudContext {
                         }
                     }
                     'AWS' {
-                        $profile = Get-AWSCredential -ListProfileDetail -ErrorAction SilentlyContinue |
+                        $awsProfile = Get-AWSCredential -ListProfileDetail -ErrorAction SilentlyContinue |
                             Where-Object { $_.ProfileName -eq $entry.Account }
-                        if ($profile -and $profile.Expiration) {
+                        if ($awsProfile -and $awsProfile.Expiration) {
                             $expiresAt = $profile.Expiration.ToLocalTime()
                             $timeToExpiry = $expiresAt - [DateTime]::Now
 

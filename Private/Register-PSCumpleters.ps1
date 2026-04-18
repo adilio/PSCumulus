@@ -38,7 +38,7 @@ $script:GCPRegions = @(
 )
 
 Register-ArgumentCompleter -ParameterName Region -ScriptBlock {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    param($commandName, $wordToComplete)
 
     $regions = switch ($commandName) {
         { $_ -match 'Azure|Get-Az' } { $script:AzureRegions }
@@ -52,7 +52,7 @@ Register-ArgumentCompleter -ParameterName Region -ScriptBlock {
 }
 
 Register-ArgumentCompleter -ParameterName ResourceGroup -ScriptBlock {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    param($wordToComplete)
 
     $context = Get-CloudContext -Provider Azure -ErrorAction SilentlyContinue
     if ($context -and $context.ResourceGroups) {
@@ -62,7 +62,7 @@ Register-ArgumentCompleter -ParameterName ResourceGroup -ScriptBlock {
 }
 
 Register-ArgumentCompleter -ParameterName Project -ScriptBlock {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    param($wordToComplete)
 
     $context = Get-CloudContext -Provider GCP -ErrorAction SilentlyContinue
     if ($context -and $context.Project) {

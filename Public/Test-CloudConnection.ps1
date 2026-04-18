@@ -25,6 +25,7 @@ function Test-CloudConnection {
     #>
     [CmdletBinding()]
     [OutputType([pscustomobject])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'All', Justification='Parameter is used via ParameterSetName mechanism')]
     param(
         # The cloud provider to test.
         [Parameter()]

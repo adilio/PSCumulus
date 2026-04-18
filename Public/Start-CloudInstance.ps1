@@ -120,8 +120,6 @@ function Start-CloudInstance {
     )
 
     process {
-        $originalInput = $InputObject
-
         if ($PSCmdlet.ParameterSetName -eq 'Path') {
             $cloudPath = [CloudPath]::Parse($Path)
 
