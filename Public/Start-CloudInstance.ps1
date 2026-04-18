@@ -109,7 +109,14 @@ function Start-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
-        [int]$PollingIntervalSeconds = 5
+        [int]$PollingIntervalSeconds = 5,
+
+        # Pass the input record through to the pipeline after starting the instance.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [switch]$PassThru
     )
 
     process {
@@ -297,6 +304,10 @@ function Start-CloudInstance {
 
                     Start-Sleep -Seconds $PollingIntervalSeconds
                 }
+            }
+
+            if ($PassThru) {
+                Write-Output $InputObject
             }
         }
     }
