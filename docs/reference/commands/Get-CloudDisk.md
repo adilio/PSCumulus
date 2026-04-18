@@ -19,19 +19,28 @@ Gets managed disks from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudDisk -ResourceGroup <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudDisk -ResourceGroup <string> [-Provider <string>] [-Status <CloudDiskStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudDisk -Project <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudDisk -Project <string> [-Provider <string>] [-Status <CloudDiskStatus>] [-Tag <hashtable>]
+ [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudDisk -Region <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudDisk -Region <string> [-Provider <string>] [-Status <CloudDiskStatus>] [-Tag <hashtable>]
+ [<CommonParameters>]
+```
+
+### All
+
+```
+Get-CloudDisk -All [-Status <CloudDiskStatus>] [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -43,6 +52,9 @@ This cmdlet has the following aliases,
 
 Routes disk inventory requests to the matching provider backend and
 returns normalized cloud record objects for the disk surface.
+
+Use -All to query every provider that has an established session context,
+returning disks from all connected clouds in one pipeline.
 
 ## EXAMPLES
 
@@ -64,7 +76,41 @@ Get-CloudDisk -Provider GCP -Project 'my-project'
 
 Gets GCP persistent disks for a project.
 
+### EXAMPLE 4
+
+Get-CloudDisk -All
+
+Gets disks from all providers with an established session context.
+Use after Connect-Cloud -Provider AWS, Azure, GCP.
+
+### EXAMPLE 5
+
+Get-CloudDisk -All -Status Available -Tag @{ environment = 'production' }
+
+Gets all available disks with the production environment tag across all connected clouds.
+
 ## PARAMETERS
+
+### -All
+
+Query all providers with an established session context.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
 
 ### -Project
 
@@ -154,6 +200,85 @@ ParameterSets:
 - Name: Azure
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Status
+
+Filter results by disk status.
+
+```yaml
+Type: CloudDiskStatus
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Tag
+
+Filter results by tag key-value pairs.
+All specified tags must match.
+
+```yaml
+Type: System.Collections.Hashtable
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false

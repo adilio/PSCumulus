@@ -36,8 +36,7 @@ Start-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>
 ### Path
 
 ```
-Start-CloudInstance -Path <string> [-Provider <string>] [-Wait] [-TimeoutSeconds <int>]
- [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
+Start-CloudInstance -Path <string> [-Provider <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### GCP
@@ -66,6 +65,8 @@ This cmdlet has the following aliases,
 Routes instance start requests to the matching provider backend and
 returns a normalized cloud record confirming the start operation.
 
+Use -Wait to block until the instance reaches the Running state.
+
 ## EXAMPLES
 
 ### EXAMPLE 1
@@ -92,6 +93,12 @@ Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Start-CloudIn
 
 Starts the Azure VM using piped PSCumulus instance output.
 
+### EXAMPLE 5
+
+Start-CloudInstance -Provider Azure -Name 'web-server-01' -ResourceGroup 'prod-rg' -Wait -TimeoutSeconds 600
+
+Starts an Azure VM and waits up to 10 minutes for it to reach Running state.
+
 ## PARAMETERS
 
 ### -Confirm
@@ -104,90 +111,6 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases:
 - cf
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -PassThru
-
-Returns the resulting CloudRecord after the start operation.
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -PollingIntervalSeconds
-
-How often to poll for status changes when using -Wait. Default is 5 seconds.
-
-```yaml
-Type: System.Int32
-DefaultValue: '5'
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -TimeoutSeconds
-
-Maximum time to wait for the instance to reach the target status when using -Wait. Default is 300 seconds.
-
-```yaml
-Type: System.Int32
-DefaultValue: '300'
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -Wait
-
-Wait for the instance to reach the Running state before returning.
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
 ParameterSets:
 - Name: (All)
   Position: Named
@@ -281,6 +204,45 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
+### -PassThru
+
+Pass the input record through to the pipeline after starting the instance.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
 ### -Path
 
 A cloud path string (e.g., 'Azure:\prod-rg\Instances\web-server-01')
@@ -296,6 +258,45 @@ ParameterSets:
   IsRequired: true
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -PollingIntervalSeconds
+
+Polling interval to check instance status (in seconds).
+
+```yaml
+Type: System.Int32
+DefaultValue: 5
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -422,6 +423,84 @@ ParameterSets:
   IsRequired: true
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -TimeoutSeconds
+
+Maximum time to wait for the instance to reach the target state (in seconds).
+
+```yaml
+Type: System.Int32
+DefaultValue: 300
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Wait
+
+Wait for the instance to reach the Running state before returning.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []

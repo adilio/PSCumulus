@@ -57,6 +57,14 @@ Gets resource tags or labels from a selected cloud provider.
 
 Parses a cloud path string into a structured CloudPath object.
 
+### [Restart-CloudInstance](commands/Restart-CloudInstance.md)
+
+Restarts a compute instance on a selected cloud provider.
+
+### [Set-CloudTag](commands/Set-CloudTag.md)
+
+{{ Fill in the Synopsis }}
+
 ### [Start-CloudInstance](commands/Start-CloudInstance.md)
 
 Starts a compute instance on a selected cloud provider.
@@ -64,5 +72,9 @@ Starts a compute instance on a selected cloud provider.
 ### [Stop-CloudInstance](commands/Stop-CloudInstance.md)
 
 Stops a compute instance on a selected cloud provider.
+
+### [Test-CloudConnection](commands/Test-CloudConnection.md)
+
+Tests the validity of stored cloud provider credentials.
 
 

@@ -16,11 +16,11 @@ Gets resource tags or labels from a selected cloud provider.
 
 ## SYNTAX
 
-### __AllParameterSets
+### All
 
 ```
-Get-CloudTag [[-Provider] <string>] [[-ResourceId] <string>] [[-Project] <string>]
- [[-Resource] <string>] [<CommonParameters>]
+Get-CloudTag [-Provider <string>] [-ResourceId <string>] [-Project <string>] [-Resource <string>]
+ [-All] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -32,6 +32,9 @@ This cmdlet has the following aliases,
 
 Routes resource metadata requests to the matching provider backend for
 Azure, AWS, or GCP.
+
+Use -All to query every provider that has an established session context,
+returning tags/labels from all connected clouds in one pipeline.
 
 ## EXAMPLES
 
@@ -53,7 +56,37 @@ Get-CloudTag -Provider GCP -Project 'my-project' -Resource 'instances/vm-01'
 
 Gets GCP labels for a project-scoped resource.
 
+### EXAMPLE 4
+
+Get-CloudTag -All
+
+Gets tags/labels from all providers with an established session context.
+Note: This returns a representative sample of tags per provider based on
+stored context (region for AWS, resource group for Azure, project for GCP).
+Use after Connect-Cloud -Provider AWS, Azure, GCP.
+
 ## PARAMETERS
+
+### -All
+
+Query all providers with an established session context.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
 
 ### -Project
 
@@ -66,7 +99,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 2
+  Position: Named
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -87,7 +120,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 0
+  Position: Named
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -108,7 +141,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 3
+  Position: Named
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -129,7 +162,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 1
+  Position: Named
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false

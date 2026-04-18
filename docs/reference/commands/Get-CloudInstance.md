@@ -20,27 +20,28 @@ Gets compute instances from a selected cloud provider.
 
 ```
 Get-CloudInstance -ResourceGroup <string> [-Provider <string>] [-Name <string>] [-Detailed]
- [<CommonParameters>]
+ [-Status <CloudInstanceStatus>] [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
 Get-CloudInstance -Project <string> [-Provider <string>] [-Name <string>] [-Detailed]
- [<CommonParameters>]
+ [-Status <CloudInstanceStatus>] [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
 Get-CloudInstance -Region <string> [-Provider <string>] [-Name <string>] [-Detailed]
- [<CommonParameters>]
+ [-Status <CloudInstanceStatus>] [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### All
 
 ```
-Get-CloudInstance -All [-Detailed] [<CommonParameters>]
+Get-CloudInstance -All [-Detailed] [-Status <CloudInstanceStatus>] [-Tag <hashtable>]
+ [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -112,6 +113,12 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.
 Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 
 Gets all prod-tagged instances across every connected cloud.
+
+### EXAMPLE 10
+
+Get-CloudInstance -All -Status Running -Tag @{ environment = 'production' }
+
+Gets all running instances with the production environment tag across all connected clouds.
 
 ## PARAMETERS
 
@@ -296,6 +303,85 @@ ParameterSets:
 - Name: Azure
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Status
+
+Filter results by instance status.
+
+```yaml
+Type: CloudInstanceStatus
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Tag
+
+Filter results by tag key-value pairs.
+All specified tags must match.
+
+```yaml
+Type: System.Collections.Hashtable
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false

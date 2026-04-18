@@ -19,13 +19,7 @@ Tests the validity of stored cloud provider credentials.
 ### All
 
 ```
-Test-CloudConnection [-All] [<CommonParameters>]
-```
-
-### __AllParameterSets
-
-```
-Test-CloudConnection [-Provider <string>] [<CommonParameters>]
+Test-CloudConnection [-Provider <string>] [-All] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -67,13 +61,13 @@ Test all providers with stored credentials.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
-DefaultValue: ''
+DefaultValue: False
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: All
   Position: Named
-  IsRequired: true
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -99,10 +93,7 @@ ParameterSets:
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
-AcceptedValues:
-- Azure
-- AWS
-- GCP
+AcceptedValues: []
 HelpMessage: ''
 ```
 
@@ -115,17 +106,16 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
-### PSCumulus.ConnectionTestResult
+### System.Management.Automation.PSObject
 
-An object with Provider, Connected, Message, and TestedAt properties.
+{{ Fill in the Description }}
 
 ## NOTES
 
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
+
 

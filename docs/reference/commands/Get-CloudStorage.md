@@ -19,19 +19,28 @@ Gets storage resources from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudStorage -ResourceGroup <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudStorage -ResourceGroup <string> [-Provider <string>] [-Status <CloudStorageStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudStorage -Project <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudStorage -Project <string> [-Provider <string>] [-Status <CloudStorageStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudStorage -Region <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudStorage -Region <string> [-Provider <string>] [-Status <CloudStorageStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
+```
+
+### All
+
+```
+Get-CloudStorage -All [-Status <CloudStorageStatus>] [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -43,6 +52,9 @@ This cmdlet has the following aliases,
 
 Routes storage inventory requests to the matching provider backend and
 returns normalized cloud record objects for the storage surface.
+
+Use -All to query every provider that has an established session context,
+returning storage resources from all connected clouds in one pipeline.
 
 ## EXAMPLES
 
@@ -64,7 +76,41 @@ Get-CloudStorage -Provider GCP -Project 'my-project'
 
 Gets GCP storage resources for a project.
 
+### EXAMPLE 4
+
+Get-CloudStorage -All
+
+Gets storage resources from all providers with an established session context.
+Use after Connect-Cloud -Provider AWS, Azure, GCP.
+
+### EXAMPLE 5
+
+Get-CloudStorage -All -Status Available -Tag @{ environment = 'production' }
+
+Gets all available storage with the production environment tag across all connected clouds.
+
 ## PARAMETERS
+
+### -All
+
+Query all providers with an established session context.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
 
 ### -Project
 
@@ -154,6 +200,85 @@ ParameterSets:
 - Name: Azure
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Status
+
+Filter results by storage status.
+
+```yaml
+Type: CloudStorageStatus
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Tag
+
+Filter results by tag key-value pairs.
+All specified tags must match.
+
+```yaml
+Type: System.Collections.Hashtable
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false

@@ -19,8 +19,8 @@ Restarts a compute instance on a selected cloud provider.
 ### Azure (Default)
 
 ```
-Restart-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-PassThru]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Restart-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ### Piped
@@ -28,28 +28,27 @@ Restart-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>
 ```
 Restart-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>]
  [-ResourceGroup <string>] [-InstanceId <string>] [-Region <string>] [-Project <string>]
- [-Zone <string>] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Zone <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Path
 
 ```
-Restart-CloudInstance -Path <string> [-Provider <string>] [-PassThru] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Restart-CloudInstance -Path <string> [-Provider <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Restart-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>]
- [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
+Restart-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Restart-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-PassThru]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Restart-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -87,6 +86,12 @@ Restarts a GCP compute instance.
 Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Restart-CloudInstance
 
 Restarts the Azure VM using piped PSCumulus instance output.
+
+### EXAMPLE 5
+
+Restart-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
+
+Restarts an Azure VM using a cloud path.
 
 ## PARAMETERS
 
@@ -187,27 +192,6 @@ ParameterSets:
   IsRequired: true
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: true
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -PassThru
-
-Returns the resulting CloudRecord after the restart operation.
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -438,4 +422,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## RELATED LINKS
 
 {{ Fill in the related links here }}
+
 

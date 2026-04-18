@@ -19,19 +19,28 @@ Gets serverless functions from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudFunction -ResourceGroup <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudFunction -ResourceGroup <string> [-Provider <string>] [-Status <CloudFunctionStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudFunction -Project <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudFunction -Project <string> [-Provider <string>] [-Status <CloudFunctionStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudFunction -Region <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudFunction -Region <string> [-Provider <string>] [-Status <CloudFunctionStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
+```
+
+### All
+
+```
+Get-CloudFunction -All [-Status <CloudFunctionStatus>] [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -43,6 +52,9 @@ This cmdlet has the following aliases,
 
 Routes function inventory requests to the matching provider backend and
 returns normalized cloud record objects for the serverless compute surface.
+
+Use -All to query every provider that has an established session context,
+returning functions from all connected clouds in one pipeline.
 
 ## EXAMPLES
 
@@ -64,7 +76,41 @@ Get-CloudFunction -Provider GCP -Project 'my-project'
 
 Gets GCP Cloud Functions for a project.
 
+### EXAMPLE 4
+
+Get-CloudFunction -All
+
+Gets functions from all providers with an established session context.
+Use after Connect-Cloud -Provider AWS, Azure, GCP.
+
+### EXAMPLE 5
+
+Get-CloudFunction -All -Status Active -Tag @{ environment = 'production' }
+
+Gets all active functions with the production environment tag across all connected clouds.
+
 ## PARAMETERS
+
+### -All
+
+Query all providers with an established session context.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
 
 ### -Project
 
@@ -154,6 +200,85 @@ ParameterSets:
 - Name: Azure
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Status
+
+Filter results by function status.
+
+```yaml
+Type: CloudFunctionStatus
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Tag
+
+Filter results by tag key-value pairs.
+All specified tags must match.
+
+```yaml
+Type: System.Collections.Hashtable
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false

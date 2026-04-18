@@ -19,19 +19,28 @@ Gets virtual networks from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudNetwork -ResourceGroup <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudNetwork -ResourceGroup <string> [-Provider <string>] [-Status <CloudNetworkStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudNetwork -Project <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudNetwork -Project <string> [-Provider <string>] [-Status <CloudNetworkStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudNetwork -Region <string> [-Provider <string>] [<CommonParameters>]
+Get-CloudNetwork -Region <string> [-Provider <string>] [-Status <CloudNetworkStatus>]
+ [-Tag <hashtable>] [<CommonParameters>]
+```
+
+### All
+
+```
+Get-CloudNetwork -All [-Status <CloudNetworkStatus>] [-Tag <hashtable>] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -43,6 +52,9 @@ This cmdlet has the following aliases,
 
 Routes network inventory requests to the matching provider backend and
 returns normalized cloud record objects for the network surface.
+
+Use -All to query every provider that has an established session context,
+returning networks from all connected clouds in one pipeline.
 
 ## EXAMPLES
 
@@ -64,7 +76,41 @@ Get-CloudNetwork -Provider GCP -Project 'my-project'
 
 Gets GCP networks for a project.
 
+### EXAMPLE 4
+
+Get-CloudNetwork -All
+
+Gets networks from all providers with an established session context.
+Use after Connect-Cloud -Provider AWS, Azure, GCP.
+
+### EXAMPLE 5
+
+Get-CloudNetwork -All -Status Available -Tag @{ environment = 'production' }
+
+Gets all available networks with the production environment tag across all connected clouds.
+
 ## PARAMETERS
+
+### -All
+
+Query all providers with an established session context.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
 
 ### -Project
 
@@ -154,6 +200,85 @@ ParameterSets:
 - Name: Azure
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Status
+
+Filter results by network status.
+
+```yaml
+Type: CloudNetworkStatus
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Tag
+
+Filter results by tag key-value pairs.
+All specified tags must match.
+
+```yaml
+Type: System.Collections.Hashtable
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
