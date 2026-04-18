@@ -106,4 +106,81 @@ Describe 'Get-CloudStorage' {
             }
         }
     }
+
+    Context '-All parameter' {
+        BeforeEach {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers = @{ Azure = $null; AWS = $null; GCP = $null }
+            }
+        }
+
+        It 'calls all backend functions when providers are connected' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureStorageData { [AzureStorageRecord]@{ Name = 'az-storage'; Provider = 'Azure' } }
+                Mock Get-AWSStorageData   { [AWSStorageRecord]@{ Name = 'aws-storage'; Provider = 'AWS' } }
+                Mock Get-GCPStorageData   { [GCPStorageRecord]@{ Name = 'gcp-storage'; Provider = 'GCP' } }
+
+                $null = Get-CloudStorage -All
+
+                Should -Invoke Get-AzureStorageData -Times 1
+                Should -Invoke Get-AWSStorageData   -Times 1
+                Should -Invoke Get-GCPStorageData   -Times 1
+            }
+        }
+
+        It 'skips providers with no stored context' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['AWS'] = @{ Region = 'us-east-1'; Scope = $null }
+
+                Mock Get-AzureStorageData { [AzureStorageRecord]@{ Name = 'az-storage'; Provider = 'Azure' } }
+                Mock Get-AWSStorageData   { [AWSStorageRecord]@{ Name = 'aws-storage'; Provider = 'AWS' } }
+                Mock Get-GCPStorageData   { [GCPStorageRecord]@{ Name = 'gcp-storage'; Provider = 'GCP' } }
+
+                $null = Get-CloudStorage -All
+
+                Should -Invoke Get-AWSStorageData   -Times 1
+                Should -Invoke Get-AzureStorageData -Times 0
+                Should -Invoke Get-GCPStorageData   -Times 0
+            }
+        }
+
+        It 'returns CloudRecord objects from all connected providers' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureStorageData { [AzureStorageRecord]@{ Name = 'az-storage';  Provider = 'Azure' } }
+                Mock Get-AWSStorageData   { [AWSStorageRecord]@{ Name = 'aws-storage'; Provider = 'AWS' } }
+                Mock Get-GCPStorageData   { [GCPStorageRecord]@{ Name = 'gcp-storage'; Provider = 'GCP' } }
+
+                $results = @(Get-CloudStorage -All)
+                $results.Count | Should -Be 3
+            }
+        }
+
+        It 'warns when a provider is skipped because it has no usable context' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['AWS'] = @{ Region = $null; Scope = $null }
+
+                Mock Write-Verbose {}
+                Mock Get-AzureStorageData {}
+                Mock Get-AWSStorageData {}
+                Mock Get-GCPStorageData {}
+
+                $null = Get-CloudStorage -All -Verbose
+
+                Should -Invoke Get-AzureStorageData -Times 0
+                Should -Invoke Get-AWSStorageData -Times 0
+                Should -Invoke Get-GCPStorageData -Times 0
+                Should -Invoke Write-Verbose -Times 1 -ParameterFilter {
+                    $Message -match 'AWS \(no stored region\)'
+                }
+            }
+        }
+    }
 }

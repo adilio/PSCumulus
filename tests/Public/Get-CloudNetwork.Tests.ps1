@@ -129,4 +129,45 @@ Describe 'Get-CloudNetwork' {
             }
         }
     }
+
+    Context '-All parameter' {
+        BeforeEach {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers = @{ Azure = $null; AWS = $null; GCP = $null }
+            }
+        }
+
+        It 'calls all backend functions when providers are connected' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureNetworkData { [AzureNetworkRecord]@{ Name = 'az-vnet'; Provider = 'Azure' } }
+                Mock Get-AWSNetworkData   { [AWSNetworkRecord]@{ Name = 'aws-vpc'; Provider = 'AWS' } }
+                Mock Get-GCPNetworkData   { [GCPNetworkRecord]@{ Name = 'gcp-network'; Provider = 'GCP' } }
+
+                $null = Get-CloudNetwork -All
+
+                Should -Invoke Get-AzureNetworkData -Times 1
+                Should -Invoke Get-AWSNetworkData   -Times 1
+                Should -Invoke Get-GCPNetworkData   -Times 1
+            }
+        }
+
+        It 'returns CloudRecord objects from all connected providers' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureNetworkData { [AzureNetworkRecord]@{ Name = 'az-vnet';  Provider = 'Azure' } }
+                Mock Get-AWSNetworkData   { [AWSNetworkRecord]@{ Name = 'aws-vpc'; Provider = 'AWS' } }
+                Mock Get-GCPNetworkData   { [GCPNetworkRecord]@{ Name = 'gcp-network'; Provider = 'GCP' } }
+
+                $results = @(Get-CloudNetwork -All)
+                $results.Count | Should -Be 3
+            }
+        }
+    }
 }

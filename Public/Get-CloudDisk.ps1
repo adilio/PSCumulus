@@ -7,6 +7,9 @@ function Get-CloudDisk {
             Routes disk inventory requests to the matching provider backend and
             returns normalized cloud record objects for the disk surface.
 
+            Use -All to query every provider that has an established session context,
+            returning disks from all connected clouds in one pipeline.
+
         .EXAMPLE
             Get-CloudDisk -Provider Azure -ResourceGroup 'prod-rg'
 
@@ -21,6 +24,12 @@ function Get-CloudDisk {
             Get-CloudDisk -Provider GCP -Project 'my-project'
 
             Gets GCP persistent disks for a project.
+
+        .EXAMPLE
+            Get-CloudDisk -All
+
+            Gets disks from all providers with an established session context.
+            Use after Connect-Cloud -Provider AWS, Azure, GCP.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure')]
     [OutputType([pscustomobject])]
@@ -44,17 +53,70 @@ function Get-CloudDisk {
         # The GCP project to query for persistent disks.
         [Parameter(Mandatory, ParameterSetName = 'GCP')]
         [ValidateNotNullOrEmpty()]
-        [string]$Project
+        [string]$Project,
+
+        # Query all providers with an established session context.
+        [Parameter(Mandatory, ParameterSetName = 'All')]
+        [switch]$All
     )
 
     process {
-        $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
-
         $commandMap = @{
             Azure = 'Get-AzureDiskData'
             AWS   = 'Get-AWSDiskData'
             GCP   = 'Get-GCPDiskData'
         }
+
+        if ($PSCmdlet.ParameterSetName -eq 'All') {
+            $skippedProviders = New-Object System.Collections.Generic.List[string]
+            $providers = @('Azure', 'AWS', 'GCP')
+            $providerIndex = 0
+
+            foreach ($providerName in $providers) {
+                $providerIndex++
+                $percentComplete = [int] (($providerIndex / $providers.Count) * 100)
+
+                Write-Progress -Activity "Get-CloudDisk -All" -Status "Querying $providerName..." -PercentComplete $percentComplete -CurrentOperation "Fetching disks from $providerName"
+
+                $ctx = $script:PSCumulusContext.Providers[$providerName]
+                if ($null -eq $ctx) {
+                    $skippedProviders.Add("$providerName (no active session context)")
+                    continue
+                }
+
+                $argumentMap = @{}
+
+                if ($providerName -eq 'AWS' -and -not [string]::IsNullOrWhiteSpace($ctx.Region)) {
+                    $argumentMap.Region = $ctx.Region
+                }
+
+                if ($providerName -eq 'AWS' -and [string]::IsNullOrWhiteSpace($ctx.Region)) {
+                    $skippedProviders.Add("$providerName (no stored region)")
+                    continue
+                }
+
+                if ($providerName -eq 'GCP' -and -not [string]::IsNullOrWhiteSpace($ctx.Scope)) {
+                    $argumentMap.Project = $ctx.Scope
+                }
+
+                if ($providerName -eq 'GCP' -and [string]::IsNullOrWhiteSpace($ctx.Scope)) {
+                    $skippedProviders.Add("$providerName (no stored project)")
+                    continue
+                }
+
+                Invoke-CloudProvider -Provider $providerName -CommandMap $commandMap -ArgumentMap $argumentMap
+            }
+
+            Write-Progress -Activity "Get-CloudDisk -All" -Completed
+
+            if ($skippedProviders.Count -gt 0) {
+                Write-Verbose ("Get-CloudDisk -All skipped: " + ($skippedProviders -join '; ') + '.')
+            }
+
+            return
+        }
+
+        $resolvedProvider = Resolve-CloudProvider -Provider $Provider -ParameterSetName $PSCmdlet.ParameterSetName
 
         $argumentMap = @{}
 

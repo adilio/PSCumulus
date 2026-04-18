@@ -151,4 +151,45 @@ Describe 'Get-CloudTag' {
             }
         }
     }
+
+    Context '-All parameter' {
+        BeforeEach {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers = @{ Azure = $null; AWS = $null; GCP = $null }
+            }
+        }
+
+        It 'calls all backend functions when providers are connected' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureTagData { [AzureTagRecord]@{ Name = 'az-tags'; Provider = 'Azure' } }
+                Mock Get-AWSTagData   { [AWSTagRecord]@{ Name = 'aws-tags'; Provider = 'AWS' } }
+                Mock Get-GCPTagData   { [GCPTagRecord]@{ Name = 'gcp-tags'; Provider = 'GCP' } }
+
+                $null = Get-CloudTag -All
+
+                Should -Invoke Get-AzureTagData -Times 1
+                Should -Invoke Get-AWSTagData   -Times 1
+                Should -Invoke Get-GCPTagData   -Times 1
+            }
+        }
+
+        It 'returns CloudRecord objects from all connected providers' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureTagData { [AzureTagRecord]@{ Name = 'az-tags';  Provider = 'Azure' } }
+                Mock Get-AWSTagData   { [AWSTagRecord]@{ Name = 'aws-tags'; Provider = 'AWS' } }
+                Mock Get-GCPTagData   { [GCPTagRecord]@{ Name = 'gcp-tags'; Provider = 'GCP' } }
+
+                $results = @(Get-CloudTag -All)
+                $results.Count | Should -Be 3
+            }
+        }
+    }
 }

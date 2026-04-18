@@ -129,4 +129,45 @@ Describe 'Get-CloudFunction' {
             }
         }
     }
+
+    Context '-All parameter' {
+        BeforeEach {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers = @{ Azure = $null; AWS = $null; GCP = $null }
+            }
+        }
+
+        It 'calls all backend functions when providers are connected' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureFunctionData { [AzureFunctionRecord]@{ Name = 'az-func'; Provider = 'Azure' } }
+                Mock Get-AWSFunctionData   { [AWSFunctionRecord]@{ Name = 'aws-func'; Provider = 'AWS' } }
+                Mock Get-GCPFunctionData   { [GCPFunctionRecord]@{ Name = 'gcp-func'; Provider = 'GCP' } }
+
+                $null = Get-CloudFunction -All
+
+                Should -Invoke Get-AzureFunctionData -Times 1
+                Should -Invoke Get-AWSFunctionData   -Times 1
+                Should -Invoke Get-GCPFunctionData   -Times 1
+            }
+        }
+
+        It 'returns CloudRecord objects from all connected providers' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureFunctionData { [AzureFunctionRecord]@{ Name = 'az-func';  Provider = 'Azure' } }
+                Mock Get-AWSFunctionData   { [AWSFunctionRecord]@{ Name = 'aws-func'; Provider = 'AWS' } }
+                Mock Get-GCPFunctionData   { [GCPFunctionRecord]@{ Name = 'gcp-func'; Provider = 'GCP' } }
+
+                $results = @(Get-CloudFunction -All)
+                $results.Count | Should -Be 3
+            }
+        }
+    }
 }

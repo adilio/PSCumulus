@@ -153,4 +153,45 @@ Describe 'Get-CloudDisk' {
             }
         }
     }
+
+    Context '-All parameter' {
+        BeforeEach {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers = @{ Azure = $null; AWS = $null; GCP = $null }
+            }
+        }
+
+        It 'calls all backend functions when providers are connected' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureDiskData { [AzureDiskRecord]@{ Name = 'az-disk'; Provider = 'Azure' } }
+                Mock Get-AWSDiskData   { [AWSDiskRecord]@{ Name = 'aws-disk'; Provider = 'AWS' } }
+                Mock Get-GCPDiskData   { [GCPDiskRecord]@{ Name = 'gcp-disk'; Provider = 'GCP' } }
+
+                $null = Get-CloudDisk -All
+
+                Should -Invoke Get-AzureDiskData -Times 1
+                Should -Invoke Get-AWSDiskData   -Times 1
+                Should -Invoke Get-GCPDiskData   -Times 1
+            }
+        }
+
+        It 'returns CloudRecord objects from all connected providers' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
+                $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
+
+                Mock Get-AzureDiskData { [AzureDiskRecord]@{ Name = 'az-disk';  Provider = 'Azure' } }
+                Mock Get-AWSDiskData   { [AWSDiskRecord]@{ Name = 'aws-disk'; Provider = 'AWS' } }
+                Mock Get-GCPDiskData   { [GCPDiskRecord]@{ Name = 'gcp-disk'; Provider = 'GCP' } }
+
+                $results = @(Get-CloudDisk -All)
+                $results.Count | Should -Be 3
+            }
+        }
+    }
 }
