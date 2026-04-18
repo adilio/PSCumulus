@@ -53,6 +53,10 @@ Gets storage resources from a selected cloud provider.
 
 Gets resource tags or labels from a selected cloud provider.
 
+### [Resolve-CloudPath](commands/Resolve-CloudPath.md)
+
+Parses a cloud path string into a structured CloudPath object.
+
 ### [Start-CloudInstance](commands/Start-CloudInstance.md)
 
 Starts a compute instance on a selected cloud provider.

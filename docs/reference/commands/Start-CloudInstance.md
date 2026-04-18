@@ -31,6 +31,12 @@ Start-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>
  [-Zone <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
+### Path
+
+```
+Start-CloudInstance -Path <string> [-Provider <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
 ### GCP
 
 ```
@@ -186,6 +192,27 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
+### -Path
+
+A cloud path string (e.g., 'Azure:\prod-rg\Instances\web-server-01')
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Path
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
 ### -Project
 
 The GCP project containing the target instance.
@@ -223,6 +250,12 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Path
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
 - Name: Piped
   Position: Named
   IsRequired: false
