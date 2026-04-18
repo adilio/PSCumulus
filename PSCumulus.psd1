@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.4.0'
+    ModuleVersion     = '0.4.1'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -42,6 +42,13 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.4.1
+- Documentation updates: fixed -WhatIf/-Confirm as implemented features (not roadmap)
+- Reframed roadmap from staged architecture to problem-driven upcoming work
+- Added Common Scenarios section to README and getting-started docs
+- Added bulk cross-cloud pipeline examples to Start/Stop command documentation
+- Updated evolution.md and strategy.md forward-looking sections
+
 0.4.0
 - Completed Stage 3: Cloud Path Model
 - Added CloudPath class for structured path parsing and validation
