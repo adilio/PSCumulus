@@ -1503,8 +1503,7 @@
 <h2 id="implementation-stages">Implementation Stages<a class="headerlink" href="#implementation-stages" title="Permanent link">&para;</a></h2>
 <p>PSCumulus is being built in additive stages so each one is shippable on its own. The cmdlets remain the primary interface throughout. Any future Provider is layered on top of the same backend engine, not treated as a replacement. The core module stays PowerShell 5.1-compatible, while later navigation work is expected to target PowerShell 7+ where provider classes are more reliable.</p>
 <p>This direction became much clearer after the Summit talk on <strong>Monday, April 13, 2026</strong>, when Jeffrey Snover offered the insight that unlocked the roadmap: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the roadmap, but it now follows the corrected record model instead of leading it. The full rationale and stage-by-stage narrative live in <a href="../evolution/">Evolution</a>.</p>
-<p><strong>Current status:</strong> Stage 1 is complete and Stage 2 has started for instance records.<br />
-<strong>Current implementation focus:</strong> Stage 2: Vendor Subclass Records.</p>
+<p><strong>Current status:</strong> Stages 1, 2, and 3 are complete (v0.4.0).</p>
 <p>Broad outline:</p>
 <ol>
 <li><strong>Stage 1: Internal Typed Contract</strong>: strengthen internal correctness without changing the public cmdlet surface.</li>

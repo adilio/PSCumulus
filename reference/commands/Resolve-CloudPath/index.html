@@ -10,28 +10,24 @@
       
       
       
-        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/module/">
+        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Resolve-CloudPath/">
       
       
-        <link rel="prev" href="../about-pscumulus/">
-      
-      
-        <link rel="next" href="../commands/Connect-Cloud/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>PSCumulus Module Reference - PSCumulus</title>
+        <title>Resolve-CloudPath - PSCumulus</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
       
 
@@ -50,7 +46,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -68,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pscumulus-module" class="md-skip">
+        <a href="#resolve-cloudpath" class="md-skip">
           Skip to content
         </a>
       
@@ -84,7 +80,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="PSCumulus" class="md-header__button md-logo" aria-label="PSCumulus" data-md-component="logo">
+    <a href="../../.." title="PSCumulus" class="md-header__button md-logo" aria-label="PSCumulus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -104,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PSCumulus Module Reference
+              Resolve-CloudPath
             
           </span>
         </div>
@@ -196,7 +192,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="PSCumulus" class="md-nav__button md-logo" aria-label="PSCumulus" data-md-component="logo">
+    <a href="../../.." title="PSCumulus" class="md-nav__button md-logo" aria-label="PSCumulus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -226,7 +222,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -253,7 +249,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/" class="md-nav__link">
+      <a href="../../../getting-started/" class="md-nav__link">
         
   
   
@@ -332,7 +328,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/strategy/" class="md-nav__link">
+      <a href="../../../concepts/strategy/" class="md-nav__link">
         
   
   
@@ -360,7 +356,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/evolution/" class="md-nav__link">
+      <a href="../../../concepts/evolution/" class="md-nav__link">
         
   
   
@@ -392,8 +388,6 @@
       
   
   
-    
-  
   
   
     
@@ -406,11 +400,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
@@ -431,7 +425,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -449,7 +443,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   
@@ -477,7 +471,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../about-pscumulus/" class="md-nav__link">
+      <a href="../../about-pscumulus/" class="md-nav__link">
         
   
   
@@ -502,37 +496,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Module
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../module/" class="md-nav__link">
         
   
   
@@ -548,186 +515,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Description
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pscumulus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PSCumulus
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="PSCumulus">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#connect-cloud" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connect-Cloud
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#disconnect-cloud" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Disconnect-Cloud
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudcontext" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudContext
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-clouddisk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudDisk
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudfunction" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudFunction
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudinstance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudInstance
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudnetwork" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudNetwork
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudstorage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudStorage
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudtag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudTag
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resolve-cloudpath" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resolve-CloudPath
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#start-cloudinstance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Start-CloudInstance
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stop-cloudinstance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Stop-CloudInstance
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -789,7 +576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Connect-Cloud/" class="md-nav__link">
+      <a href="../Connect-Cloud/" class="md-nav__link">
         
   
   
@@ -817,7 +604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Disconnect-Cloud/" class="md-nav__link">
+      <a href="../Disconnect-Cloud/" class="md-nav__link">
         
   
   
@@ -845,7 +632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Get-CloudContext/" class="md-nav__link">
+      <a href="../Get-CloudContext/" class="md-nav__link">
         
   
   
@@ -873,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Get-CloudDisk/" class="md-nav__link">
+      <a href="../Get-CloudDisk/" class="md-nav__link">
         
   
   
@@ -901,7 +688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Get-CloudFunction/" class="md-nav__link">
+      <a href="../Get-CloudFunction/" class="md-nav__link">
         
   
   
@@ -929,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Get-CloudInstance/" class="md-nav__link">
+      <a href="../Get-CloudInstance/" class="md-nav__link">
         
   
   
@@ -957,7 +744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Get-CloudNetwork/" class="md-nav__link">
+      <a href="../Get-CloudNetwork/" class="md-nav__link">
         
   
   
@@ -985,7 +772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Get-CloudStorage/" class="md-nav__link">
+      <a href="../Get-CloudStorage/" class="md-nav__link">
         
   
   
@@ -1013,7 +800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Get-CloudTag/" class="md-nav__link">
+      <a href="../Get-CloudTag/" class="md-nav__link">
         
   
   
@@ -1041,7 +828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Start-CloudInstance/" class="md-nav__link">
+      <a href="../Start-CloudInstance/" class="md-nav__link">
         
   
   
@@ -1069,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/Stop-CloudInstance/" class="md-nav__link">
+      <a href="../Stop-CloudInstance/" class="md-nav__link">
         
   
   
@@ -1132,10 +919,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
+  <a href="#synopsis" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Description
+        SYNOPSIS
       
     </span>
   </a>
@@ -1143,143 +930,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pscumulus" class="md-nav__link">
+  <a href="#syntax" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PSCumulus
+        SYNTAX
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="PSCumulus">
+    <nav class="md-nav" aria-label="SYNTAX">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#connect-cloud" class="md-nav__link">
+  <a href="#__allparametersets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Connect-Cloud
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#disconnect-cloud" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Disconnect-Cloud
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudcontext" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudContext
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-clouddisk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudDisk
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudfunction" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudFunction
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudinstance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudInstance
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudnetwork" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudNetwork
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudstorage" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudStorage
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-cloudtag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Get-CloudTag
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resolve-cloudpath" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resolve-CloudPath
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#start-cloudinstance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Start-CloudInstance
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#stop-cloudinstance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Stop-CloudInstance
+        __AllParameterSets
       
     </span>
   </a>
@@ -1288,6 +954,195 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ALIASES
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DESCRIPTION
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLES
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EXAMPLES">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PARAMETERS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PARAMETERS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commonparameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CommonParameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        INPUTS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="INPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System.String
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OUTPUTS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OUTPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloudpath" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CloudPath
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOTES
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RELATED LINKS
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1311,34 +1166,67 @@
   
 
 
-<h1 id="pscumulus-module">PSCumulus Module<a class="headerlink" href="#pscumulus-module" title="Permanent link">&para;</a></h1>
-<h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
-<p>Cross-cloud PowerShell module for Azure, AWS, and GCP. Unified commands (Get-CloudInstance, Get-CloudStorage, etc.) return normalized objects with a consistent output shape across all three providers.</p>
-<h2 id="pscumulus">PSCumulus<a class="headerlink" href="#pscumulus" title="Permanent link">&para;</a></h2>
-<h3 id="connect-cloud"><a href="../commands/Connect-Cloud/">Connect-Cloud</a><a class="headerlink" href="#connect-cloud" title="Permanent link">&para;</a></h3>
-<p>Prepares a ready-to-use cloud session for the specified provider.</p>
-<h3 id="disconnect-cloud"><a href="../commands/Disconnect-Cloud/">Disconnect-Cloud</a><a class="headerlink" href="#disconnect-cloud" title="Permanent link">&para;</a></h3>
-<p>Clears PSCumulus session context for a specific cloud provider.</p>
-<h3 id="get-cloudcontext"><a href="../commands/Get-CloudContext/">Get-CloudContext</a><a class="headerlink" href="#get-cloudcontext" title="Permanent link">&para;</a></h3>
-<p>Returns the current PSCumulus session context for all connected providers.</p>
-<h3 id="get-clouddisk"><a href="../commands/Get-CloudDisk/">Get-CloudDisk</a><a class="headerlink" href="#get-clouddisk" title="Permanent link">&para;</a></h3>
-<p>Gets managed disks from a selected cloud provider.</p>
-<h3 id="get-cloudfunction"><a href="../commands/Get-CloudFunction/">Get-CloudFunction</a><a class="headerlink" href="#get-cloudfunction" title="Permanent link">&para;</a></h3>
-<p>Gets serverless functions from a selected cloud provider.</p>
-<h3 id="get-cloudinstance"><a href="../commands/Get-CloudInstance/">Get-CloudInstance</a><a class="headerlink" href="#get-cloudinstance" title="Permanent link">&para;</a></h3>
-<p>Gets compute instances from a selected cloud provider.</p>
-<h3 id="get-cloudnetwork"><a href="../commands/Get-CloudNetwork/">Get-CloudNetwork</a><a class="headerlink" href="#get-cloudnetwork" title="Permanent link">&para;</a></h3>
-<p>Gets virtual networks from a selected cloud provider.</p>
-<h3 id="get-cloudstorage"><a href="../commands/Get-CloudStorage/">Get-CloudStorage</a><a class="headerlink" href="#get-cloudstorage" title="Permanent link">&para;</a></h3>
-<p>Gets storage resources from a selected cloud provider.</p>
-<h3 id="get-cloudtag"><a href="../commands/Get-CloudTag/">Get-CloudTag</a><a class="headerlink" href="#get-cloudtag" title="Permanent link">&para;</a></h3>
-<p>Gets resource tags or labels from a selected cloud provider.</p>
-<h3 id="resolve-cloudpath"><a href="../commands/Resolve-CloudPath/">Resolve-CloudPath</a><a class="headerlink" href="#resolve-cloudpath" title="Permanent link">&para;</a></h3>
+<h1 id="resolve-cloudpath">Resolve-CloudPath<a class="headerlink" href="#resolve-cloudpath" title="Permanent link">&para;</a></h1>
+<h2 id="synopsis">SYNOPSIS<a class="headerlink" href="#synopsis" title="Permanent link">&para;</a></h2>
 <p>Parses a cloud path string into a structured CloudPath object.</p>
-<h3 id="start-cloudinstance"><a href="../commands/Start-CloudInstance/">Start-CloudInstance</a><a class="headerlink" href="#start-cloudinstance" title="Permanent link">&para;</a></h3>
-<p>Starts a compute instance on a selected cloud provider.</p>
-<h3 id="stop-cloudinstance"><a href="../commands/Stop-CloudInstance/">Stop-CloudInstance</a><a class="headerlink" href="#stop-cloudinstance" title="Permanent link">&para;</a></h3>
-<p>Stops a compute instance on a selected cloud provider.</p>
+<h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
+<h3 id="__allparametersets">__AllParameterSets<a class="headerlink" href="#__allparametersets" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Resolve-CloudPath [-Path] &lt;string&gt; [&lt;CommonParameters&gt;]
+</code></pre></div>
+<h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
+<p>This cmdlet has the following aliases,
+  None</p>
+<h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
+<p>Resolve-CloudPath converts a cloud path string into a structured CloudPath object
+that can be used for path-based operations.
+The path format is:</p>
+<div class="highlight"><pre><span></span><code>{Provider}:\{Scope}\{Kind}\{ResourceName}
+</code></pre></div>
+<p>Where Provider is Azure, AWS, or GCP; Scope is resource group/region/project;
+Kind is Instances, Disks, Storage, Networks, Functions, or Tags; and
+ResourceName is the specific resource name.</p>
+<h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
+<p>Resolve-CloudPath 'Azure:\prod-rg\Instances\web-server-01'</p>
+<p>Parses the full Azure instance path.</p>
+<h3 id="example-2">EXAMPLE 2<a class="headerlink" href="#example-2" title="Permanent link">&para;</a></h3>
+<p>'AWS:\us-east-1\Disks' | Resolve-CloudPath</p>
+<p>Parses an AWS disk container path via pipeline.</p>
+<h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
+<p>Resolve-CloudPath 'GCP:\my-project'</p>
+<p>Parses a GCP project scope path.</p>
+<h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<h3 id="-path">-Path<a class="headerlink" href="#-path" title="Permanent link">&para;</a></h3>
+<p>{{ Fill Path Description }}</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="commonparameters">CommonParameters<a class="headerlink" href="#commonparameters" title="Permanent link">&para;</a></h3>
+<p>This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable,
+-InformationAction, -InformationVariable, -OutBuffer, -OutVariable, -PipelineVariable,
+-ProgressAction, -Verbose, -WarningAction, and -WarningVariable. For more information, see
+<a href="https://go.microsoft.com/fwlink/?LinkID=113216">about_CommonParameters</a>.</p>
+<h2 id="inputs">INPUTS<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
+<h3 id="systemstring">System.String<a class="headerlink" href="#systemstring" title="Permanent link">&para;</a></h3>
+<p>{{ Fill in the Description }}</p>
+<h2 id="outputs">OUTPUTS<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
+<h3 id="cloudpath">CloudPath<a class="headerlink" href="#cloudpath" title="Permanent link">&para;</a></h3>
+<p>{{ Fill in the Description }}</p>
+<h2 id="notes">NOTES<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<h2 id="related-links">RELATED LINKS<a class="headerlink" href="#related-links" title="Permanent link">&para;</a></h2>
+<p>{{ Fill in the related links here }}</p>
 
 
 
@@ -1397,10 +1285,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.sections", "navigation.top", "content.code.copy", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.sections", "navigation.top", "content.code.copy", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
