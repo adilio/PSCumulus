@@ -48,7 +48,10 @@ Describe 'Set-AzureTag' {
             InModuleScope PSCumulus {
                 Mock -CommandName Assert-CommandAvailable
                 Mock -CommandName Get-AzTag -MockWith { $null }
-                Mock -CommandName Update-AzTag -MockWith { @{Properties = @{ Tags = @{}} } }
+                Mock -CommandName Update-AzTag -MockWith {
+                    param($ResourceId, $Tag, $Operation)
+                    @{Properties = @{ Tags = @{}} }
+                }
 
                 { Set-AzureTag -ResourceId 'test-id' -Tags @{Key = 'Value' } } | Should -Not -Throw
             }
@@ -69,7 +72,8 @@ Describe 'Set-AzureTag' {
                     }
                 }
                 Mock -CommandName Update-AzTag -MockWith {
-                    param($ResourceId, $Tag)
+                    param($ResourceId, $Tag, $Operation)
+                    $Operation | Should -Be 'Merge'
                     $Tag.ContainsKey('ExistingTag') | Should -BeTrue
                     $Tag.ContainsKey('NewTag') | Should -BeTrue
                 }
@@ -91,7 +95,8 @@ Describe 'Set-AzureTag' {
                     }
                 }
                 Mock -CommandName Update-AzTag -MockWith {
-                    param($ResourceId, $Tag)
+                    param($ResourceId, $Tag, $Operation)
+                    $Operation | Should -Be 'Replace'
                     $Tag.ContainsKey('ExistingTag') | Should -BeFalse
                     $Tag.ContainsKey('NewTag') | Should -BeTrue
                 }
@@ -106,7 +111,10 @@ Describe 'Set-AzureTag' {
             InModuleScope PSCumulus {
                 Mock -CommandName Assert-CommandAvailable
                 Mock -CommandName Get-AzTag -MockWith { $null }
-                Mock -CommandName Update-AzTag -MockWith { @{Properties = @{ Tags = @{}} } }
+                Mock -CommandName Update-AzTag -MockWith {
+                    param($ResourceId, $Tag, $Operation)
+                    @{Properties = @{ Tags = @{}} }
+                }
 
                 { Set-AzureTag -ResourceId 'test-id' -Tags @{Key = 'Value' } } | Should -Not -Throw
             }
@@ -116,7 +124,10 @@ Describe 'Set-AzureTag' {
             InModuleScope PSCumulus {
                 Mock -CommandName Assert-CommandAvailable
                 Mock -CommandName Get-AzTag -MockWith { $null }
-                Mock -CommandName Update-AzTag -MockWith { throw 'Update failed' }
+                Mock -CommandName Update-AzTag -MockWith {
+                    param($ResourceId, $Tag, $Operation)
+                    throw 'Update failed'
+                }
 
                 { Set-AzureTag -ResourceId 'test-id' -Tags @{Key = 'Value' } -ErrorAction Stop } | Should -Throw
             }

@@ -91,13 +91,13 @@ Describe 'Set-CloudTag' {
                 Mock Set-AzureTag -MockWith { @() }
 
                 # Create mock record at script level so it's available outside InModuleScope
-                $script:mockRecord = [PSCustomObject]@{
-                    PSTypeName    = 'PSCumulus.CloudRecord'
+                $script:mockRecord = New-Object PSObject -Property @{
                     Name          = 'vm01'
                     Provider      = 'Azure'
                     ResourceGroup = 'rg-test'
                     Id            = '/subscriptions/123/resourceGroups/rg-test/providers/Microsoft.Compute/virtualMachines/vm01'
                 }
+                $script:mockRecord.PSTypeNames.Insert(0, 'PSCumulus.CloudRecord')
             }
         }
 
