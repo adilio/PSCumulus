@@ -368,6 +368,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cross-cloud-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Cloud Helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#interactive-aliases" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -749,6 +760,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/commands/Export-CloudInventory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Export-CloudInventory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/commands/Find-CloudResource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Find-CloudResource
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/commands/Get-CloudContext/" class="md-nav__link">
         
   
@@ -889,6 +956,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/commands/Get-CloudRegion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudRegion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/commands/Get-CloudStorage/" class="md-nav__link">
         
   
@@ -945,6 +1040,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/commands/Resolve-CloudPath/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resolve-CloudPath
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/commands/Restart-CloudInstance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restart-CloudInstance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/commands/Set-CloudTag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set-CloudTag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/commands/Start-CloudInstance/" class="md-nav__link">
         
   
@@ -981,6 +1160,34 @@
     
   
     Stop-CloudInstance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/commands/Test-CloudConnection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-CloudConnection
   
 
     
@@ -1091,6 +1298,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cross-cloud-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Cloud Helpers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#interactive-aliases" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1173,6 +1391,15 @@ others look disconnected. Providers not yet connected are omitted from the outpu
 <span class="nb">Start-CloudInstance</span> <span class="n">-Provider</span> <span class="n">AWS</span> <span class="n">-InstanceId</span> <span class="s2">&quot;i-0abc123&quot;</span> <span class="n">-Region</span> <span class="s2">&quot;us-east-1&quot;</span>
 <span class="nb">Stop-CloudInstance</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="n">-Name</span> <span class="s2">&quot;web-01&quot;</span> <span class="n">-ResourceGroup</span> <span class="s2">&quot;prod-rg&quot;</span>
 </code></pre></div>
+<h2 id="cross-cloud-helpers">Cross-Cloud Helpers<a class="headerlink" href="#cross-cloud-helpers" title="Permanent link">&para;</a></h2>
+<p>Use <code>Find-CloudResource</code> when you know a name, but not the provider or resource kind:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Find-CloudResource</span> <span class="n">-Name</span> <span class="s2">&quot;web-*&quot;</span>
+<span class="nb">Find-CloudResource</span> <span class="n">-Name</span> <span class="s2">&quot;prod-*&quot;</span> <span class="n">-Provider</span> <span class="n">Azure</span><span class="p">,</span> <span class="n">AWS</span> <span class="n">-Kind</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Disk</span>
+</code></pre></div>
+<p>Use <code>Export-CloudInventory</code> to capture a point-in-time inventory file for audit, demo, or before/after comparison work:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Export-CloudInventory</span> <span class="n">-Path</span> <span class="s2">&quot;./inventory.json&quot;</span>
+<span class="nb">Export-CloudInventory</span> <span class="n">-Path</span> <span class="s2">&quot;./inventory.csv&quot;</span> <span class="n">-Format</span> <span class="n">Csv</span> <span class="n">-Provider</span> <span class="n">Azure</span>
+</code></pre></div>
 <h2 id="interactive-aliases">Interactive Aliases<a class="headerlink" href="#interactive-aliases" title="Permanent link">&para;</a></h2>
 <p>These aliases are exported for terminal convenience:</p>
 <table>
@@ -1188,6 +1415,10 @@ others look disconnected. Providers not yet connected are omitted from the outpu
 <td><code>Connect-Cloud</code></td>
 </tr>
 <tr>
+<td><code>fcr</code></td>
+<td><code>Find-CloudResource</code></td>
+</tr>
+<tr>
 <td><code>gcont</code></td>
 <td><code>Get-CloudContext</code></td>
 </tr>
@@ -1196,12 +1427,20 @@ others look disconnected. Providers not yet connected are omitted from the outpu
 <td><code>Get-CloudInstance</code></td>
 </tr>
 <tr>
+<td><code>rci</code></td>
+<td><code>Restart-CloudInstance</code></td>
+</tr>
+<tr>
 <td><code>sci</code></td>
 <td><code>Start-CloudInstance</code></td>
 </tr>
 <tr>
+<td><code>sct</code></td>
+<td><code>Set-CloudTag</code></td>
+</tr>
+<tr>
 <td><code>tci</code></td>
-<td><code>Stop-CloudInstance</code></td>
+<td><code>Test-CloudConnection</code></td>
 </tr>
 </tbody>
 </table>

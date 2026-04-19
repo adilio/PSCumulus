@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Get-CloudContext/">
+        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Get-CloudRegion/">
       
       
-        <link rel="prev" href="../Find-CloudResource/">
+        <link rel="prev" href="../Get-CloudNetwork/">
       
       
-        <link rel="next" href="../Get-CloudDisk/">
+        <link rel="next" href="../Get-CloudStorage/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Get-CloudContext - PSCumulus</title>
+        <title>Get-CloudRegion - PSCumulus</title>
       
     
     
@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#get-cloudcontext" class="md-skip">
+        <a href="#get-cloudregion" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Get-CloudContext
+              Get-CloudRegion
             
           </span>
         </div>
@@ -693,37 +693,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Get-CloudContext
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../Get-CloudContext/" class="md-nav__link">
         
   
   
@@ -739,226 +712,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#synopsis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SYNOPSIS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SYNTAX
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SYNTAX">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#__allparametersets" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        __AllParameterSets
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#aliases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ALIASES
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DESCRIPTION
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLES
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="EXAMPLES">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 1
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 2
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PARAMETERS
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="PARAMETERS">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#-provider" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Provider
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#commonparameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CommonParameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        INPUTS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#outputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OUTPUTS
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="OUTPUTS">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#systemmanagementautomationpsobject" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        System.Management.Automation.PSObject
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NOTES
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#related-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RELATED LINKS
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1080,10 +833,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../Get-CloudRegion/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudRegion
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1099,6 +879,237 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#synopsis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYNOPSIS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYNTAX
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SYNTAX">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__allparametersets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __AllParameterSets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ALIASES
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DESCRIPTION
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLES
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EXAMPLES">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PARAMETERS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PARAMETERS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Provider
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commonparameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CommonParameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        INPUTS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OUTPUTS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OUTPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemmanagementautomationpsobject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System.Management.Automation.PSObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOTES
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RELATED LINKS
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1464,6 +1475,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 3
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1589,34 +1611,33 @@
   
 
 
-<h1 id="get-cloudcontext">Get-CloudContext<a class="headerlink" href="#get-cloudcontext" title="Permanent link">&para;</a></h1>
+<h1 id="get-cloudregion">Get-CloudRegion<a class="headerlink" href="#get-cloudregion" title="Permanent link">&para;</a></h1>
 <h2 id="synopsis">SYNOPSIS<a class="headerlink" href="#synopsis" title="Permanent link">&para;</a></h2>
-<p>Returns the current PSCumulus session context for all connected providers.</p>
+<p>Lists supported regions for each cloud provider.</p>
 <h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <h3 id="__allparametersets">__AllParameterSets<a class="headerlink" href="#__allparametersets" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudContext [[-Provider] &lt;string&gt;] [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CloudRegion [[-Provider] &lt;string&gt;] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
-  gcont</p>
+  None</p>
 <h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
-<p>Shows all cloud providers that have been connected in this session, along with
-the active account, scope, and region for each.
-ConnectionState shows whether a
-provider is the current active session context or simply connected in the session.
-IsActive is retained as a compatibility flag and is only populated for the current
-provider.</p>
-<p>Use -Provider to filter the output to a specific provider.</p>
+<p>Returns all supported regions for Azure, AWS, or GCP.
+Use this to discover
+valid region values for Connect-Cloud and other provider-specific commands.</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
-<p>Get-CloudContext</p>
-<p>Returns context entries for all providers connected in this session.</p>
+<p>Get-CloudRegion</p>
+<p>Returns all regions for all providers.</p>
 <h3 id="example-2">EXAMPLE 2<a class="headerlink" href="#example-2" title="Permanent link">&para;</a></h3>
-<p>Get-CloudContext -Provider Azure</p>
-<p>Returns context entry only for Azure.</p>
+<p>Get-CloudRegion -Provider Azure</p>
+<p>Returns only Azure regions.</p>
+<h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
+<p>Get-CloudRegion -Provider AWS | Where-Object { $_.Name -like 'us-*' }</p>
+<p>Returns AWS regions in the US.</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
 <h3 id="-provider">-Provider<a class="headerlink" href="#-provider" title="Permanent link">&para;</a></h3>
-<p>Filter to a specific provider.</p>
+<p>The cloud provider to list regions for.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>

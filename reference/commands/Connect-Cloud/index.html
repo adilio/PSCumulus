@@ -986,6 +986,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../Export-CloudInventory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Export-CloudInventory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Find-CloudResource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Find-CloudResource
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Get-CloudContext/" class="md-nav__link">
         
   
@@ -1126,6 +1182,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../Get-CloudRegion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudRegion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Get-CloudStorage/" class="md-nav__link">
         
   
@@ -1182,6 +1266,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../Resolve-CloudPath/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resolve-CloudPath
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Restart-CloudInstance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Restart-CloudInstance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Set-CloudTag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set-CloudTag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Start-CloudInstance/" class="md-nav__link">
         
   
@@ -1218,6 +1386,34 @@
     
   
     Stop-CloudInstance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Test-CloudConnection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test-CloudConnection
   
 
     
@@ -1599,10 +1795,10 @@
 <div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; [-Tenant &lt;string&gt;] [-Subscription &lt;string&gt;] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="gcp">GCP<a class="headerlink" href="#gcp" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; -Project &lt;string&gt; [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; [-Project &lt;string&gt;] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="aws">AWS<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; -Region &lt;string&gt; [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Connect-Cloud -Provider &lt;string[]&gt; [-Region &lt;string&gt;] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
@@ -1656,7 +1852,7 @@ ActiveProvider is set to the last provider connected.</p>
 <span class="nt">ParameterSets</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -1702,7 +1898,7 @@ ActiveProvider is set to the last provider connected.</p>
 <span class="nt">ParameterSets</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -1752,10 +1948,10 @@ ActiveProvider is set to the last provider connected.</p>
 <h2 id="inputs">INPUTS<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
 <h2 id="outputs">OUTPUTS<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
 <h3 id="systemmanagementautomationpsobject">System.Management.Automation.PSObject<a class="headerlink" href="#systemmanagementautomationpsobject" title="Permanent link">&para;</a></h3>
-<p>{{ Fill in the Description }}</p>
+<p>See the command description and examples above.</p>
 <h2 id="notes">NOTES<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <h2 id="related-links">RELATED LINKS<a class="headerlink" href="#related-links" title="Permanent link">&para;</a></h2>
-<p>{{ Fill in the related links here }}</p>
+<p>None.</p>
 
 
 

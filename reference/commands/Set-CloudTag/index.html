@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Get-CloudNetwork/">
+        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Set-CloudTag/">
       
       
-        <link rel="prev" href="../Get-CloudInstance/">
+        <link rel="prev" href="../Restart-CloudInstance/">
       
       
-        <link rel="next" href="../Get-CloudRegion/">
+        <link rel="next" href="../Start-CloudInstance/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Get-CloudNetwork - PSCumulus</title>
+        <title>Set-CloudTag - PSCumulus</title>
       
     
     
@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#get-cloudnetwork" class="md-skip">
+        <a href="#set-cloudtag" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Get-CloudNetwork
+              Set-CloudTag
             
           </span>
         </div>
@@ -805,37 +805,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Get-CloudNetwork
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../Get-CloudNetwork/" class="md-nav__link">
         
   
   
@@ -851,402 +824,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#synopsis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SYNOPSIS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SYNTAX
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SYNTAX">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#azure-default" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Azure (Default)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#gcp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        GCP
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#aws" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        AWS
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        All
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#aliases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ALIASES
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#description" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DESCRIPTION
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLES
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="EXAMPLES">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 1
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 2
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 3
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 4
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 5
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 6
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 7
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PARAMETERS
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="PARAMETERS">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#-all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -All
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-detailed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Detailed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-project" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Project
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-provider" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Provider
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-region" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Region
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-resourcegroup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -ResourceGroup
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-status" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Status
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-tag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        -Tag
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#commonparameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CommonParameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        INPUTS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#outputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OUTPUTS
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="OUTPUTS">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#systemmanagementautomationpsobject" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        System.Management.Automation.PSObject
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NOTES
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#related-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RELATED LINKS
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1396,10 +973,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../Set-CloudTag/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set-CloudTag
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1415,6 +1019,441 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#synopsis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYNOPSIS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SYNTAX
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SYNTAX">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#piped-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Piped (Default)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azurebyname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AzureByName
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azurebyid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AzureById
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ALIASES
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DESCRIPTION
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLES
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EXAMPLES">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 5
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PARAMETERS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PARAMETERS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-azureresourceid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -AzureResourceId
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-confirm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Confirm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-inputobject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -InputObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Merge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Resource
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-resourcegroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -ResourceGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-resourceid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -ResourceId
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Tags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-whatif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -WhatIf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commonparameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CommonParameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        INPUTS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="INPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemmanagementautomationpsobject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System.Management.Automation.PSObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OUTPUTS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OUTPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemmanagementautomationpsobject_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System.Management.Automation.PSObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NOTES
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RELATED LINKS
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1569,10 +1608,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#azure-default" class="md-nav__link">
+  <a href="#piped-default" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Azure (Default)
+        Piped (Default)
       
     </span>
   </a>
@@ -1580,10 +1619,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gcp" class="md-nav__link">
+  <a href="#azurebyname" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GCP
+        AzureByName
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azurebyid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AzureById
       
     </span>
   </a>
@@ -1602,10 +1652,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#all" class="md-nav__link">
+  <a href="#gcp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        All
+        GCP
       
     </span>
   </a>
@@ -1706,28 +1756,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#example-6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 6
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EXAMPLE 7
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -1746,10 +1774,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#-all" class="md-nav__link">
+  <a href="#-azureresourceid" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -All
+        -AzureResourceId
       
     </span>
   </a>
@@ -1757,10 +1785,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-detailed" class="md-nav__link">
+  <a href="#-confirm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -Detailed
+        -Confirm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-inputobject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -InputObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Merge
       
     </span>
   </a>
@@ -1790,10 +1840,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-provider" class="md-nav__link">
+  <a href="#-region" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -Provider
+        -Region
       
     </span>
   </a>
@@ -1801,10 +1851,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-region" class="md-nav__link">
+  <a href="#-resource" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -Region
+        -Resource
       
     </span>
   </a>
@@ -1823,10 +1873,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-status" class="md-nav__link">
+  <a href="#-resourceid" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -Status
+        -ResourceId
       
     </span>
   </a>
@@ -1834,10 +1884,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-tag" class="md-nav__link">
+  <a href="#-tags" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -Tag
+        -Tags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-whatif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -WhatIf
       
     </span>
   </a>
@@ -1869,6 +1930,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="INPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemmanagementautomationpsobject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System.Management.Automation.PSObject
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1884,7 +1962,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#systemmanagementautomationpsobject" class="md-nav__link">
+  <a href="#systemmanagementautomationpsobject_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         System.Management.Automation.PSObject
@@ -1941,66 +2019,64 @@
   
 
 
-<h1 id="get-cloudnetwork">Get-CloudNetwork<a class="headerlink" href="#get-cloudnetwork" title="Permanent link">&para;</a></h1>
+<h1 id="set-cloudtag">Set-CloudTag<a class="headerlink" href="#set-cloudtag" title="Permanent link">&para;</a></h1>
 <h2 id="synopsis">SYNOPSIS<a class="headerlink" href="#synopsis" title="Permanent link">&para;</a></h2>
-<p>Gets virtual networks from a selected cloud provider.</p>
+<p>Sets tags or labels on a cloud resource across Azure, AWS, or GCP.</p>
 <h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
-<h3 id="azure-default">Azure (Default)<a class="headerlink" href="#azure-default" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudNetwork -ResourceGroup &lt;string&gt; [-Provider &lt;string&gt;] [-Name &lt;string&gt;]
- [-Status &lt;CloudNetworkStatus&gt;] [-Tag &lt;hashtable&gt;] [-Detailed] [&lt;CommonParameters&gt;]
+<h3 id="piped-default">Piped (Default)<a class="headerlink" href="#piped-default" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Set-CloudTag -InputObject &lt;psobject&gt; -Tags &lt;hashtable&gt; [-Merge] [-WhatIf] [-Confirm]
+ [&lt;CommonParameters&gt;]
 </code></pre></div>
-<h3 id="gcp">GCP<a class="headerlink" href="#gcp" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudNetwork -Project &lt;string&gt; [-Provider &lt;string&gt;] [-Name &lt;string&gt;]
- [-Status &lt;CloudNetworkStatus&gt;] [-Tag &lt;hashtable&gt;] [-Detailed] [&lt;CommonParameters&gt;]
+<h3 id="azurebyname">AzureByName<a class="headerlink" href="#azurebyname" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Set-CloudTag -Name &lt;string&gt; -ResourceGroup &lt;string&gt; -Tags &lt;hashtable&gt; [-Merge] [-WhatIf] [-Confirm]
+ [&lt;CommonParameters&gt;]
+</code></pre></div>
+<h3 id="azurebyid">AzureById<a class="headerlink" href="#azurebyid" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Set-CloudTag -AzureResourceId &lt;string&gt; -Tags &lt;hashtable&gt; [-Merge] [-WhatIf] [-Confirm]
+ [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h3 id="aws">AWS<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudNetwork -Region &lt;string&gt; [-Provider &lt;string&gt;] [-Name &lt;string&gt;]
- [-Status &lt;CloudNetworkStatus&gt;] [-Tag &lt;hashtable&gt;] [-Detailed] [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Set-CloudTag -ResourceId &lt;string&gt; -Region &lt;string&gt; -Tags &lt;hashtable&gt; [-Merge] [-WhatIf] [-Confirm]
+ [&lt;CommonParameters&gt;]
 </code></pre></div>
-<h3 id="all">All<a class="headerlink" href="#all" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudNetwork -All [-Name &lt;string&gt;] [-Status &lt;CloudNetworkStatus&gt;] [-Tag &lt;hashtable&gt;] [-Detailed]
+<h3 id="gcp">GCP<a class="headerlink" href="#gcp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Set-CloudTag -Project &lt;string&gt; -Resource &lt;string&gt; -Tags &lt;hashtable&gt; [-Merge] [-WhatIf] [-Confirm]
  [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
-  None</p>
+  sct</p>
 <h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
-<p>Routes network inventory requests to the matching provider backend and
-returns normalized cloud record objects for the network surface.</p>
-<p>Use -All to query every provider that has an established session context,
-returning networks from all connected clouds in one pipeline.</p>
+<p>Set-CloudTag applies tags (Azure), tags (AWS), or labels (GCP) to cloud resources.
+For Azure, you can specify a VM by Name/ResourceGroup or any resource by ResourceId.
+For AWS, provide the ResourceId and Region.
+For GCP, provide the Project and Resource.
+You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
-<p>Get-CloudNetwork -Provider Azure -ResourceGroup 'prod-rg'</p>
-<p>Gets Azure virtual networks in a resource group.</p>
+<p>Set-CloudTag -Name 'vm01' -ResourceGroup 'rg-test' -Tags @{Environment='Dev'; Owner='TeamA'}</p>
+<p>Tags an Azure VM by name and resource group.</p>
 <h3 id="example-2">EXAMPLE 2<a class="headerlink" href="#example-2" title="Permanent link">&para;</a></h3>
-<p>Get-CloudNetwork -Provider AWS -Region 'us-east-1'</p>
-<p>Gets AWS VPCs in a region.</p>
+<p>Set-CloudTag -AzureResourceId '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Compute/disks/disk01' -Tags @{Backup='Weekly'}</p>
+<p>Tags an Azure disk using its full resource ID (AzureById parameter set).</p>
 <h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
-<p>Get-CloudNetwork -Provider GCP -Project 'my-project'</p>
-<p>Gets GCP networks for a project.</p>
+<p>Set-CloudTag -ResourceId 'i-1234567890abcdef0' -Region 'us-east-1' -Tags @{Environment='Prod'}</p>
+<p>Tags an AWS EC2 instance by its resource ID.</p>
 <h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
-<p>Get-CloudNetwork -All</p>
-<p>Gets networks from all providers with an established session context.
-Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
+<p>Set-CloudTag -Project 'my-project' -Resource 'projects/my/zones/us-central1-a/instances/vm01' -Tags @{Owner='Ops'}</p>
+<p>Tags a GCP compute instance.</p>
 <h3 id="example-5">EXAMPLE 5<a class="headerlink" href="#example-5" title="Permanent link">&para;</a></h3>
-<p>Get-CloudNetwork -All -Status Available -Tag @{ environment = 'production' }</p>
-<p>Gets all available networks with the production environment tag across all connected clouds.</p>
-<h3 id="example-6">EXAMPLE 6<a class="headerlink" href="#example-6" title="Permanent link">&para;</a></h3>
-<p>Get-CloudNetwork -Provider Azure -ResourceGroup 'prod-rg' -Name 'vnet-prod'</p>
-<p>Gets Azure virtual networks matching the specified name.</p>
-<h3 id="example-7">EXAMPLE 7<a class="headerlink" href="#example-7" title="Permanent link">&para;</a></h3>
-<p>Get-CloudNetwork -Provider AWS -Region 'us-east-1' -Detailed</p>
-<p>Gets AWS VPCs with detailed view enabled.</p>
+<p>Get-CloudDisk -Provider Azure | Set-CloudTag -Tags @{Encrypted='AES256'}</p>
+<p>Tags all Azure disks returned from Get-CloudDisk (piped input).</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
-<h3 id="-all">-All<a class="headerlink" href="#-all" title="Permanent link">&para;</a></h3>
-<p>Query all providers with an established session context.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
-<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<h3 id="-azureresourceid">-AzureResourceId<a class="headerlink" href="#-azureresourceid" title="Permanent link">&para;</a></h3>
+<p>{{ Fill AzureResourceId Description }}</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AzureById</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2010,32 +2086,49 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
-<h3 id="-detailed">-Detailed<a class="headerlink" href="#-detailed" title="Permanent link">&para;</a></h3>
-<p>Emit detailed view records.</p>
+<h3 id="-confirm">-Confirm<a class="headerlink" href="#-confirm" title="Permanent link">&para;</a></h3>
+<p>Prompts you for confirmation before running the cmdlet.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cf</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-inputobject">-InputObject<a class="headerlink" href="#-inputobject" title="Permanent link">&para;</a></h3>
+<p>{{ Fill InputObject Description }}</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.PSObject</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Piped</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-merge">-Merge<a class="headerlink" href="#-merge" title="Permanent link">&para;</a></h3>
+<p>{{ Fill Merge Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2046,33 +2139,15 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-name">-Name<a class="headerlink" href="#-name" title="Permanent link">&para;</a></h3>
-<p>Filter results by name.</p>
+<p>{{ Fill Name Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AzureByName</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2081,7 +2156,7 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-project">-Project<a class="headerlink" href="#-project" title="Permanent link">&para;</a></h3>
-<p>The GCP project to query for networks.</p>
+<p>{{ Fill Project Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2097,28 +2172,16 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
-<h3 id="-provider">-Provider<a class="headerlink" href="#-provider" title="Permanent link">&para;</a></h3>
-<p>The cloud provider to query.</p>
+<h3 id="-region">-Region<a class="headerlink" href="#-region" title="Permanent link">&para;</a></h3>
+<p>{{ Fill Region Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2126,14 +2189,14 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
-<h3 id="-region">-Region<a class="headerlink" href="#-region" title="Permanent link">&para;</a></h3>
-<p>The AWS region to query for VPCs.</p>
+<h3 id="-resource">-Resource<a class="headerlink" href="#-resource" title="Permanent link">&para;</a></h3>
+<p>{{ Fill Resource Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2144,13 +2207,13 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-resourcegroup">-ResourceGroup<a class="headerlink" href="#-resourcegroup" title="Permanent link">&para;</a></h3>
-<p>The Azure resource group containing the target virtual networks.</p>
+<p>{{ Fill ResourceGroup Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AzureByName</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2160,34 +2223,16 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
-<h3 id="-status">-Status<a class="headerlink" href="#-status" title="Permanent link">&para;</a></h3>
-<p>Filter results by network status.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CloudNetworkStatus</span>
+<h3 id="-resourceid">-ResourceId<a class="headerlink" href="#-resourceid" title="Permanent link">&para;</a></h3>
+<p>{{ Fill ResourceId Description }}</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2195,33 +2240,32 @@ Use after Connect-Cloud -Provider AWS, Azure, GCP.</p>
 <span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
-<h3 id="-tag">-Tag<a class="headerlink" href="#-tag" title="Permanent link">&para;</a></h3>
-<p>Filter results by tag key-value pairs.
-All specified tags must match.</p>
+<h3 id="-tags">-Tags<a class="headerlink" href="#-tags" title="Permanent link">&para;</a></h3>
+<p>{{ Fill Tags Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Collections.Hashtable</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
-<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Azure</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-whatif">-WhatIf<a class="headerlink" href="#-whatif" title="Permanent link">&para;</a></h3>
+<p>Runs the command in a mode that only reports what would happen without performing the actions.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wi</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2237,8 +2281,10 @@ All specified tags must match.</p>
 -ProgressAction, -Verbose, -WarningAction, and -WarningVariable. For more information, see
 <a href="https://go.microsoft.com/fwlink/?LinkID=113216">about_CommonParameters</a>.</p>
 <h2 id="inputs">INPUTS<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
-<h2 id="outputs">OUTPUTS<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
 <h3 id="systemmanagementautomationpsobject">System.Management.Automation.PSObject<a class="headerlink" href="#systemmanagementautomationpsobject" title="Permanent link">&para;</a></h3>
+<p>See the command description and examples above.</p>
+<h2 id="outputs">OUTPUTS<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
+<h3 id="systemmanagementautomationpsobject_1">System.Management.Automation.PSObject<a class="headerlink" href="#systemmanagementautomationpsobject_1" title="Permanent link">&para;</a></h3>
 <p>See the command description and examples above.</p>
 <h2 id="notes">NOTES<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <h2 id="related-links">RELATED LINKS<a class="headerlink" href="#related-links" title="Permanent link">&para;</a></h2>

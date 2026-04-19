@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Get-CloudContext/">
+        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Find-CloudResource/">
       
       
-        <link rel="prev" href="../Find-CloudResource/">
+        <link rel="prev" href="../Export-CloudInventory/">
       
       
-        <link rel="next" href="../Get-CloudDisk/">
+        <link rel="next" href="../Get-CloudContext/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Get-CloudContext - PSCumulus</title>
+        <title>Find-CloudResource - PSCumulus</title>
       
     
     
@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#get-cloudcontext" class="md-skip">
+        <a href="#find-cloudresource" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Get-CloudContext
+              Find-CloudResource
             
           </span>
         </div>
@@ -665,34 +665,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../Find-CloudResource/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Find-CloudResource
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -712,7 +684,7 @@
   <span class="md-ellipsis">
     
   
-    Get-CloudContext
+    Find-CloudResource
   
 
     
@@ -730,7 +702,7 @@
   <span class="md-ellipsis">
     
   
-    Get-CloudContext
+    Find-CloudResource
   
 
     
@@ -850,6 +822,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -866,6 +860,28 @@
   
     <nav class="md-nav" aria-label="PARAMETERS">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-kind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Kind
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Name
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#-provider" class="md-nav__link">
@@ -959,6 +975,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Get-CloudContext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudContext
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1464,6 +1508,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1480,6 +1546,28 @@
   
     <nav class="md-nav" aria-label="PARAMETERS">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-kind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Kind
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Name
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#-provider" class="md-nav__link">
@@ -1589,41 +1677,81 @@
   
 
 
-<h1 id="get-cloudcontext">Get-CloudContext<a class="headerlink" href="#get-cloudcontext" title="Permanent link">&para;</a></h1>
+<h1 id="find-cloudresource">Find-CloudResource<a class="headerlink" href="#find-cloudresource" title="Permanent link">&para;</a></h1>
 <h2 id="synopsis">SYNOPSIS<a class="headerlink" href="#synopsis" title="Permanent link">&para;</a></h2>
-<p>Returns the current PSCumulus session context for all connected providers.</p>
+<p>Searches for cloud resources by name across providers and resource kinds.</p>
 <h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <h3 id="__allparametersets">__AllParameterSets<a class="headerlink" href="#__allparametersets" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudContext [[-Provider] &lt;string&gt;] [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Find-CloudResource [-Name] &lt;string&gt; [-Provider &lt;string[]&gt;] [-Kind &lt;string[]&gt;] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
-  gcont</p>
+  fcr</p>
 <h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
-<p>Shows all cloud providers that have been connected in this session, along with
-the active account, scope, and region for each.
-ConnectionState shows whether a
-provider is the current active session context or simply connected in the session.
-IsActive is retained as a compatibility flag and is only populated for the current
-provider.</p>
-<p>Use -Provider to filter the output to a specific provider.</p>
+<p>Find-CloudResource performs a cross-kind, cross-cloud search for resources by name.
+Use this when you know a resource name but not whether it's a VM, disk, storage account,
+network, or function, or when you need to search multiple clouds simultaneously.</p>
+<p>Wildcards are supported in the -Name parameter.</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
-<p>Get-CloudContext</p>
-<p>Returns context entries for all providers connected in this session.</p>
+<p>Find-CloudResource -Name 'payment-svc-03'</p>
+<p>Searches all providers and all resource kinds for 'payment-svc-03'.</p>
 <h3 id="example-2">EXAMPLE 2<a class="headerlink" href="#example-2" title="Permanent link">&para;</a></h3>
-<p>Get-CloudContext -Provider Azure</p>
-<p>Returns context entry only for Azure.</p>
+<p>Find-CloudResource -Name 'prod-*' -Provider Azure, AWS</p>
+<p>Searches Azure and AWS for any resource starting with 'prod-'.</p>
+<h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
+<p>Find-CloudResource -Name 'web-*' -Kind Instance, Network</p>
+<p>Searches for instances and networks with names starting with 'web-'.</p>
+<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
+<p>Find-CloudResource -Name '<em>test</em>' -Provider GCP -Kind Storage</p>
+<p>Searches GCP storage resources for names containing 'test'.</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
-<h3 id="-provider">-Provider<a class="headerlink" href="#-provider" title="Permanent link">&para;</a></h3>
-<p>Filter to a specific provider.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<h3 id="-kind">-Kind<a class="headerlink" href="#-kind" title="Permanent link">&para;</a></h3>
+<p>Limit search to specific resource kinds.
+If not specified, searches all kinds.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String[]</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-name">-Name<a class="headerlink" href="#-name" title="Permanent link">&para;</a></h3>
+<p>The resource name to search for.
+Wildcards are supported.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-provider">-Provider<a class="headerlink" href="#-provider" title="Permanent link">&para;</a></h3>
+<p>Limit search to specific providers.
+If not specified, searches all connected providers.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String[]</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
