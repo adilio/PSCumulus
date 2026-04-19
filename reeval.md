@@ -45,13 +45,16 @@ Picked up the follow-up queue and completed Groups 1 through 8 from Section 4.
 - `pwsh -NoLogo -NoProfile -File scripts/Update-Docs.ps1; rg -n "{{ Fill" docs/reference/`
   - **Result:** docs generation succeeded; no placeholder matches.
 
+### Shipping completed
+- Committed as `1e4146d` (`Complete PSCumulus re-evaluation fixes`) and pushed to `origin/main`.
+- GitHub Actions for `1e4146d`:
+  - **Docs:** run `24619142184`, completed successfully.
+  - **Test and Publish:** run `24619142182`, completed successfully.
+- GitHub emitted Node.js 20 deprecation warnings for several actions. These are workflow maintenance warnings, not failures.
+
 ### Current handoff state
-- Working tree is intentionally dirty with the completed implementation, tests, generated docs, and this updated `reeval.md`.
-- Remaining Section 4 work is only **Group 9 shipping**:
-  1. Review the diff.
-  2. Commit as Adil only.
-  3. Push to `origin/main`.
-  4. Watch Docs and Test-and-Publish workflows until both complete successfully.
+- Section 4 Groups 1 through 9 are complete for this continuation.
+- Working tree should be clean after the final handoff-note commit, except for any future changes made by the next agent.
 
 ---
 
