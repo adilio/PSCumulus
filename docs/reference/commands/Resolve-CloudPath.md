@@ -63,7 +63,7 @@ Parses a GCP project scope path.
 
 ### -Path
 
-{{ Fill Path Description }}
+The cloud path string to parse.
 
 ```yaml
 Type: System.String

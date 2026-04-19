@@ -83,7 +83,7 @@
 - Added Restart-CloudInstance -Wait, -TimeoutSeconds, -PollingIntervalSeconds, and -PassThru.
 - Fixed Restart-CloudInstance -Wait -PassThru to emit the freshest running record.
 - Added central Invoke-CloudProvider error wrapping with PSCumulus-specific guidance and an optional CallerPSCmdlet path.
-- Added snapshot and image record classes for future work, but kept Get-CloudSnapshot, Get-CloudImage, and Remove-CloudTag out of the 0.6.0 public surface.
+- Kept Get-CloudSnapshot, Get-CloudImage, and Remove-CloudTag out of the 0.6.0 public surface.
 - Removed stale gcsn alias for the out-of-scope Get-CloudSnapshot command.
 - Confirmed the final 0.6.0 public surface is 18 exported functions and 8 aliases.
 - Updated PSCumulus.Tests.ps1 to assert the 18-command public surface and current aliases.
@@ -94,7 +94,7 @@
 - Updated docs/getting-started.md with a Cross-Cloud Helpers section and the canonical alias table.
 - Updated docs/reference/about-pscumulus.md and en-US/about_PSCumulus.help.txt with all 18 commands and all current aliases.
 - Updated README with the 18-command public surface, Resolve-CloudPath, Find-CloudResource, Export-CloudInventory, and Get-CloudRegion.
-- Updated docs/concepts/strategy.md and docs/concepts/evolution.md to v0.5.0 status.
+- Updated docs/concepts/strategy.md and docs/concepts/evolution.md to v0.6.0 status.
 - Added and maintained plan.md as the execution handoff and completion record for this improvement pass.
 - All local tests pass: 658 passed, 6 skipped.
 - Latest CI Docs and Test and Publish workflows are green before release tagging.

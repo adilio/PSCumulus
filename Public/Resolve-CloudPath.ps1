@@ -31,6 +31,7 @@ function Resolve-CloudPath {
     [CmdletBinding()]
     [OutputType([CloudPath])]
     param(
+        # The cloud path string to parse.
         [Parameter(Mandatory, Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [string]$Path

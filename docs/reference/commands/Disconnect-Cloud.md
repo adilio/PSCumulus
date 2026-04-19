@@ -20,8 +20,8 @@ Clears PSCumulus session context for a specific cloud provider.
 
 ```
 Disconnect-Cloud [-Provider] <string> [[-TenantId] <string>] [[-Subscription] <string>]
- [[-Account] <string>] [[-AccountId] <string>] [[-ProfileName] <string>] [[-Region] <string>]
- [[-Project] <string>] [[-AccountEmail] <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [[-AccountId] <string>] [[-ProfileName] <string>] [[-Region] <string>] [[-Project] <string>]
+ [[-AccountEmail] <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -69,30 +69,9 @@ Clears the stored GCP context only if it matches the supplied account email.
 
 ## PARAMETERS
 
-### -Account
-
-{{ Fill Account Description }}
-
-```yaml
-Type: System.String
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: 3
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
 ### -AccountEmail
 
-{{ Fill AccountEmail Description }}
+Only disconnect GCP if the stored account email matches this value.
 
 ```yaml
 Type: System.String
@@ -101,7 +80,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 8
+  Position: 7
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -113,7 +92,7 @@ HelpMessage: ''
 
 ### -AccountId
 
-{{ Fill AccountId Description }}
+Only disconnect AWS if the stored account id matches this value.
 
 ```yaml
 Type: System.String
@@ -122,7 +101,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 4
+  Position: 3
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -156,7 +135,7 @@ HelpMessage: ''
 
 ### -ProfileName
 
-{{ Fill ProfileName Description }}
+Only disconnect AWS if the stored profile name matches this value.
 
 ```yaml
 Type: System.String
@@ -165,7 +144,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 5
+  Position: 4
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -177,7 +156,7 @@ HelpMessage: ''
 
 ### -Project
 
-{{ Fill Project Description }}
+Only disconnect GCP if the stored project matches this value.
 
 ```yaml
 Type: System.String
@@ -186,7 +165,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 7
+  Position: 6
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -198,7 +177,7 @@ HelpMessage: ''
 
 ### -Provider
 
-{{ Fill Provider Description }}
+The provider context to clear.
 
 ```yaml
 Type: System.String
@@ -219,7 +198,7 @@ HelpMessage: ''
 
 ### -Region
 
-{{ Fill Region Description }}
+Only disconnect AWS if the stored region matches this value.
 
 ```yaml
 Type: System.String
@@ -228,7 +207,7 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: 6
+  Position: 5
   IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
@@ -240,7 +219,7 @@ HelpMessage: ''
 
 ### -Subscription
 
-{{ Fill Subscription Description }}
+Only disconnect Azure if the stored subscription name or id matches this value.
 
 ```yaml
 Type: System.String
@@ -261,7 +240,7 @@ HelpMessage: ''
 
 ### -TenantId
 
-{{ Fill TenantId Description }}
+Only disconnect Azure if the stored tenant id matches this value.
 
 ```yaml
 Type: System.String

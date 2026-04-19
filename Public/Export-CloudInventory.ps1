@@ -54,41 +54,90 @@ function Export-CloudInventory {
         # Build (provider, kind) matrix and collect records
         $inventory = [ordered]@{}
 
-        foreach ($providerName in $providersToExport) {
-            foreach ($kindName in $Kind) {
-                $key = "$providerName/$kindName"
+        $azureRgCacheLoaded = $false
 
-                try {
+        try {
+            foreach ($providerName in $providersToExport) {
+                foreach ($kindName in $Kind) {
+                    $key = "$providerName/$kindName"
                     $commandName = "Get-Cloud$kindName"
-                    $commandParams = @{ Provider = $providerName }
+                    $scopeParameterSets = [System.Collections.Generic.List[hashtable]]::new()
 
                     # Add provider-specific scope from context
                     $ctx = $script:PSCumulusContext.Providers[$providerName]
+                    $skipProvider = $false
 
                     switch ($providerName) {
                         'Azure' {
-                            if ($ctx.ResourceGroup) {
-                                $commandParams.ResourceGroup = $ctx.ResourceGroup
-                            } else { continue }
+                            if (-not $azureRgCacheLoaded) {
+                                $azureRgCacheLoaded = $true
+                                if (Get-Command Get-AzResourceGroup -ErrorAction SilentlyContinue) {
+                                    $script:__PSCumulusInventoryAzureRgCache = @(Get-AzResourceGroup -ErrorAction SilentlyContinue)
+                                } else {
+                                    $script:__PSCumulusInventoryAzureRgCache = @()
+                                }
+                            }
+
+                            if ($script:__PSCumulusInventoryAzureRgCache.Count -gt 0) {
+                                foreach ($rg in $script:__PSCumulusInventoryAzureRgCache) {
+                                    if (-not [string]::IsNullOrWhiteSpace($rg.ResourceGroupName)) {
+                                        $scopeParameterSets.Add(@{ ResourceGroup = $rg.ResourceGroupName })
+                                    }
+                                }
+                            } else {
+                                Write-Verbose "Export-CloudInventory: no resource groups returned for Azure subscription $($ctx.SubscriptionId); skipping."
+                                $skipProvider = $true
+                            }
+                            break
                         }
                         'AWS' {
                             if ($ctx.Region) {
-                                $commandParams.Region = $ctx.Region
-                            } else { continue }
+                                $scopeParameterSets.Add(@{ Region = $ctx.Region })
+                            } else {
+                                Write-Verbose "Export-CloudInventory: no region found for AWS context; skipping."
+                                $skipProvider = $true
+                            }
+                            break
                         }
                         'GCP' {
                             if ($ctx.Project) {
-                                $commandParams.Project = $ctx.Project
-                            } else { continue }
+                                $scopeParameterSets.Add(@{ Project = $ctx.Project })
+                            } else {
+                                Write-Verbose "Export-CloudInventory: no project found for GCP context; skipping."
+                                $skipProvider = $true
+                            }
+                            break
                         }
                     }
 
-                    $records = & $commandName @commandParams -ErrorAction SilentlyContinue
-                    $inventory[$key] = @($records)
-                } catch {
-                    Write-Verbose "Export-CloudInventory: Failed to query $key`: $_"
+                    if ($skipProvider) {
+                        continue
+                    }
+
+                    $mergedRecords = [System.Collections.Generic.List[psobject]]::new()
+                    foreach ($scopeParams in $scopeParameterSets) {
+                        try {
+                            $commandParams = @{ Provider = $providerName }
+                            foreach ($paramName in $scopeParams.Keys) {
+                                $commandParams[$paramName] = $scopeParams[$paramName]
+                            }
+
+                            $records = & $commandName @commandParams -ErrorAction SilentlyContinue
+                            foreach ($record in @($records)) {
+                                if ($null -ne $record) {
+                                    $mergedRecords.Add($record)
+                                }
+                            }
+                        } catch {
+                            Write-Verbose "Export-CloudInventory: Failed to query $key`: $_"
+                        }
+                    }
+
+                    $inventory[$key] = @($mergedRecords)
                 }
             }
+        } finally {
+            Remove-Variable -Scope Script -Name __PSCumulusInventoryAzureRgCache -ErrorAction SilentlyContinue -WhatIf:$false
         }
 
         # Export based on format

@@ -100,7 +100,7 @@ Tags all Azure disks returned from Get-CloudDisk (piped input).
 
 ### -AzureResourceId
 
-{{ Fill AzureResourceId Description }}
+The full Azure resource id to tag.
 
 ```yaml
 Type: System.String
@@ -143,7 +143,7 @@ HelpMessage: ''
 
 ### -InputObject
 
-{{ Fill InputObject Description }}
+A PSCumulus cloud record or object with Provider and Name properties.
 
 ```yaml
 Type: System.Management.Automation.PSObject
@@ -164,7 +164,7 @@ HelpMessage: ''
 
 ### -Merge
 
-{{ Fill Merge Description }}
+Merge the supplied tags with existing tags instead of replacing them.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -185,7 +185,7 @@ HelpMessage: ''
 
 ### -Name
 
-{{ Fill Name Description }}
+The Azure VM name when tagging by name and resource group.
 
 ```yaml
 Type: System.String
@@ -206,7 +206,7 @@ HelpMessage: ''
 
 ### -Project
 
-{{ Fill Project Description }}
+The GCP project containing the resource.
 
 ```yaml
 Type: System.String
@@ -227,7 +227,7 @@ HelpMessage: ''
 
 ### -Region
 
-{{ Fill Region Description }}
+The AWS region containing the resource.
 
 ```yaml
 Type: System.String
@@ -248,7 +248,7 @@ HelpMessage: ''
 
 ### -Resource
 
-{{ Fill Resource Description }}
+The GCP resource path to label.
 
 ```yaml
 Type: System.String
@@ -269,7 +269,7 @@ HelpMessage: ''
 
 ### -ResourceGroup
 
-{{ Fill ResourceGroup Description }}
+The Azure resource group containing the VM.
 
 ```yaml
 Type: System.String
@@ -290,7 +290,7 @@ HelpMessage: ''
 
 ### -ResourceId
 
-{{ Fill ResourceId Description }}
+The AWS resource id to tag.
 
 ```yaml
 Type: System.String
@@ -311,7 +311,7 @@ HelpMessage: ''
 
 ### -Tags
 
-{{ Fill Tags Description }}
+The tags or labels to apply.
 
 ```yaml
 Type: System.Collections.Hashtable

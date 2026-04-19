@@ -95,6 +95,7 @@ function Stop-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [switch]$Wait,
 
         # Maximum time to wait for the instance to reach the target state (in seconds).
@@ -102,6 +103,7 @@ function Stop-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [int]$TimeoutSeconds = 300,
 
         # Polling interval to check instance status (in seconds).
@@ -109,6 +111,7 @@ function Stop-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [int]$PollingIntervalSeconds = 5,
 
         # Pass the input record through to the pipeline after stopping the instance.
@@ -116,6 +119,7 @@ function Stop-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [switch]$PassThru
     )
 
@@ -171,7 +175,9 @@ function Stop-CloudInstance {
             if ($PSCmdlet.ShouldProcess($target, 'Stop-CloudInstance')) {
                 Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
 
-                if ($Wait -and -not $WhatIf) {
+                $lastRecord = $null
+
+                if ($Wait -and -not $WhatIfPreference) {
                     $startTime = Get-Date
                     $targetStatus = 'Stopped'
 
@@ -184,9 +190,8 @@ function Stop-CloudInstance {
                             )
                         }
 
-                        Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Status "Current status: checking... - ${elapsed}s elapsed" -PercentComplete ([int] (($elapsed / $TimeoutSeconds) * 100))
-
-                        Start-Sleep -Seconds $PollingIntervalSeconds
+                        $currentRecord = $null
+                        $currentStatus = 'Unknown'
 
                         switch ($resolvedProvider) {
                             'Azure' {
@@ -200,11 +205,25 @@ function Stop-CloudInstance {
                             }
                         }
 
-                        if ($currentRecord -and $currentRecord.Status -eq $targetStatus) {
+                        if ($currentRecord) {
+                            $currentStatus = $currentRecord.Status
+                            $lastRecord = $currentRecord
+                        }
+
+                        Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Status "Current status: $currentStatus - ${elapsed}s elapsed" -PercentComplete ([int] (($elapsed / $TimeoutSeconds) * 100))
+
+                        if ($currentStatus -eq $targetStatus) {
                             Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Completed
                             break
                         }
+
+                        Start-Sleep -Seconds $PollingIntervalSeconds
                     }
+                }
+
+                if ($PassThru) {
+                    if ($lastRecord) { Write-Output $lastRecord }
+                    elseif ($InputObject) { Write-Output $InputObject }
                 }
             }
             return
@@ -261,7 +280,7 @@ function Stop-CloudInstance {
         if ($PSCmdlet.ShouldProcess($target, 'Stop-CloudInstance')) {
             Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
 
-            if ($Wait -and -not $WhatIf) {
+            if ($Wait -and -not $WhatIfPreference) {
                 $startTime = Get-Date
                 $targetStatus = 'Stopped'
                 $lastRecord = $null

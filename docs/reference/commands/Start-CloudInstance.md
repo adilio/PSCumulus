@@ -36,7 +36,8 @@ Start-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>
 ### Path
 
 ```
-Start-CloudInstance -Path <string> [-Provider <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Start-CloudInstance -Path <string> [-Provider <string>] [-Wait] [-TimeoutSeconds <int>]
+ [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### GCP
@@ -214,6 +215,12 @@ DefaultValue: False
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Path
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
 - Name: Piped
   Position: Named
   IsRequired: false
@@ -274,6 +281,12 @@ DefaultValue: 5
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Path
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
 - Name: Piped
   Position: Named
   IsRequired: false
@@ -439,6 +452,12 @@ DefaultValue: 300
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Path
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
 - Name: Piped
   Position: Named
   IsRequired: false
@@ -478,6 +497,12 @@ DefaultValue: False
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
+- Name: Path
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
 - Name: Piped
   Position: Named
   IsRequired: false

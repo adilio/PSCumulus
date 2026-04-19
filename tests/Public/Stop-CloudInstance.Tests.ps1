@@ -279,4 +279,49 @@ Describe 'Stop-CloudInstance' {
             }
         }
     }
+
+    Context 'Path parameter set -Wait -PassThru' {
+        It 'emits the freshest polled record with -Wait -PassThru' {
+            InModuleScope PSCumulus {
+                Mock Stop-AzureInstance { }
+                Mock Start-Sleep { }
+                Mock Get-AzureInstanceData {
+                    [AzureCloudRecord]@{ Name = 'web-server-01'; Provider = 'Azure'; ResourceGroup = 'prod-rg'; Status = 'Stopped' }
+                }
+
+                $result = Stop-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -Wait -PassThru -PollingIntervalSeconds 1 -Confirm:$false
+
+                $result.Status | Should -Be 'Stopped'
+                Should -Invoke Get-AzureInstanceData -Times 1
+            }
+        }
+
+        It 'emits nothing extra with -PassThru alone when no wait was done' {
+            InModuleScope PSCumulus {
+                Mock Stop-AzureInstance { }
+                Mock Get-AzureInstanceData {
+                    [AzureCloudRecord]@{ Name = 'web-server-01'; Provider = 'Azure'; ResourceGroup = 'prod-rg'; Status = 'Stopped' }
+                }
+
+                $result = Stop-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -PassThru -Confirm:$false
+
+                $result | Should -BeNullOrEmpty
+                Should -Invoke Get-AzureInstanceData -Times 0
+            }
+        }
+
+        It 'does not poll under -Wait -WhatIf' {
+            InModuleScope PSCumulus {
+                Mock Stop-AzureInstance { }
+                Mock Get-AzureInstanceData {
+                    [AzureCloudRecord]@{ Name = 'web-server-01'; Provider = 'Azure'; ResourceGroup = 'prod-rg'; Status = 'Stopped' }
+                }
+
+                Stop-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -Wait -WhatIf
+
+                Should -Invoke Stop-AzureInstance -Times 0
+                Should -Invoke Get-AzureInstanceData -Times 0
+            }
+        }
+    }
 }

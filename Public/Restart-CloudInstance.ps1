@@ -98,6 +98,7 @@ function Restart-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [switch]$Wait,
 
         # Maximum seconds to wait for the instance to reach Running status.
@@ -105,6 +106,7 @@ function Restart-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [ValidateRange(1, 3600)]
         [int]$TimeoutSeconds = 300,
 
@@ -113,6 +115,7 @@ function Restart-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [ValidateRange(1, 60)]
         [int]$PollingIntervalSeconds = 5,
 
@@ -121,6 +124,7 @@ function Restart-CloudInstance {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'Piped')]
+        [Parameter(ParameterSetName = 'Path')]
         [switch]$PassThru
     )
 
@@ -175,6 +179,57 @@ function Restart-CloudInstance {
 
             if ($PSCmdlet.ShouldProcess($target, 'Restart-CloudInstance')) {
                 Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+
+                $lastRecord = $null
+
+                if ($Wait -and -not $WhatIfPreference) {
+                    $startTime = Get-Date
+                    $targetStatus = 'Running'
+
+                    while ($true) {
+                        $elapsed = ((Get-Date) - $startTime).TotalSeconds
+
+                        if ($elapsed -ge $TimeoutSeconds) {
+                            throw [System.TimeoutException]::new(
+                                "Instance did not reach '$targetStatus' state within $TimeoutSeconds seconds."
+                            )
+                        }
+
+                        $currentRecord = $null
+                        $currentStatus = 'Unknown'
+
+                        switch ($resolvedProvider) {
+                            'Azure' {
+                                $currentRecord = Get-AzureInstanceData -ResourceGroup $argumentMap.ResourceGroup -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                            }
+                            'AWS' {
+                                $currentRecord = Get-AWSInstanceData -Region $argumentMap.Region -Name $argumentMap.InstanceId -ErrorAction SilentlyContinue | Select-Object -First 1
+                            }
+                            'GCP' {
+                                $currentRecord = Get-GCPInstanceData -Project $argumentMap.Project -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                            }
+                        }
+
+                        if ($currentRecord) {
+                            $currentStatus = $currentRecord.Status
+                            $lastRecord = $currentRecord
+                        }
+
+                        Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Status "Current status: $currentStatus - ${elapsed}s elapsed" -PercentComplete ([int] (($elapsed / $TimeoutSeconds) * 100))
+
+                        if ($currentStatus -eq $targetStatus) {
+                            Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Completed
+                            break
+                        }
+
+                        Start-Sleep -Seconds $PollingIntervalSeconds
+                    }
+                }
+
+                if ($PassThru) {
+                    if ($lastRecord) { Write-Output $lastRecord }
+                    elseif ($InputObject) { Write-Output $InputObject }
+                }
             }
             return
         }
@@ -230,7 +285,7 @@ function Restart-CloudInstance {
         if ($PSCmdlet.ShouldProcess($target, 'Restart-CloudInstance')) {
             Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
 
-            if ($Wait -and -not $WhatIf) {
+            if ($Wait -and -not $WhatIfPreference) {
                 $startTime = Get-Date
                 $targetStatus = 'Running'
                 $lastRecord = $null

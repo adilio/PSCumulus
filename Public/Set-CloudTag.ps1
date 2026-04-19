@@ -40,33 +40,43 @@ function Set-CloudTag {
     )]
     [OutputType([pscustomobject])]
     param(
+        # The Azure VM name when tagging by name and resource group.
         [Parameter(Mandatory, ParameterSetName = 'AzureByName')]
         [string]$Name,
 
+        # The Azure resource group containing the VM.
         [Parameter(Mandatory, ParameterSetName = 'AzureByName')]
         [string]$ResourceGroup,
 
+        # The full Azure resource id to tag.
         [Parameter(Mandatory, ParameterSetName = 'AzureById')]
         [string]$AzureResourceId,
 
+        # The AWS resource id to tag.
         [Parameter(Mandatory, ParameterSetName = 'AWS')]
         [string]$ResourceId,
 
+        # The AWS region containing the resource.
         [Parameter(Mandatory, ParameterSetName = 'AWS')]
         [string]$Region,
 
+        # The GCP project containing the resource.
         [Parameter(Mandatory, ParameterSetName = 'GCP')]
         [string]$Project,
 
+        # The GCP resource path to label.
         [Parameter(Mandatory, ParameterSetName = 'GCP')]
         [string]$Resource,
 
+        # A PSCumulus cloud record or object with Provider and Name properties.
         [Parameter(Mandatory, ValueFromPipeline = $true, ParameterSetName = 'Piped')]
         [psobject]$InputObject,
 
+        # The tags or labels to apply.
         [Parameter(Mandatory)]
         [hashtable]$Tags,
 
+        # Merge the supplied tags with existing tags instead of replacing them.
         [switch]$Merge
     )
 

@@ -1,7 +1,26 @@
 Describe 'Find-CloudResource' {
     BeforeAll {
+        if (-not (Get-Command Get-AzResourceGroup -ErrorAction SilentlyContinue)) {
+            function global:Get-AzResourceGroup { }
+        }
+
         $ModulePath = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Join-Path -ChildPath 'PSCumulus.psd1'
         Import-Module $ModulePath -Force
+    }
+
+    BeforeEach {
+        InModuleScope PSCumulus {
+            if (-not (Get-Command Get-AzResourceGroup -ErrorAction SilentlyContinue)) {
+                function Get-AzResourceGroup { }
+            }
+
+            $script:PSCumulusContext.Providers['Azure'] = @{
+                Account        = 'test@example.com'
+                SubscriptionId = 'sub-123'
+                Connected      = $true
+            }
+            $script:PSCumulusContext.ActiveProvider = 'Azure'
+        }
     }
 
     Context 'Parameter validation' {
@@ -19,19 +38,12 @@ Describe 'Find-CloudResource' {
     }
 
     Context 'Provider dispatch' {
-        BeforeEach {
-            InModuleScope PSCumulus {
-                $script:PSCumulusContext.Providers['Azure'] = @{
-                    Account       = 'test@example.com'
-                    ResourceGroup = 'test-rg'
-                    Connected     = $true
-                }
-                $script:PSCumulusContext.ActiveProvider = 'Azure'
-            }
-        }
-
         It 'Should call Get-CloudInstance when Kind includes Instance' {
             InModuleScope PSCumulus {
+                Mock Get-AzResourceGroup -MockWith {
+                    [PSCustomObject]@{ ResourceGroupName = 'test-rg' }
+                }
+
                 Mock Get-CloudInstance -MockWith {
                     [PSCustomObject]@{
                         PSTypeName = 'PSCumulus.AzureCloudRecord'
@@ -50,6 +62,10 @@ Describe 'Find-CloudResource' {
     Context 'Output shape' {
         It 'Should return objects with Kind property' {
             InModuleScope PSCumulus {
+                Mock Get-AzResourceGroup -MockWith {
+                    [PSCustomObject]@{ ResourceGroupName = 'test-rg' }
+                }
+
                 Mock Get-CloudInstance -MockWith {
                     [PSCustomObject]@{
                         PSTypeName = 'PSCumulus.AzureCloudRecord'
@@ -65,6 +81,10 @@ Describe 'Find-CloudResource' {
 
         It 'Should filter results by Name wildcard' {
             InModuleScope PSCumulus {
+                Mock Get-AzResourceGroup -MockWith {
+                    [PSCustomObject]@{ ResourceGroupName = 'test-rg' }
+                }
+
                 Mock Get-CloudInstance -MockWith {
                     [PSCustomObject]@{
                         PSTypeName = 'PSCumulus.AzureCloudRecord'
@@ -88,6 +108,27 @@ Describe 'Find-CloudResource' {
 
                 $result = Find-CloudResource -Name 'test'
                 $result | Should -BeNullOrEmpty
+            }
+        }
+
+        It 'Should skip Azure when Get-AzResourceGroup returns no RGs and emit verbose' {
+            InModuleScope PSCumulus {
+                Mock Get-AzResourceGroup -MockWith { @() }
+                Mock Get-CloudInstance -MockWith {
+                    [PSCustomObject]@{
+                        PSTypeName = 'PSCumulus.AzureCloudRecord'
+                        Name       = 'test-vm'
+                        Provider   = 'Azure'
+                    }
+                }
+
+                $output = Find-CloudResource -Name 'test-vm' -Provider Azure -Kind Instance -Verbose 4>&1
+                $records = @($output | Where-Object { $_ -isnot [System.Management.Automation.VerboseRecord] })
+                $verbose = @($output | Where-Object { $_ -is [System.Management.Automation.VerboseRecord] })
+
+                $records | Should -BeNullOrEmpty
+                $verbose.Message | Should -Contain 'Find-CloudResource: no resource groups returned for Azure subscription sub-123; skipping.'
+                Assert-MockCalled Get-CloudInstance -Times 0 -Exactly
             }
         }
     }

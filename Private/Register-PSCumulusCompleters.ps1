@@ -1,42 +1,3 @@
-$script:AzureRegions = @(
-    'australiaeast', 'australiasoutheast', 'brazilsouth', 'brazilsoutheast',
-    'canadacentral', 'canadaeast', 'centralindia', 'centralus',
-    'centraluseuap', 'eastasia', 'eastus', 'eastus2',
-    'eastus2euap', 'francecentral', 'francesouth', 'germanynorth',
-    'germanywestcentral', 'japaneast', 'japanwest', 'jioindiacentral',
-    'jioindiawest', 'koreacentral', 'koreasouth', 'northcentralus',
-    'northeurope', 'norwayeast', 'norwaywest', 'qatarcentral',
-    'southafricanorth', 'southafricawest', 'southcentralus', 'southeastasia',
-    'southindia', 'swedencentral', 'switzerlandnorth', 'switzerlandwest',
-    'uaecentral', 'uaenorth', 'uksouth', 'ukwest',
-    'westcentralus', 'westeurope', 'westindia', 'westus',
-    'westus2', 'westus3'
-)
-
-$script:AWSRegions = @(
-    'af-south-1', 'ap-east-1', 'ap-northeast-1', 'ap-northeast-2',
-    'ap-northeast-3', 'ap-south-1', 'ap-south-2', 'ap-southeast-1',
-    'ap-southeast-2', 'ap-southeast-3', 'ap-southeast-4', 'ca-central-1',
-    'ca-west-1', 'eu-central-1', 'eu-central-2', 'eu-north-1',
-    'eu-south-1', 'eu-south-2', 'eu-west-1', 'eu-west-2',
-    'eu-west-3', 'il-central-1', 'me-central-1', 'me-south-1',
-    'sa-east-1', 'us-east-1', 'us-east-2', 'us-gov-east-1',
-    'us-gov-west-1', 'us-west-1', 'us-west-2'
-)
-
-$script:GCPRegions = @(
-    'asia-east1', 'asia-east2', 'asia-northeast1', 'asia-northeast2',
-    'asia-northeast3', 'asia-south1', 'asia-south2', 'asia-southeast1',
-    'asia-southeast2', 'australia-southeast1', 'australia-southeast2',
-    'europe-central2', 'europe-north1', 'europe-southwest1',
-    'europe-west1', 'europe-west10', 'europe-west12', 'europe-west2',
-    'europe-west3', 'europe-west4', 'europe-west6', 'europe-west8',
-    'europe-west9', 'me-central1', 'me-central2', 'me-west1',
-    'northamerica-northeast1', 'northamerica-northeast2', 'southamerica-east1',
-    'southamerica-west1', 'us-central1', 'us-east1', 'us-east4',
-    'us-east5', 'us-south1', 'us-west1', 'us-west2', 'us-west3', 'us-west4'
-)
-
 # Cache for ResourceGroup completion (60-second TTL)
 $script:__PSCumulusRgCache = @{}
 $script:__PSCumulusRgCacheLastUpdate = $null
@@ -44,13 +5,23 @@ $script:__PSCumulusRgCacheLastUpdate = $null
 Register-ArgumentCompleter -ParameterName Region -ScriptBlock {
     param($commandName, $wordToComplete)
 
-    $regions = switch ($commandName) {
-        { $_ -match 'Azure|Get-Az' } { $script:AzureRegions }
-        { $_ -match 'AWS|Get-EC2|Get-S3' } { $script:AWSRegions }
-        { $_ -match 'GCP|gcloud' } { $script:GCPRegions }
-        default { @($script:AzureRegions; $script:AWSRegions; $script:GCPRegions) | Sort-Object -Unique }
+    $module = Get-Module PSCumulus
+    if (-not $module) {
+        return
     }
 
+    $providers = switch ($commandName) {
+        { $_ -match 'Azure|Get-Az' } { @('Azure') }
+        { $_ -match 'AWS|Get-EC2|Get-S3' } { @('AWS') }
+        { $_ -match 'GCP|gcloud' } { @('GCP') }
+        default { @('Azure', 'AWS', 'GCP') }
+    }
+
+    $regions = foreach ($providerName in $providers) {
+        & $module { param($p) Get-CloudRegionData -Provider $p } $providerName
+    }
+
+    $regions = $regions | Sort-Object -Unique
     $regions | Where-Object { $_ -like "$wordToComplete*" } |
         ForEach-Object { [CompletionResult]::new($_, $_, 'ParameterValue', $_) }
 }

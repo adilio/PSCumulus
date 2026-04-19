@@ -35,31 +35,36 @@ function Disconnect-Cloud {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([pscustomobject])]
     param(
+        # The provider context to clear.
         [Parameter(Mandatory)]
         [ValidateSet('Azure', 'AWS', 'GCP')]
         [string]$Provider,
 
+        # Only disconnect Azure if the stored tenant id matches this value.
         [ValidateNotNullOrEmpty()]
         [string]$TenantId,
 
+        # Only disconnect Azure if the stored subscription name or id matches this value.
         [ValidateNotNullOrEmpty()]
         [string]$Subscription,
 
-        [ValidateNotNullOrEmpty()]
-        [string]$Account,
-
+        # Only disconnect AWS if the stored account id matches this value.
         [ValidateNotNullOrEmpty()]
         [string]$AccountId,
 
+        # Only disconnect AWS if the stored profile name matches this value.
         [ValidateNotNullOrEmpty()]
         [string]$ProfileName,
 
+        # Only disconnect AWS if the stored region matches this value.
         [ValidateNotNullOrEmpty()]
         [string]$Region,
 
+        # Only disconnect GCP if the stored project matches this value.
         [ValidateNotNullOrEmpty()]
         [string]$Project,
 
+        # Only disconnect GCP if the stored account email matches this value.
         [ValidateNotNullOrEmpty()]
         [string]$AccountEmail
     )
@@ -75,7 +80,7 @@ function Disconnect-Cloud {
         $contextMatches = $true
 
         $providerSpecificParams = switch ($Provider) {
-            'Azure' { @('TenantId', 'Subscription', 'Account') }
+            'Azure' { @('TenantId', 'Subscription') }
             'AWS'   { @('AccountId', 'ProfileName', 'Region') }
             'GCP'   { @('Project', 'AccountEmail') }
         }

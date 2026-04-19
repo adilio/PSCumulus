@@ -279,4 +279,49 @@ Describe 'Start-CloudInstance' {
             }
         }
     }
+
+    Context 'Path parameter set -Wait -PassThru' {
+        It 'emits the freshest polled record with -Wait -PassThru' {
+            InModuleScope PSCumulus {
+                Mock Start-AzureInstance { }
+                Mock Start-Sleep { }
+                Mock Get-AzureInstanceData {
+                    [AzureCloudRecord]@{ Name = 'web-server-01'; Provider = 'Azure'; ResourceGroup = 'prod-rg'; Status = 'Running' }
+                }
+
+                $result = Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -Wait -PassThru -PollingIntervalSeconds 1 -Confirm:$false
+
+                $result.Status | Should -Be 'Running'
+                Should -Invoke Get-AzureInstanceData -Times 1
+            }
+        }
+
+        It 'emits nothing extra with -PassThru alone when no wait was done' {
+            InModuleScope PSCumulus {
+                Mock Start-AzureInstance { }
+                Mock Get-AzureInstanceData {
+                    [AzureCloudRecord]@{ Name = 'web-server-01'; Provider = 'Azure'; ResourceGroup = 'prod-rg'; Status = 'Running' }
+                }
+
+                $result = Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -PassThru -Confirm:$false
+
+                $result | Should -BeNullOrEmpty
+                Should -Invoke Get-AzureInstanceData -Times 0
+            }
+        }
+
+        It 'does not poll under -Wait -WhatIf' {
+            InModuleScope PSCumulus {
+                Mock Start-AzureInstance { }
+                Mock Get-AzureInstanceData {
+                    [AzureCloudRecord]@{ Name = 'web-server-01'; Provider = 'Azure'; ResourceGroup = 'prod-rg'; Status = 'Running' }
+                }
+
+                Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -Wait -WhatIf
+
+                Should -Invoke Start-AzureInstance -Times 0
+                Should -Invoke Get-AzureInstanceData -Times 0
+            }
+        }
+    }
 }

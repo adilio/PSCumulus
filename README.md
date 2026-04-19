@@ -128,7 +128,7 @@ PSCumulus is being evolved in stages so each step ships independently, delivers 
 
 The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the key insight that unlocked the next move: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the plan, but it now follows that corrected object-model foundation rather than defining it. The longer-form rationale lives in the [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) doc.
 
-**Current status:** Stages 1, 2, and 3 are complete (v0.5.0).
+**Current status:** Stages 1, 2, and 3 are complete (v0.6.0).
 
 1. **Stage 1: Internal Typed Contract**  
    Purpose: establish a typed internal vocabulary without changing the public cmdlet surface.  

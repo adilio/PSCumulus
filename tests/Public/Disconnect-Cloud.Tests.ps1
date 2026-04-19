@@ -10,6 +10,10 @@ Describe 'Disconnect-Cloud' {
             (Get-Command Disconnect-Cloud).Parameters['Provider'].Attributes.Mandatory |
                 Should -Contain $true
         }
+
+        It 'does not expose the removed Account parameter' {
+            { Disconnect-Cloud -Provider Azure -Account 'adil@contoso.com' } | Should -Throw -ExpectedMessage '*parameter*Account*'
+        }
     }
 
     Context 'Azure routing' {

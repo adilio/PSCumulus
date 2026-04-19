@@ -60,61 +60,95 @@ function Find-CloudResource {
 
         $results = [System.Collections.Generic.List[psobject]]::new()
 
-        foreach ($providerName in $providersToSearch) {
-            foreach ($kindName in $kindsToSearch) {
-                $commandName = "Get-Cloud$kindName"
-                $commandParams = @{ Provider = $providerName }
+        $azureRgCacheLoaded = $false
 
-                # Add provider-specific scope parameters from context
-                $ctx = $script:PSCumulusContext.Providers[$providerName]
+        try {
+            foreach ($providerName in $providersToSearch) {
+                foreach ($kindName in $kindsToSearch) {
+                    $commandName = "Get-Cloud$kindName"
+                    $scopeParameterSets = [System.Collections.Generic.List[hashtable]]::new()
 
-                switch ($providerName) {
-                    'Azure' {
-                        if ($ctx.ResourceGroup) {
-                            $commandParams.ResourceGroup = $ctx.ResourceGroup
-                        } else {
-                            # Skip if no resource group in context
-                            continue
-                        }
-                    }
-                    'AWS' {
-                        if ($ctx.Region) {
-                            $commandParams.Region = $ctx.Region
-                        } else {
-                            # Skip if no region in context
-                            continue
-                        }
-                    }
-                    'GCP' {
-                        if ($ctx.Project) {
-                            $commandParams.Project = $ctx.Project
-                        } else {
-                            # Skip if no project in context
-                            continue
-                        }
-                    }
-                }
+                    # Add provider-specific scope parameters from context
+                    $ctx = $script:PSCumulusContext.Providers[$providerName]
+                    $skipProvider = $false
 
-                try {
-                    $kindResults = & $commandName @commandParams -ErrorAction SilentlyContinue
-
-                    if ($kindResults) {
-                        foreach ($result in $kindResults) {
-                            # Add Kind property if not already present
-                            if (-not $result.PSObject.Properties.Match('Kind').Count) {
-                                $result | Add-Member -MemberType NoteProperty -Name 'Kind' -Value $kindName -Force
+                    switch ($providerName) {
+                        'Azure' {
+                            if (-not $azureRgCacheLoaded) {
+                                $azureRgCacheLoaded = $true
+                                if (Get-Command Get-AzResourceGroup -ErrorAction SilentlyContinue) {
+                                    $script:__PSCumulusFcrAzureRgCache = @(Get-AzResourceGroup -ErrorAction SilentlyContinue)
+                                } else {
+                                    $script:__PSCumulusFcrAzureRgCache = @()
+                                }
                             }
 
-                            # Filter by name
-                            if ($result.Name -like $Name) {
-                                $results.Add($result)
+                            if ($script:__PSCumulusFcrAzureRgCache.Count -gt 0) {
+                                foreach ($rg in $script:__PSCumulusFcrAzureRgCache) {
+                                    if (-not [string]::IsNullOrWhiteSpace($rg.ResourceGroupName)) {
+                                        $scopeParameterSets.Add(@{ ResourceGroup = $rg.ResourceGroupName })
+                                    }
+                                }
+                            } else {
+                                Write-Verbose "Find-CloudResource: no resource groups returned for Azure subscription $($ctx.SubscriptionId); skipping."
+                                $skipProvider = $true
                             }
+                            break
+                        }
+                        'AWS' {
+                            if ($ctx.Region) {
+                                $scopeParameterSets.Add(@{ Region = $ctx.Region })
+                            } else {
+                                Write-Verbose "Find-CloudResource: no region found for AWS context; skipping."
+                                $skipProvider = $true
+                            }
+                            break
+                        }
+                        'GCP' {
+                            if ($ctx.Project) {
+                                $scopeParameterSets.Add(@{ Project = $ctx.Project })
+                            } else {
+                                Write-Verbose "Find-CloudResource: no project found for GCP context; skipping."
+                                $skipProvider = $true
+                            }
+                            break
                         }
                     }
-                } catch {
-                    Write-Verbose "Find-CloudResource: Failed to query $providerName $kindName`: $_"
+
+                    if ($skipProvider) {
+                        continue
+                    }
+
+                    foreach ($scopeParams in $scopeParameterSets) {
+                        try {
+                            $commandParams = @{ Provider = $providerName }
+                            foreach ($key in $scopeParams.Keys) {
+                                $commandParams[$key] = $scopeParams[$key]
+                            }
+
+                            $kindResults = & $commandName @commandParams -ErrorAction SilentlyContinue
+
+                            if ($kindResults) {
+                                foreach ($result in $kindResults) {
+                                    # Add Kind property if not already present
+                                    if (-not $result.PSObject.Properties.Match('Kind').Count) {
+                                        $result | Add-Member -MemberType NoteProperty -Name 'Kind' -Value $kindName -Force
+                                    }
+
+                                    # Filter by name
+                                    if ($result.Name -like $Name) {
+                                        $results.Add($result)
+                                    }
+                                }
+                            }
+                        } catch {
+                            Write-Verbose "Find-CloudResource: Failed to query $providerName $kindName`: $_"
+                        }
+                    }
                 }
             }
+        } finally {
+            Remove-Variable -Scope Script -Name __PSCumulusFcrAzureRgCache -ErrorAction SilentlyContinue
         }
 
         $results

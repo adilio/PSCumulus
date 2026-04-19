@@ -8,7 +8,8 @@ $referenceRoot = Join-Path $repoRoot 'docs/reference'
 $commandOutputRoot = Join-Path $referenceRoot 'commands'
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("pscumulus-docs-" + [guid]::NewGuid().ToString('n'))
 
-function Set-AliasSection {
+function Update-AliasSection {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
         [string]$Path,
@@ -28,11 +29,14 @@ function Set-AliasSection {
     $updated = $updated -replace 'Locale: .+', 'Locale: en-US'
     $updated = $updated -replace '(?m)^ms\.date: .+\r?\n', ''
     $updated = $updated -replace '\{\{ Fill in the Description \}\}', 'See the command description and examples above.'
+    $updated = $updated -replace '\{\{ Fill [A-Za-z0-9_]+ Description \}\}', 'See the description and examples above.'
     $updated = $updated -replace '\{\{ Fill in the related links here \}\}', 'None.'
     if ((Split-Path -Leaf $Path) -eq 'Get-CloudInstance.md') {
         $updated = $updated -replace 'See the command description and examples above\.', 'PSCumulus.CloudRecord or a vendor subclass (PSCumulus.AzureCloudRecord, PSCumulus.AWSCloudRecord, PSCumulus.GCPCloudRecord).'
     }
-    Set-Content -Path $Path -Value $updated -Encoding utf8NoBOM
+    if ($PSCmdlet.ShouldProcess($Path, 'Update generated command help')) {
+        Set-Content -Path $Path -Value $updated -Encoding utf8NoBOM
+    }
 }
 
 try {
@@ -56,7 +60,7 @@ try {
     Import-Module $modulePath -Force
 
     $module = Get-Module PSCumulus
-    $generated = New-MarkdownCommandHelp `
+    $null = New-MarkdownCommandHelp `
         -ModuleInfo $module `
         -OutputFolder $tempRoot `
         -WithModulePage `
@@ -64,7 +68,6 @@ try {
         -Force
 
     $moduleFolder = Join-Path $tempRoot 'PSCumulus'
-    $modulePage = Join-Path $moduleFolder 'PSCumulus.md'
     $targetModulePage = Join-Path $referenceRoot 'module.md'
 
     Get-ChildItem -Path $commandOutputRoot -Filter '*.md' -File -ErrorAction SilentlyContinue |
@@ -81,7 +84,7 @@ try {
 
         $commandName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
         $aliases = @(Get-Alias -Definition $commandName -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name)
-        Set-AliasSection -Path $targetPath -Aliases $aliases
+        Update-AliasSection -Path $targetPath -Aliases $aliases
     }
 
     if (Test-Path $targetModulePage) {

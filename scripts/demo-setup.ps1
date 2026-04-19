@@ -1,22 +1,22 @@
 # demo-setup.ps1
 # Injects fake multi-cloud data into the PSCumulus module scope for demo purposes.
 #
-# ── From PSGallery (talk demo) ────────────────────────────────────────────────
+# -- From PSGallery (talk demo) ------------------------------------------------
 #
 #   Install-Module PSCumulus -Scope CurrentUser
 #   Import-Module PSCumulus
 #   Invoke-WebRequest https://raw.githubusercontent.com/adilio/PSCumulus/main/scripts/demo-setup.ps1 -OutFile demo-setup.ps1
 #   . ./demo-setup.ps1
 #
-# ── From source (development) ─────────────────────────────────────────────────
+# -- From source (development) -------------------------------------------------
 #
 #   Import-Module ./PSCumulus.psd1 -Force
 #   . ./scripts/demo-setup.ps1
 #
-# ── Talk flow: slide-by-slide commands ───────────────────────────────────────
+# -- Talk flow: slide-by-slide commands ----------------------------------------
 # Mirrors the live demo in talk/presentation.md (Slides 7 and 8).
 #
-# ── DEMO A — Native vs. Unified (Slide 7) ─────────────────────────────────────
+# -- DEMO A - Native vs. Unified (Slide 7) -------------------------------------
 #
 #   # Native (shown, NOT run on stage)
 #   Get-AzVM
@@ -30,7 +30,7 @@
 #   Get-CloudInstance -Provider AWS   -Region us-east-1
 #   Get-CloudInstance -Provider GCP   -Project contoso-prod
 #
-# ── DEMO B — One Pipe, Three Clouds (Slide 8) ────────────────────────────────
+# -- DEMO B - One Pipe, Three Clouds (Slide 8) ---------------------------------
 #
 #   Get-CloudInstance -All
 #
@@ -41,7 +41,7 @@
 #   Show-FleetHealth
 #   Get-CloudInstance -All | Group-Object Provider | Select-Object Name, Count
 #
-# ── Bonus pre-built queries (optional, if time allows) ────────────────────────
+# -- Bonus pre-built queries (optional, if time allows) ------------------------
 #
 #   Find-UntaggedInstances   # tagging compliance: missing owner tag
 #   Find-StaleInstances      # cost waste: stopped/terminated > 30 days
@@ -50,7 +50,7 @@
 #   Find-OldestInstances     # oldest five instances across all clouds
 #   Invoke-AllDemoQueries    # run all of the above in sequence
 #
-# ── Per-resource spot checks (Slide 11 reference commands) ────────────────────
+# -- Per-resource spot checks (Slide 11 reference commands) --------------------
 #
 #   Get-CloudStorage  -Provider Azure -ResourceGroup prod-rg
 #   Get-CloudStorage  -Provider AWS   -Region us-east-1
@@ -72,7 +72,7 @@
 #   Get-CloudTag      -Provider AWS   -ResourceId 'i-0a1b2c3d4e5f00001'
 #   Get-CloudTag      -Provider GCP   -Project contoso-prod -Resource 'instances/prod-web-01'
 #
-# ── Start / Stop (write path) ─────────────────────────────────────────────────
+# -- Start / Stop (write path) -------------------------------------------------
 #
 #   Start-CloudInstance -Provider Azure -Name web-server-01   -ResourceGroup prod-rg
 #   Start-CloudInstance -Provider AWS   -InstanceId i-0a1b2c3d4e5f00003 -Region us-east-1
@@ -82,12 +82,12 @@
 #   Stop-CloudInstance  -Provider AWS   -InstanceId i-0a1b2c3d4e5f00002 -Region us-east-1
 #   Stop-CloudInstance  -Provider GCP   -Name prod-api-01     -Zone us-central1-b -Project contoso-prod
 #
-# ── Cleanup ───────────────────────────────────────────────────────────────────
+# -- Cleanup -------------------------------------------------------------------
 #
 #   Remove-DemoSetup            # unload module, remove demo functions
 #   Remove-DemoSetup -Uninstall # also uninstalls PSCumulus from the system
 #
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 $module = Get-Module PSCumulus
 if (-not $module) {
@@ -97,7 +97,7 @@ if (-not $module) {
 
 $module.Invoke({
 
-    # ── Connect backends ──────────────────────────────────────────────────────
+    # -- Connect backends ------------------------------------------------------
 
     Set-Item -Path 'Function:Connect-AzureBackend' -Value {
         [pscustomobject]@{
@@ -136,10 +136,11 @@ $module.Invoke({
         }
     }
 
-    # ── Instances ─────────────────────────────────────────────────────────────
+    # -- Instances -------------------------------------------------------------
 
     Set-Item -Path 'Function:Get-AzureInstanceData' -Value {
         param([string]$ResourceGroup)
+        $null = $ResourceGroup
         ConvertTo-CloudRecord -Name 'web-server-01'  -Provider Azure -Region 'eastus'  -Status 'Running' -Size 'Standard_D2s_v3' -CreatedAt ([datetime]'2025-03-15') -Tags @{ environment = 'prod';    team = 'platform'; 'cost-center' = 'eng-001'; owner = 'platform-team' } -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0001-0001-0001-aaaaaaaaaaaa'; OsType = 'Linux' }
         ConvertTo-CloudRecord -Name 'api-server-01'  -Provider Azure -Region 'eastus'  -Status 'Running' -Size 'Standard_D4s_v3' -CreatedAt ([datetime]'2024-11-01') -Tags @{ environment = 'prod';    team = 'platform'; 'cost-center' = 'eng-001'; owner = 'platform-team' } -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0002-0002-0002-aaaaaaaaaaaa'; OsType = 'Linux' }
         ConvertTo-CloudRecord -Name 'db-server-01'   -Provider Azure -Region 'eastus2' -Status 'Stopped' -Size 'Standard_E8s_v3' -CreatedAt ([datetime]'2024-08-20') -Tags @{ environment = 'staging'; team = 'data';     'cost-center' = 'eng-002' }                                    -Metadata @{ ResourceGroup = 'prod-rg'; VmId = 'aaaaaaaa-0003-0003-0003-aaaaaaaaaaaa'; OsType = 'Windows' }
@@ -147,6 +148,7 @@ $module.Invoke({
 
     Set-Item -Path 'Function:Get-AWSInstanceData' -Value {
         param([string]$Region)
+        $null = $Region
         ConvertTo-CloudRecord -Name 'prod-web-01'    -Provider AWS -Region 'us-east-1a' -Status 'Running' -Size 't3.medium'  -CreatedAt ([datetime]'2026-01-10') -Tags @{ environment = 'prod';    team = 'platform'; 'cost-center' = 'eng-001'; owner = 'platform-team' } -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00001'; PrivateIpAddress = '10.0.1.10'; PublicIpAddress = '54.210.10.1'; VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-0a1b2c3d' }
         ConvertTo-CloudRecord -Name 'prod-api-01'    -Provider AWS -Region 'us-east-1b' -Status 'Running' -Size 't3.large'   -CreatedAt ([datetime]'2025-06-01') -Tags @{ environment = 'prod';    team = 'platform'; 'cost-center' = 'eng-001'; owner = 'platform-team' } -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00002'; PrivateIpAddress = '10.0.2.10'; PublicIpAddress = '54.210.10.2'; VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-1a2b3c4d' }
         ConvertTo-CloudRecord -Name 'prod-worker-01' -Provider AWS -Region 'us-east-1c' -Status 'Stopped' -Size 't3.xlarge'  -CreatedAt ([datetime]'2024-09-30') -Tags @{ environment = 'staging'; team = 'workers';  'cost-center' = 'eng-003' }                                    -Metadata @{ InstanceId = 'i-0a1b2c3d4e5f00003'; PrivateIpAddress = '10.0.3.10'; PublicIpAddress = $null;         VpcId = 'vpc-0a1b2c3d'; SubnetId = 'subnet-2a3b4c5d' }
@@ -154,35 +156,40 @@ $module.Invoke({
 
     Set-Item -Path 'Function:Get-GCPInstanceData' -Value {
         param([string]$Project)
+        $null = $Project
         ConvertTo-CloudRecord -Name 'prod-web-01'    -Provider GCP -Region 'us-central1-a' -Status 'Running'    -Size 'n2-standard-2' -CreatedAt ([datetime]'2025-11-20') -Tags @{ environment = 'prod';    team = 'platform'; 'cost-center' = 'eng-001'; owner = 'platform-team' } -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000001'; Zone = 'us-central1-a'; PrivateIpAddress = '10.128.0.10'; PublicIpAddress = '34.72.10.1'; Labels = @{ env = 'production'; team = 'platform' } }
         ConvertTo-CloudRecord -Name 'prod-api-01'    -Provider GCP -Region 'us-central1-b' -Status 'Running'    -Size 'n2-standard-4' -CreatedAt ([datetime]'2025-04-08') -Tags @{ environment = 'prod';    team = 'platform'; 'cost-center' = 'eng-001'; owner = 'platform-team' } -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000002'; Zone = 'us-central1-b'; PrivateIpAddress = '10.128.0.11'; PublicIpAddress = '34.72.10.2'; Labels = @{ env = 'production'; team = 'platform' } }
         ConvertTo-CloudRecord -Name 'prod-worker-01' -Provider GCP -Region 'us-central1-c' -Status 'Terminated' -Size 'n2-standard-8' -CreatedAt ([datetime]'2024-07-14') -Tags @{ environment = 'staging'; team = 'workers';  'cost-center' = 'eng-003' }                                    -Metadata @{ Project = 'contoso-prod'; Id = '1234567890000003'; Zone = 'us-central1-c'; PrivateIpAddress = '10.128.0.12'; PublicIpAddress = $null;        Labels = @{ env = 'production'; team = 'workers' } }
     }
 
-    # ── Storage ───────────────────────────────────────────────────────────────
+    # -- Storage ---------------------------------------------------------------
 
     Set-Item -Path 'Function:Get-AzureStorageData' -Value {
         param([string]$ResourceGroup)
+        $null = $ResourceGroup
         ConvertTo-CloudRecord -Name 'contosoproddata' -Provider Azure -Region 'eastus'  -Status 'available' -Size 'Standard_LRS' -CreatedAt ([datetime]'2024-09-01') -Metadata @{ ResourceGroup = 'prod-rg'; Kind = 'StorageV2';   AccessTier = 'Hot' }
         ConvertTo-CloudRecord -Name 'contosobackups'  -Provider Azure -Region 'eastus2' -Status 'available' -Size 'Standard_GRS' -CreatedAt ([datetime]'2024-09-01') -Metadata @{ ResourceGroup = 'prod-rg'; Kind = 'BlobStorage'; AccessTier = 'Cool' }
     }
 
     Set-Item -Path 'Function:Get-AWSStorageData' -Value {
         param([string]$Region)
+        $null = $Region
         ConvertTo-CloudRecord -Name 'contoso-prod-assets'  -Provider AWS -Region 'us-east-1' -Status 'Available' -CreatedAt ([datetime]'2024-09-01') -Metadata @{ BucketName = 'contoso-prod-assets' }
         ConvertTo-CloudRecord -Name 'contoso-prod-backups' -Provider AWS -Region 'us-west-2' -Status 'Available' -CreatedAt ([datetime]'2024-09-01') -Metadata @{ BucketName = 'contoso-prod-backups' }
     }
 
     Set-Item -Path 'Function:Get-GCPStorageData' -Value {
         param([string]$Project)
+        $null = $Project
         ConvertTo-CloudRecord -Name 'contoso-prod-assets'  -Provider GCP -Region 'US-CENTRAL1' -Status 'Available' -Size 'STANDARD' -CreatedAt ([datetime]'2024-09-01') -Metadata @{ Project = 'contoso-prod'; StorageClass = 'STANDARD'; Location = 'US-CENTRAL1' }
         ConvertTo-CloudRecord -Name 'contoso-prod-backups' -Provider GCP -Region 'US'           -Status 'Available' -Size 'NEARLINE' -CreatedAt ([datetime]'2024-09-01') -Metadata @{ Project = 'contoso-prod'; StorageClass = 'NEARLINE'; Location = 'US' }
     }
 
-    # ── Disks ─────────────────────────────────────────────────────────────────
+    # -- Disks -----------------------------------------------------------------
 
     Set-Item -Path 'Function:Get-AzureDiskData' -Value {
         param([string]$ResourceGroup)
+        $null = $ResourceGroup
         ConvertTo-CloudRecord -Name 'web-server-01_OsDisk_1' -Provider Azure -Region 'eastus'  -Status 'Attached'   -Size '128 GB' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ ResourceGroup = 'prod-rg'; DiskSizeGB = 128; OsType = 'Linux';   Sku = 'Premium_LRS' }
         ConvertTo-CloudRecord -Name 'api-server-01_OsDisk_1' -Provider Azure -Region 'eastus'  -Status 'Attached'   -Size '128 GB' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ ResourceGroup = 'prod-rg'; DiskSizeGB = 128; OsType = 'Linux';   Sku = 'Premium_LRS' }
         ConvertTo-CloudRecord -Name 'data-disk-prod-01'       -Provider Azure -Region 'eastus'  -Status 'Attached'   -Size '512 GB' -CreatedAt ([datetime]'2024-10-01') -Metadata @{ ResourceGroup = 'prod-rg'; DiskSizeGB = 512; OsType = $null;    Sku = 'Premium_LRS' }
@@ -191,6 +198,7 @@ $module.Invoke({
 
     Set-Item -Path 'Function:Get-AWSDiskData' -Value {
         param([string]$Region)
+        $null = $Region
         ConvertTo-CloudRecord -Name 'prod-web-root'        -Provider AWS -Region 'us-east-1a' -Status 'in-use'    -Size '100 GB' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ VolumeId = 'vol-0a1b2c3d00000001'; VolumeType = 'gp3'; Encrypted = $true;  InstanceId = 'i-0a1b2c3d4e5f00001' }
         ConvertTo-CloudRecord -Name 'prod-api-root'        -Provider AWS -Region 'us-east-1b' -Status 'in-use'    -Size '100 GB' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ VolumeId = 'vol-0a1b2c3d00000002'; VolumeType = 'gp3'; Encrypted = $true;  InstanceId = 'i-0a1b2c3d4e5f00002' }
         ConvertTo-CloudRecord -Name 'prod-data-store'      -Provider AWS -Region 'us-east-1a' -Status 'in-use'    -Size '500 GB' -CreatedAt ([datetime]'2024-10-01') -Metadata @{ VolumeId = 'vol-0a1b2c3d00000003'; VolumeType = 'io1'; Encrypted = $true;  InstanceId = 'i-0a1b2c3d4e5f00001' }
@@ -199,15 +207,17 @@ $module.Invoke({
 
     Set-Item -Path 'Function:Get-GCPDiskData' -Value {
         param([string]$Project)
+        $null = $Project
         ConvertTo-CloudRecord -Name 'prod-web-01'    -Provider GCP -Region 'us-central1-a' -Status 'Ready' -Size '100 GB' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ Project = 'contoso-prod'; Zone = 'us-central1-a'; DiskType = 'pd-balanced'; SizeGb = '100' }
         ConvertTo-CloudRecord -Name 'prod-api-01'    -Provider GCP -Region 'us-central1-b' -Status 'Ready' -Size '100 GB' -CreatedAt ([datetime]'2024-11-01') -Metadata @{ Project = 'contoso-prod'; Zone = 'us-central1-b'; DiskType = 'pd-balanced'; SizeGb = '100' }
         ConvertTo-CloudRecord -Name 'prod-data-disk' -Provider GCP -Region 'us-central1-a' -Status 'Ready' -Size '500 GB' -CreatedAt ([datetime]'2024-10-01') -Metadata @{ Project = 'contoso-prod'; Zone = 'us-central1-a'; DiskType = 'pd-ssd';      SizeGb = '500' }
     }
 
-    # ── Networks ──────────────────────────────────────────────────────────────
+    # -- Networks --------------------------------------------------------------
 
     Set-Item -Path 'Function:Get-AzureNetworkData' -Value {
         param([string]$ResourceGroup)
+        $null = $ResourceGroup
         ConvertTo-CloudRecord -Name 'prod-vnet' -Provider Azure -Region 'eastus' -Status 'Succeeded' -Size '10.0.0.0/16'   -Metadata @{ ResourceGroup = 'prod-rg'; AddressSpace = @('10.0.0.0/16'); SubnetCount = 3 }
         ConvertTo-CloudRecord -Name 'dev-vnet'  -Provider Azure -Region 'eastus' -Status 'Succeeded' -Size '10.1.0.0/16'   -Metadata @{ ResourceGroup = 'dev-rg';  AddressSpace = @('10.1.0.0/16'); SubnetCount = 2 }
     }
@@ -220,11 +230,12 @@ $module.Invoke({
 
     Set-Item -Path 'Function:Get-GCPNetworkData' -Value {
         param([string]$Project)
+        $null = $Project
         ConvertTo-CloudRecord -Name 'prod-network' -Provider GCP -Region 'global' -Status 'Available' -Metadata @{ Project = 'contoso-prod'; AutoCreateSubnetworks = $false; SubnetworkMode = 'custom' }
         ConvertTo-CloudRecord -Name 'default'       -Provider GCP -Region 'global' -Status 'Available' -Metadata @{ Project = 'contoso-prod'; AutoCreateSubnetworks = $true;  SubnetworkMode = 'auto' }
     }
 
-    # ── Tags / Labels ─────────────────────────────────────────────────────────
+    # -- Tags / Labels ---------------------------------------------------------
 
     Set-Item -Path 'Function:Get-AzureTagData' -Value {
         param([string]$ResourceId)
@@ -253,10 +264,11 @@ $module.Invoke({
         }
     }
 
-    # ── Functions ─────────────────────────────────────────────────────────────
+    # -- Functions -------------------------------------------------------------
 
     Set-Item -Path 'Function:Get-AzureFunctionData' -Value {
         param([string]$ResourceGroup)
+        $null = $ResourceGroup
         ConvertTo-CloudRecord -Name 'process-orders'     -Provider Azure -Region 'eastus' -Status 'Running' -Size 'dotnet' -CreatedAt ([datetime]'2024-12-01') -Metadata @{ ResourceGroup = 'prod-rg'; Runtime = 'dotnet';  RuntimeVersion = '8';    OSType = 'Linux'; Kind = 'functionapp' }
         ConvertTo-CloudRecord -Name 'send-notifications' -Provider Azure -Region 'eastus' -Status 'Running' -Size 'node'   -CreatedAt ([datetime]'2024-12-01') -Metadata @{ ResourceGroup = 'prod-rg'; Runtime = 'node';    RuntimeVersion = '20';   OSType = 'Linux'; Kind = 'functionapp' }
         ConvertTo-CloudRecord -Name 'resize-images'      -Provider Azure -Region 'eastus' -Status 'Running' -Size 'python' -CreatedAt ([datetime]'2025-01-10') -Metadata @{ ResourceGroup = 'prod-rg'; Runtime = 'python';  RuntimeVersion = '3.11'; OSType = 'Linux'; Kind = 'functionapp' }
@@ -278,7 +290,7 @@ $module.Invoke({
         ConvertTo-CloudRecord -Name 'resize-images'      -Provider GCP -Region 'us-central1' -Status 'Active' -Size 'python311' -CreatedAt ([datetime]'2025-01-10') -Metadata @{ Project = $p; Runtime = 'python311'; EntryPoint = 'resize_image';        FullName = "projects/$p/locations/us-central1/functions/resize-images" }
     }
 
-    # ── Start / Stop ──────────────────────────────────────────────────────────
+    # -- Start / Stop ----------------------------------------------------------
 
     Set-Item -Path 'Function:Start-AzureInstance' -Value {
         param([Parameter(Mandatory)][string]$Name, [Parameter(Mandatory)][string]$ResourceGroup)
@@ -316,7 +328,7 @@ $module.Invoke({
         ConvertTo-CloudRecord -Name $Name -Provider GCP -Region $Zone -Status 'Stopping' -Metadata @{ Project = $Project; Zone = $Zone }
     }
 
-    # ── Seed context via Connect-Cloud ───────────────────────────────────────────
+    # -- Seed context via Connect-Cloud ----------------------------------------
     # Call the real command so context is established the same way a user would.
     # Suppress pipeline output -- the demo presenter calls it interactively.
 
@@ -327,16 +339,22 @@ Write-Host "PSCumulus demo mode active. All commands return simulated data." -Fo
 Write-Host "Demo queries: Find-UntaggedInstances, Find-StaleInstances, Show-FleetHealth, Show-CostCenterRollup, Find-OldestInstances, Invoke-AllDemoQueries" -ForegroundColor DarkCyan
 Write-Host "Cleanup: Remove-DemoSetup [-Uninstall]" -ForegroundColor DarkCyan
 
-# ── Demo query functions ───────────────────────────────────────────────────────
+# -- Demo query functions ------------------------------------------------------
 # Pre-built queries for the talk. Each can be called individually or run all
 # at once with Invoke-AllDemoQueries.
 
 function Find-UntaggedInstances {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Demo shortcut name is intentionally audience-facing.')]
+    param()
+
     # Tagging compliance -- instances missing a required owner tag
     Get-CloudInstance -All | Where-Object { -not $_.Tags['owner'] }
 }
 
 function Find-StaleInstances {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Demo shortcut name is intentionally audience-facing.')]
+    param()
+
     # Cost waste candidates -- stopped/terminated instances older than 30 days
     $cutoff = (Get-Date).AddDays(-30)
     Get-CloudInstance -All |
@@ -364,6 +382,9 @@ function Show-CostCenterRollup {
 }
 
 function Find-OldestInstances {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Demo shortcut name is intentionally audience-facing.')]
+    param()
+
     # Legacy/forgotten VM candidates -- oldest five instances across all clouds
     Get-CloudInstance -All |
         Where-Object { $_.CreatedAt } |
@@ -373,6 +394,7 @@ function Find-OldestInstances {
 }
 
 function Remove-DemoSetup {
+    [CmdletBinding(SupportsShouldProcess)]
     # Removes all demo functions, unloads the module, and optionally uninstalls it.
     param(
         [switch]$Uninstall
@@ -390,14 +412,20 @@ function Remove-DemoSetup {
 
     foreach ($fn in $demoFunctions) {
         if (Get-Item -Path "Function:$fn" -ErrorAction SilentlyContinue) {
-            Remove-Item -Path "Function:$fn"
+            if ($PSCmdlet.ShouldProcess("Function:$fn", 'Remove demo function')) {
+                Remove-Item -Path "Function:$fn"
+            }
         }
     }
 
-    Remove-Module PSCumulus -Force -ErrorAction SilentlyContinue
+    if ($PSCmdlet.ShouldProcess('PSCumulus', 'Remove module')) {
+        Remove-Module PSCumulus -Force -ErrorAction SilentlyContinue
+    }
 
     if ($Uninstall) {
-        Uninstall-Module PSCumulus -AllVersions -Force -ErrorAction SilentlyContinue
+        if ($PSCmdlet.ShouldProcess('PSCumulus', 'Uninstall module')) {
+            Uninstall-Module PSCumulus -AllVersions -Force -ErrorAction SilentlyContinue
+        }
         Write-Host "PSCumulus uninstalled." -ForegroundColor Yellow
     } else {
         Write-Host "PSCumulus unloaded. Run 'Uninstall-Module PSCumulus' to remove it fully." -ForegroundColor Yellow
@@ -405,14 +433,17 @@ function Remove-DemoSetup {
 }
 
 function Invoke-AllDemoQueries {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Justification = 'Demo shortcut name is intentionally audience-facing.')]
+    param()
+
     # Each section prints the underlying pipeline, then the result. Queries are
     # inlined (not delegated to the Find-* / Show-* helpers) so the audience
     # sees the real PowerShell -- not a wrapper.
 
     function Write-DemoQuery {
         param([string]$Title, [string]$Helper, [string]$Query)
-        Write-Host "`n── $Title " -ForegroundColor Cyan -NoNewline
-        Write-Host ('─' * [Math]::Max(0, 60 - $Title.Length)) -ForegroundColor Cyan
+        Write-Host "`n-- $Title " -ForegroundColor Cyan -NoNewline
+        Write-Host ('-' * [Math]::Max(0, 60 - $Title.Length)) -ForegroundColor Cyan
         Write-Host ''
         if ($Helper) {
             Write-Host "PS> # shortcut: $Helper" -ForegroundColor DarkGreen
