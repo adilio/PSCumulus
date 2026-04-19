@@ -422,8 +422,8 @@ You are the execution agent. Work top-to-bottom. Every task is atomic. After eac
 **~~32. Run the full local suite~~** ✅ COMPLETED (2026-04-19: 658 passed, 6 skipped.)
 **~~33. Run PSScriptAnalyzer locally~~** ✅ COMPLETED (2026-04-19: no findings; local ScriptAnalyzer required checking the four CI paths one at a time.)
 **~~34. Commit~~** ✅ COMPLETED (2026-04-19: Sync generated docs and aliases.)
-35. **Push to the current branch (`main` per `git status`)** — Pending for the latest local documentation/alias cleanup.
-36. **Watch CI** — Use `gh run list --limit 5 --branch main` and `gh run watch <id>` to follow the newest run. If the workflow fails, open the run log with `gh run view <id> --log-failed`, fix the failure at the root cause (do not skip PSScriptAnalyzer, do not `--no-verify` any hook), commit, push, and re-watch. Repeat until every check on the latest commit is green. **PENDING after local docs/alias cleanup; previous CI was passing.**
+**~~35. Push to the current branch (`main` per `git status`)~~** ✅ COMPLETED (2026-04-19: pushed docs/alias cleanup to `origin/main`.)
+36. **Watch CI** — Use `gh run list --limit 5 --branch main` and `gh run watch <id>` to follow the newest run. If the workflow fails, open the run log with `gh run view <id> --log-failed`, fix the failure at the root cause (do not skip PSScriptAnalyzer, do not `--no-verify` any hook), commit, push, and re-watch. Repeat until every check on the latest commit is green. **IN PROGRESS after docs/alias cleanup push.**
 
 ### Test-writing rules for new commands
 
