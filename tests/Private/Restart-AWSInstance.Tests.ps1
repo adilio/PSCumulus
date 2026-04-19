@@ -1,3 +1,8 @@
+# Create a stub for Stop-EC2Instance to prevent validation failures in CI
+if (-not (Get-Command Stop-EC2Instance -ErrorAction SilentlyContinue)) {
+    New-Item -Path Function:\Stop-EC2Instance -Value { param($InstanceId) } -Force | Out-Null
+}
+
 BeforeAll {
     Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
 }
@@ -5,7 +10,7 @@ BeforeAll {
 Describe 'Restart-AWSInstance' {
     BeforeAll {
         InModuleScope PSCumulus {
-            # Mock Assert-CommandAvailable before any tests to avoid Stop-EC2Instance validation
+            # Mock Assert-CommandAvailable to avoid additional validation
             Mock -CommandName Assert-CommandAvailable
         }
     }
