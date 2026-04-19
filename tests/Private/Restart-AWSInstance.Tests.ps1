@@ -1,10 +1,17 @@
-# Create a stub for Stop-EC2Instance to prevent validation failures in CI
-if (-not (Get-Command Stop-EC2Instance -ErrorAction SilentlyContinue)) {
-    New-Item -Path Function:\Stop-EC2Instance -Value { param($InstanceId) } -Force | Out-Null
+BeforeAll {
+    # Stub AWS EC2 stop command so Pester can create mocks when AWS.Tools is not installed
+    if (-not (Get-Command Stop-EC2Instance -ErrorAction SilentlyContinue)) {
+        $script:stubCreatedStopEC2 = $true
+        function global:Stop-EC2Instance { param([string]$InstanceId) }
+    }
+
+    Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
 }
 
-BeforeAll {
-    Import-Module (Resolve-Path (Join-Path $PSScriptRoot '..\..\PSCumulus.psd1')).Path -Force
+AfterAll {
+    if ($script:stubCreatedStopEC2) {
+        Remove-Item -Path Function:global:Stop-EC2Instance -ErrorAction SilentlyContinue
+    }
 }
 
 Describe 'Restart-AWSInstance' {
