@@ -74,8 +74,10 @@ Describe 'Set-AzureTag' {
                 Mock -CommandName Update-AzTag -MockWith {
                     param($ResourceId, $Tag, $Operation)
                     $Operation | Should -Be 'Merge'
-                    $Tag.ContainsKey('ExistingTag') | Should -BeTrue
+                    # Only the new tags are passed to Update-AzTag; Azure API handles the merge
                     $Tag.ContainsKey('NewTag') | Should -BeTrue
+                    $Tag['NewTag'] | Should -Be 'NewValue'
+                    # ExistingTag is NOT in $Tag - the Azure API merges server-side
                 }
 
                 Set-AzureTag -ResourceId 'test-id' -Tags @{NewTag = 'NewValue'} -Merge
