@@ -147,7 +147,7 @@ Describe 'PSCumulus module' {
     Context 'aliases' {
         It 'exports the expected interactive aliases' {
             (Get-Command -Module PSCumulus -CommandType Alias).Name |
-                Should -Be @('conc', 'gcin', 'gcont', 'rci', 'sci', 'sct', 'tci')
+                Should -Be @('conc', 'fcr', 'gcin', 'gcont', 'gcsn', 'rci', 'sci', 'sct', 'tci')
         }
     }
 

@@ -161,7 +161,7 @@ Describe 'Get-CloudTag' {
 
         It 'calls all backend functions when providers are connected' {
             InModuleScope PSCumulus {
-                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['Azure'] = @{ SubscriptionId = '12345678-1234-1234-1234-123456789012'; Region = $null; Scope = 'prod-rg' }
                 $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
                 $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
 
@@ -179,7 +179,7 @@ Describe 'Get-CloudTag' {
 
         It 'returns CloudRecord objects from all connected providers' {
             InModuleScope PSCumulus {
-                $script:PSCumulusContext.Providers['Azure'] = @{ Region = $null; Scope = 'prod-rg' }
+                $script:PSCumulusContext.Providers['Azure'] = @{ SubscriptionId = '12345678-1234-1234-1234-123456789012'; Region = $null; Scope = 'prod-rg' }
                 $script:PSCumulusContext.Providers['AWS']   = @{ Region = 'us-east-1'; Scope = $null }
                 $script:PSCumulusContext.Providers['GCP']   = @{ Region = 'us-central1'; Scope = 'my-project' }
 

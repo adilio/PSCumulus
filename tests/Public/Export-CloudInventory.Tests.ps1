@@ -27,7 +27,7 @@ Describe 'Export-CloudInventory' {
 
     Context 'Output shape' {
         It 'Should return FileInfo object' {
-            InModuleScope PSCumulus {
+            InModuleScope PSCumulus -Parameters @{ testPath = $testPath } {
                 Mock Get-CloudInstance -MockWith { @() }
                 $script:PSCumulusContext.Providers['Azure'] = @{
                     Account       = 'test@example.com'
@@ -41,7 +41,7 @@ Describe 'Export-CloudInventory' {
         }
 
         It 'Should create file in JSON format by default' {
-            InModuleScope PSCumulus {
+            InModuleScope PSCumulus -Parameters @{ testPath = $testPath } {
                 Mock Get-CloudInstance -MockWith { @() }
                 $script:PSCumulusContext.Providers['Azure'] = @{
                     Account       = 'test@example.com'
@@ -57,7 +57,7 @@ Describe 'Export-CloudInventory' {
 
     Context 'Provider dispatch' {
         It 'Should query all connected providers' {
-            InModuleScope PSCumulus {
+            InModuleScope PSCumulus -Parameters @{ testPath = $testPath } {
                 Mock Get-CloudInstance -MockWith { @() }
                 $script:PSCumulusContext.Providers['Azure'] = @{
                     Account       = 'test@example.com'

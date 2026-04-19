@@ -1,6 +1,3 @@
-[Diagnostic.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'commandName', Justification='Required by Register-ArgumentCompleter signature but not needed when reading from module scope')]
-param()
-
 $script:AzureRegions = @(
     'australiaeast', 'australiasoutheast', 'brazilsouth', 'brazilsoutheast',
     'canadacentral', 'canadaeast', 'centralindia', 'centralus',
@@ -61,6 +58,9 @@ Register-ArgumentCompleter -ParameterName Region -ScriptBlock {
 Register-ArgumentCompleter -ParameterName ResourceGroup -ScriptBlock {
     param($commandName, $wordToComplete)
 
+    # $commandName is required by the completer signature but not used for ResourceGroup
+    $null = $commandName
+
     # Get-AzResourceGroup may not be available; guard against it
     if (-not (Get-Command Get-AzResourceGroup -ErrorAction SilentlyContinue)) {
         return
@@ -95,6 +95,9 @@ Register-ArgumentCompleter -ParameterName ResourceGroup -ScriptBlock {
 
 Register-ArgumentCompleter -ParameterName Project -ScriptBlock {
     param($commandName, $wordToComplete)
+
+    # $commandName is required by the completer signature but not used for Project
+    $null = $commandName
 
     # Read context directly from module scope
     $ctx = & (Get-Module PSCumulus) { $script:PSCumulusContext }

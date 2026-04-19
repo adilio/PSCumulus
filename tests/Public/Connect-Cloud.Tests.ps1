@@ -19,18 +19,18 @@ Describe 'Connect-Cloud' {
             { Connect-Cloud -Provider Oracle } | Should -Throw
         }
 
-        It 'requires -Region in the AWS parameter set' {
-            Should-HaveMandatoryParameter `
-                -CommandName 'Connect-Cloud' `
-                -ParameterSetName 'AWS' `
-                -ParameterName 'Region'
+        It 'accepts optional -Region in the AWS parameter set' {
+            InModuleScope PSCumulus {
+                Mock Connect-AWSBackend { [pscustomobject]@{ PSTypeName = 'PSCumulus.ConnectionResult'; Provider = 'AWS'; Connected = $true } }
+                { Connect-Cloud -Provider AWS -Region 'us-east-1' } | Should -Not -Throw
+            }
         }
 
-        It 'requires -Project in the GCP parameter set' {
-            Should-HaveMandatoryParameter `
-                -CommandName 'Connect-Cloud' `
-                -ParameterSetName 'GCP' `
-                -ParameterName 'Project'
+        It 'accepts optional -Project in the GCP parameter set' {
+            InModuleScope PSCumulus {
+                Mock Connect-GCPBackend { [pscustomobject]@{ PSTypeName = 'PSCumulus.ConnectionResult'; Provider = 'GCP'; Connected = $true } }
+                { Connect-Cloud -Provider GCP -Project 'my-project' } | Should -Not -Throw
+            }
         }
     }
 
