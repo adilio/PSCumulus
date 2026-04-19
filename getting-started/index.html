@@ -1375,6 +1375,7 @@
 <h2 id="check-your-session">Check Your Session<a class="headerlink" href="#check-your-session" title="Permanent link">&para;</a></h2>
 <p>After connecting to one or more providers, use <code>Get-CloudContext</code> to see all established sessions:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Get-CloudContext</span>
+<span class="nb">Test-CloudConnection</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>Provider ConnectionState Account            Scope        Region
 -------- -------------- -------            -----        ------
@@ -1399,6 +1400,10 @@ others look disconnected. Providers not yet connected are omitted from the outpu
 <p>Use <code>Export-CloudInventory</code> to capture a point-in-time inventory file for audit, demo, or before/after comparison work:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Export-CloudInventory</span> <span class="n">-Path</span> <span class="s2">&quot;./inventory.json&quot;</span>
 <span class="nb">Export-CloudInventory</span> <span class="n">-Path</span> <span class="s2">&quot;./inventory.csv&quot;</span> <span class="n">-Format</span> <span class="n">Csv</span> <span class="n">-Provider</span> <span class="n">Azure</span>
+</code></pre></div>
+<p>Use <code>Get-CloudRegion</code> when you want provider-specific region names without leaving the PSCumulus command surface:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-CloudRegion</span> <span class="n">-Provider</span> <span class="n">AWS</span>
+<span class="nb">Get-CloudRegion</span> <span class="n">-Provider</span> <span class="n">Azure</span> <span class="n">-Name</span> <span class="s2">&quot;*canada*&quot;</span>
 </code></pre></div>
 <h2 id="interactive-aliases">Interactive Aliases<a class="headerlink" href="#interactive-aliases" title="Permanent link">&para;</a></h2>
 <p>These aliases are exported for terminal convenience:</p>

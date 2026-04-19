@@ -1326,7 +1326,11 @@
 <ul>
 <li>connect to a provider</li>
 <li>query common infrastructure categories</li>
+<li>search for resources by name across connected clouds</li>
+<li>export a point-in-time inventory</li>
 <li>start and stop compute instances</li>
+<li>set tags or labels</li>
+<li>test session connectivity</li>
 <li>return a stable output shape for inventory-style commands</li>
 </ul>
 <h2 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h2>
@@ -1407,7 +1411,7 @@
 <li><code>CreatedAt</code></li>
 <li><code>Metadata</code></li>
 </ul>
-<p>For instance inventory, the shared contract is now backed by a real base class with vendor subclasses. Common provider identity fields such as Azure <code>ResourceGroup</code>, AWS <code>InstanceId</code>, and GCP <code>Project</code> are first-class properties on those vendor-specific instance records rather than living only in <code>Metadata</code>.</p>
+<p>The shared contract is backed by a real base class with vendor and resource-kind subclasses. Common provider identity fields such as Azure <code>ResourceGroup</code>, AWS <code>InstanceId</code>, AWS <code>VolumeId</code>, and GCP <code>Project</code> are first-class properties on those vendor-specific records rather than living only in <code>Metadata</code>.</p>
 <p><code>Connect-Cloud</code> returns <code>PSCumulus.ConnectionResult</code>.</p>
 <p><code>Get-CloudContext</code> returns <code>PSCumulus.CloudContext</code> objects with these properties:</p>
 <ul>
