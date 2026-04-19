@@ -168,7 +168,7 @@ PSCumulus is being built in additive stages so each one is shippable on its own.
 
 This direction became much clearer after the Summit talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the insight that unlocked the roadmap: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the roadmap, but it now follows the corrected record model instead of leading it. The full rationale and stage-by-stage narrative live in [Evolution](evolution.md).
 
-**Current status:** Stages 1, 2, and 3 are complete (v0.4.0).
+**Current status:** Stages 1, 2, and 3 are complete (v0.5.0).
 
 Broad outline:
 

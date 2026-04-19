@@ -8,6 +8,8 @@ function Test-CloudConnection {
             Makes a lightweight read-only API call to verify authentication.
             Returns connection test results without throwing on auth failure.
 
+            When run without parameters, defaults to testing all providers (equivalent to -All).
+
         .EXAMPLE
             Test-CloudConnection -Provider Azure
 
@@ -17,6 +19,11 @@ function Test-CloudConnection {
             Test-CloudConnection -All
 
             Tests all stored provider credentials.
+
+        .EXAMPLE
+            Test-CloudConnection
+
+            Tests all stored provider credentials (equivalent to -All).
 
         .EXAMPLE
             Test-CloudConnection -All | Where-Object { -not $_.Connected }
@@ -40,8 +47,11 @@ function Test-CloudConnection {
     process {
         $providersToTest = if ($PSCmdlet.ParameterSetName -eq 'All') {
             @('Azure', 'AWS', 'GCP')
-        } else {
+        } elseif ($Provider) {
             @($Provider)
+        } else {
+            # Default to -All when neither -Provider nor -All is supplied
+            @('Azure', 'AWS', 'GCP')
         }
 
         foreach ($providerName in $providersToTest) {

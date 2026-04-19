@@ -27,7 +27,7 @@ Once that clicked, the stages became much easier to define:
 
 ## Current Status
 
-PSCumulus has completed **Stage 3: Cloud Path Model** (v0.4.0).
+PSCumulus has completed **Stage 3: Cloud Path Model** (v0.5.0).
 
 **Stage 1 is complete:**
 - Internal typed vocabulary is established
@@ -357,7 +357,7 @@ more reliable; the core module's PS 5.1 posture must stay intact.
 
 Let lifecycle actions flow through path context and, eventually, through Provider navigation.
 
-### What Has Landed (Stage 3 / v0.4.0)
+### What Has Landed (Stage 3 / v0.5.0)
 
 Path-based start and stop are already available via the `Path` parameter set on
 `Start-CloudInstance` and `Stop-CloudInstance`:

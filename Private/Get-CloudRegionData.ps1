@@ -37,37 +37,22 @@ $script:GCPRegions = @(
     'us-east5', 'us-south1', 'us-west1', 'us-west2', 'us-west3', 'us-west4'
 )
 
-Register-ArgumentCompleter -ParameterName Region -ScriptBlock {
-    param($commandName, $wordToComplete)
+function Get-CloudRegionData {
+    <#
+        .INTERNAL
+        Returns region data for a specific provider.
+    #>
+    [CmdletBinding()]
+    [OutputType([string[]])]
+    param(
+        [Parameter(Mandatory)]
+        [ValidateSet('Azure', 'AWS', 'GCP')]
+        [string]$Provider
+    )
 
-    $regions = switch ($commandName) {
-        { $_ -match 'Azure|Get-Az' } { $script:AzureRegions }
-        { $_ -match 'AWS|Get-EC2|Get-S3' } { $script:AWSRegions }
-        { $_ -match 'GCP|gcloud' } { $script:GCPRegions }
-        default { @($script:AzureRegions; $script:AWSRegions; $script:GCPRegions) | Sort-Object -Unique }
-    }
-
-    $regions | Where-Object { $_ -like "$wordToComplete*" } |
-        ForEach-Object { [CompletionResult]::new($_, $_, 'ParameterValue', $_) }
-}
-
-Register-ArgumentCompleter -ParameterName ResourceGroup -ScriptBlock {
-    param($wordToComplete)
-
-    $context = Get-CloudContext -Provider Azure -ErrorAction SilentlyContinue
-    if ($context -and $context.ResourceGroups) {
-        $context.ResourceGroups | Where-Object { $_ -like "$wordToComplete*" } |
-            ForEach-Object { [CompletionResult]::new($_, $_, 'ParameterValue', $_) }
-    }
-}
-
-Register-ArgumentCompleter -ParameterName Project -ScriptBlock {
-    param($wordToComplete)
-
-    $context = Get-CloudContext -Provider GCP -ErrorAction SilentlyContinue
-    if ($context -and $context.Project) {
-        if ($context.Project -like "$wordToComplete*") {
-            [CompletionResult]::new($context.Project, $context.Project, 'ParameterValue', $context.Project)
-        }
+    switch ($Provider) {
+        'Azure' { $script:AzureRegions }
+        'AWS'   { $script:AWSRegions }
+        'GCP'   { $script:GCPRegions }
     }
 }

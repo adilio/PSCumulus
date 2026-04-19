@@ -22,9 +22,11 @@ foreach ($path in @($classesPath, $privatePath, $publicPath)) {
         ForEach-Object { . $_.FullName }
 }
 
-. (Join-Path -Path $privatePath -ChildPath 'Register-PSCumpleters.ps1')
+. (Join-Path -Path $privatePath -ChildPath 'Register-PSCumulusCompleters.ps1')
 
 Set-Alias -Name conc  -Value Connect-Cloud -Scope Script
+Set-Alias -Name fcr   -Value Find-CloudResource -Scope Script
+Set-Alias -Name gcsn  -Value Get-CloudSnapshot -Scope Script
 Set-Alias -Name gcont -Value Get-CloudContext -Scope Script
 Set-Alias -Name gcin  -Value Get-CloudInstance -Scope Script
 Set-Alias -Name sci   -Value Start-CloudInstance -Scope Script

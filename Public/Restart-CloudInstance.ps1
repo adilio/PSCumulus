@@ -28,6 +28,11 @@ function Restart-CloudInstance {
             Restarts the Azure VM using piped PSCumulus instance output.
 
         .EXAMPLE
+            Restart-CloudInstance -Provider Azure -Name 'web-server-01' -ResourceGroup 'prod-rg' -Wait -PassThru
+
+            Restarts an Azure VM, waits until it reaches Running status, and emits the fresh record.
+
+        .EXAMPLE
             Restart-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
 
             Restarts an Azure VM using a cloud path.
@@ -86,7 +91,37 @@ function Restart-CloudInstance {
         [Parameter(Mandatory, ParameterSetName = 'GCP', ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'Piped', ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [string]$Zone
+        [string]$Zone,
+
+        # Wait for the instance to reach Running status after restart.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [switch]$Wait,
+
+        # Maximum seconds to wait for the instance to reach Running status.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [ValidateRange(1, 3600)]
+        [int]$TimeoutSeconds = 300,
+
+        # Seconds between status polls during wait.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [ValidateRange(1, 60)]
+        [int]$PollingIntervalSeconds = 5,
+
+        # Emit the instance record after operation completes.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'Piped')]
+        [switch]$PassThru
     )
 
     process {
@@ -194,6 +229,56 @@ function Restart-CloudInstance {
 
         if ($PSCmdlet.ShouldProcess($target, 'Restart-CloudInstance')) {
             Invoke-CloudProvider -Provider $resolvedProvider -CommandMap $commandMap -ArgumentMap $argumentMap
+
+            if ($Wait -and -not $WhatIf) {
+                $startTime = Get-Date
+                $targetStatus = 'Running'
+                $lastRecord = $null
+
+                while ($true) {
+                    $elapsed = ((Get-Date) - $startTime).TotalSeconds
+
+                    if ($elapsed -ge $TimeoutSeconds) {
+                        throw [System.TimeoutException]::new(
+                            "Instance did not reach '$targetStatus' state within $TimeoutSeconds seconds."
+                        )
+                    }
+
+                    $currentRecord = $null
+                    $currentStatus = 'Unknown'
+
+                    switch ($resolvedProvider) {
+                        'Azure' {
+                            $currentRecord = Get-AzureInstanceData -ResourceGroup $argumentMap.ResourceGroup -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                        }
+                        'AWS' {
+                            $currentRecord = Get-AWSInstanceData -Region $argumentMap.Region -Name $argumentMap.InstanceId -ErrorAction SilentlyContinue | Select-Object -First 1
+                        }
+                        'GCP' {
+                            $currentRecord = Get-GCPInstanceData -Project $argumentMap.Project -Name $argumentMap.Name -ErrorAction SilentlyContinue | Select-Object -First 1
+                        }
+                    }
+
+                    if ($currentRecord) {
+                        $currentStatus = $currentRecord.Status
+                        $lastRecord = $currentRecord
+                    }
+
+                    Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Status "Current status: $currentStatus - ${elapsed}s elapsed" -PercentComplete ([int] (($elapsed / $TimeoutSeconds) * 100))
+
+                    if ($currentStatus -eq $targetStatus) {
+                        Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Completed
+                        break
+                    }
+
+                    Start-Sleep -Seconds $PollingIntervalSeconds
+                }
+            }
+
+            if ($PassThru) {
+                if ($lastRecord) { Write-Output $lastRecord }
+                elseif ($InputObject) { Write-Output $InputObject }
+            }
         }
     }
 }

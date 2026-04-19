@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.5.0'
+    ModuleVersion     = '0.6.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -14,17 +14,20 @@
     FunctionsToExport = @(
         'Connect-Cloud',
         'Disconnect-Cloud',
+        'Export-CloudInventory',
+        'Find-CloudResource',
         'Get-CloudContext',
-        'Get-CloudInstance',
-        'Get-CloudStorage',
-        'Get-CloudTag',
-        'Get-CloudNetwork',
         'Get-CloudDisk',
         'Get-CloudFunction',
-        'Start-CloudInstance',
-        'Stop-CloudInstance',
+        'Get-CloudInstance',
+        'Get-CloudNetwork',
+        'Get-CloudRegion',
+        'Get-CloudStorage',
+        'Get-CloudTag',
         'Restart-CloudInstance',
         'Set-CloudTag',
+        'Start-CloudInstance',
+        'Stop-CloudInstance',
         'Test-CloudConnection',
         'Resolve-CloudPath'
     )
@@ -33,12 +36,14 @@
     VariablesToExport = @()
     AliasesToExport   = @(
         'conc',
+        'fcr',
+        'gcsn',
         'gcont',
         'gcin',
+        'rci',
         'sci',
         'sct',
-        'tci',
-        'rci'
+        'tci'
     )
 
     PrivateData = @{
@@ -47,6 +52,29 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.6.0
+- Fixed critical bug in Get-CloudContext AWS expiry calculation (was reading $profile instead of $awsProfile)
+- Fixed Get-CloudContext GCP token expiry branch (now uses gcloud auth list, removed broken JWT parsing)
+- Removed broken Path parameter set from Set-CloudTag (Get-CloudResource will handle cross-cloud search in Stage 4)
+- Fixed Set-CloudTag dispatch (removed Invoke-CloudProvider -ScriptBlock, now calls backends directly)
+- Added AzureById parameter set to Set-CloudTag (can now tag any Azure resource by -AzureResourceId)
+- Fixed Get-CloudTag -All for Azure (now uses subscription-scoped resource ID)
+- Renamed Register-PSCumpleters.ps1 to Register-PSCumulusCompleters.ps1 (typo fix)
+- Fixed argument completers (removed -Provider call, now read from script-scope context directly)
+- Test-CloudConnection now defaults to -All when run without parameters
+- Added -Name and -Detailed parameters to Get-CloudStorage, Get-CloudNetwork, Get-CloudDisk, and Get-CloudFunction
+- Fixed Start/Stop/Restart-CloudInstance -Wait/-PassThru to emit fresh record after wait completes
+- Added -Wait/-TimeoutSeconds/-PollingIntervalSeconds/-PassThru to Restart-CloudInstance
+- Added optional -Provider parameter to Get-CloudContext for filtering by provider
+- Made Connect-Cloud -Region and -Project optional (backends handle defaults)
+- Fixed Disconnect-Cloud GCP -AccountEmail parameter matching
+- Loosened Set-CloudTag pipeline type validation (validates Provider/Name properties instead of PSTypeName)
+- Added Find-CloudResource command with alias fcr for cross-kind, cross-cloud search
+- Added Export-CloudInventory command for snapshotting all connected inventory to JSON/CSV
+- Added Get-CloudRegion command to list supported regions for each provider
+- Updated README and docs with correct command counts (18) and new command documentation
+- Updated docs/concepts/strategy.md and docs/concepts/evolution.md to v0.5.0
+
 0.5.0
 - Updated command reference documentation for Start-CloudInstance and Stop-CloudInstance to include -Wait, -PassThru, -TimeoutSeconds, and -PollingIntervalSeconds parameters
 - Added command reference documentation for Restart-CloudInstance, Set-CloudTag, and Test-CloudConnection

@@ -153,4 +153,23 @@ Describe 'Get-CloudContext' {
             }
         }
     }
+
+    Context 'when -Provider filter is used' {
+        It 'returns only the specified provider' {
+            InModuleScope PSCumulus {
+                $script:PSCumulusContext.ActiveProvider   = 'AWS'
+                $script:PSCumulusContext.Providers.Azure = @{
+                    Account = 'adil@contoso.com'; Scope = 'my-sub'; Region = $null; ConnectedAt = (Get-Date)
+                }
+                $script:PSCumulusContext.Providers.AWS   = @{
+                    Account = 'default'; Scope = 'default'; Region = 'us-east-1'; ConnectedAt = (Get-Date)
+                }
+                $script:PSCumulusContext.Providers.GCP   = $null
+
+                $result = @(Get-CloudContext -Provider Azure)
+                $result.Count | Should -Be 1
+                $result[0].Provider | Should -Be 'Azure'
+            }
+        }
+    }
 }

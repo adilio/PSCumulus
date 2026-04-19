@@ -15,15 +15,23 @@ It keeps a small set of high-value cloud tasks consistent in the shell without p
 ## Public Commands
 
 - `Connect-Cloud`
+- `Disconnect-Cloud`
+- `Export-CloudInventory`
+- `Find-CloudResource`
 - `Get-CloudContext`
-- `Get-CloudInstance`
-- `Get-CloudStorage`
-- `Get-CloudTag`
-- `Get-CloudNetwork`
 - `Get-CloudDisk`
 - `Get-CloudFunction`
+- `Get-CloudInstance`
+- `Get-CloudNetwork`
+- `Get-CloudRegion`
+- `Get-CloudStorage`
+- `Get-CloudTag`
+- `Resolve-CloudPath`
+- `Restart-CloudInstance`
+- `Set-CloudTag`
 - `Start-CloudInstance`
 - `Stop-CloudInstance`
+- `Test-CloudConnection`
 
 ## Documentation Layout
 

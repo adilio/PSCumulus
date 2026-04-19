@@ -108,30 +108,11 @@ Describe 'Set-CloudTag' {
         }
     }
 
-    Context 'Path parameter set' {
-        BeforeEach {
-            InModuleScope PSCumulus {
-                $script:PSCumulusContext.Providers['Azure'] = @{
-                    Account  = 'test@example.com'
-                    Connected = $true
-                }
-                $script:PSCumulusContext.ActiveProvider = 'Azure'
-                Mock -CommandName Assert-CommandAvailable
-                Mock -CommandName Get-CloudResource -MockWith {
-                    [PSCustomObject]@{
-                        PSTypeName    = 'PSCumulus.AzureCloudRecord'
-                        Name          = 'vm01'
-                        Provider      = 'Azure'
-                        ResourceGroup = 'rg-test'
-                        Id            = '/subscriptions/123/resourceGroups/rg-test/providers/Microsoft.Compute/virtualMachines/vm01'
-                    }
-                }
-                Mock Set-AzureTag -MockWith { @() }
-            }
-        }
-
-        It 'Should accept Path parameter' -Pending {
-            { Set-CloudTag -Path 'Azure:\rg-test\Instances\vm01' -Tags @{Environment = 'Dev' } -WhatIf } | Should -Not -Throw
+    Context 'Path parameter removed' {
+        It 'Should error when -Path parameter is used' {
+            # -Path parameter was removed in v0.6.0; this verifies it's no longer accepted
+            { Set-CloudTag -Path 'Azure:\rg-test\Instances\vm01' -Tags @{Environment = 'Dev' } -ErrorAction Stop } |
+                Should -Throw -ExpectedMessage '*Path*'
         }
     }
 

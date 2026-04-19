@@ -264,6 +264,7 @@ function Start-CloudInstance {
             if ($Wait -and -not $WhatIf) {
                 $startTime = Get-Date
                 $targetStatus = 'Running'
+                $lastRecord = $null
 
                 while ($true) {
                     $elapsed = ((Get-Date) - $startTime).TotalSeconds
@@ -291,6 +292,7 @@ function Start-CloudInstance {
 
                     if ($currentRecord) {
                         $currentStatus = $currentRecord.Status
+                        $lastRecord = $currentRecord
                     }
 
                     Write-Progress -Activity "Waiting for instance to reach $targetStatus" -Status "Current status: $currentStatus - ${elapsed}s elapsed" -PercentComplete ([int] (($elapsed / $TimeoutSeconds) * 100))
@@ -305,7 +307,8 @@ function Start-CloudInstance {
             }
 
             if ($PassThru) {
-                Write-Output $InputObject
+                if ($lastRecord) { Write-Output $lastRecord }
+                elseif ($InputObject) { Write-Output $InputObject }
             }
         }
     }

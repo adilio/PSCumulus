@@ -10,19 +10,32 @@ function Get-CloudContext {
             IsActive is retained as a compatibility flag and is only populated for the current
             provider.
 
+            Use -Provider to filter the output to a specific provider.
+
         .EXAMPLE
             Get-CloudContext
 
             Returns context entries for all providers connected in this session.
+
+        .EXAMPLE
+            Get-CloudContext -Provider Azure
+
+            Returns context entry only for Azure.
     #>
     [CmdletBinding()]
     [OutputType([pscustomobject])]
-    param()
+    param(
+        # Filter to a specific provider.
+        [Parameter()]
+        [ValidateSet('Azure', 'AWS', 'GCP')]
+        [string]$Provider
+    )
 
     process {
         $activeProvider = Get-CurrentCloudProvider
+        $providers = if ($Provider) { @($Provider) } else { @('Azure', 'AWS', 'GCP') }
 
-        foreach ($provider in 'Azure', 'AWS', 'GCP') {
+        foreach ($provider in $providers) {
             $entry = $script:PSCumulusContext.Providers[$provider]
 
             if ($null -eq $entry) { continue }
@@ -49,7 +62,7 @@ function Get-CloudContext {
                         $awsProfile = Get-AWSCredential -ListProfileDetail -ErrorAction SilentlyContinue |
                             Where-Object { $_.ProfileName -eq $entry.Account }
                         if ($awsProfile -and $awsProfile.Expiration) {
-                            $expiresAt = $profile.Expiration.ToLocalTime()
+                            $expiresAt = $awsProfile.Expiration.ToLocalTime()
                             $timeToExpiry = $expiresAt - [DateTime]::Now
 
                             if ($timeToExpiry -le $warningThreshold -and $timeToExpiry -gt [TimeSpan]::Zero) {
@@ -60,23 +73,13 @@ function Get-CloudContext {
                         }
                     }
                     'GCP' {
-                        $tokenInfo = Invoke-GCloudJson -Arguments @('auth', 'print-access-token') -ErrorAction SilentlyContinue
-                        if ($tokenInfo) {
-                            $tokenBytes = [System.Convert]::FromBase64String($tokenInfo)
-                            $tokenJson = [System.Text.Encoding]::UTF8.GetString($tokenBytes)
-                            $tokenData = $tokenJson | ConvertFrom-Json -ErrorAction SilentlyContinue
-
-                            if ($tokenData -and $tokenData.exp) {
-                                $expiresAt = [DateTimeOffset]::FromUnixTimeSeconds($tokenData.exp).LocalDateTime
-                                $timeToExpiry = $expiresAt - [DateTime]::Now
-
-                                if ($timeToExpiry -le $warningThreshold -and $timeToExpiry -gt [TimeSpan]::Zero) {
-                                    Write-Warning "GCP credentials for $($entry.Account) will expire in $($timeToExpiry.Minutes) minutes at $($expiresAt:HH:mm)."
-                                } elseif ($timeToExpiry -le [TimeSpan]::Zero) {
-                                    Write-Warning "GCP credentials for $($entry.Account) have expired. Please run Connect-Cloud -Provider GCP."
-                                }
-                            }
+                        $gcloudAuth = gcloud auth list --format=json 2>$null | ConvertFrom-Json -ErrorAction SilentlyContinue
+                        $activeAccount = $gcloudAuth | Where-Object { $_.status -eq 'ACTIVE' } | Select-Object -First 1
+                        if (-not $activeAccount) {
+                            Write-Warning "GCP credentials for $($entry.Account) are not active. Please run Connect-Cloud -Provider GCP."
                         }
+                        # GCP access tokens are opaque; there is no reliable expiry without an extra API call.
+                        # We leave $expiresAt null and surface status only via the warning above.
                     }
                 }
             } catch {

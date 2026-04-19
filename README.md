@@ -21,24 +21,28 @@ The module is evidence for an argument. The argument is that a deliberately narr
 
 ## The public surface
 
-Fourteen commands. Verb-noun, normalized output, no provider marketing in the noun.
+Eighteen commands. Verb-noun, normalized output, no provider marketing in the noun.
 
 | Command | Intent |
 |---|---|
 | `Connect-Cloud` | Detect or trigger a provider-native login and store a normalized session context |
 | `Disconnect-Cloud` | Clear stored session context for a selected provider |
+| `Export-CloudInventory` | Export all connected inventory to JSON or CSV for audit/compliance |
+| `Find-CloudResource` | Cross-kind, cross-cloud search by name (supports wildcards) |
 | `Get-CloudContext` | List established provider sessions for the current shell (includes credential expiry warnings) |
-| `Get-CloudInstance` | Compute instances (supports `-All`, `-Status`, `-Tag` filters) |
-| `Get-CloudStorage` | Storage accounts / buckets (supports `-All`, `-Status`, `-Tag` filters) |
-| `Get-CloudDisk` | Disks / volumes (supports `-All`, `-Status`, `-Tag` filters) |
-| `Get-CloudNetwork` | Virtual networks / VPCs (supports `-All`, `-Status`, `-Tag` filters) |
-| `Get-CloudFunction` | Serverless functions (supports `-All`, `-Status`, `-Tag` filters) |
-| `Get-CloudTag` | Tags / labels (supports `-All`) |
-| `Set-CloudTag` | Set tags/labels on cloud resources (supports `-Merge`) |
+| `Get-CloudDisk` | Disks / volumes (supports `-All`, `-Status`, `-Tag`, `-Name`, `-Detailed` filters) |
+| `Get-CloudFunction` | Serverless functions (supports `-All`, `-Status`, `-Tag`, `-Name`, `-Detailed` filters) |
+| `Get-CloudInstance` | Compute instances (supports `-All`, `-Status`, `-Tag`, `-Name`, `-Detailed` filters) |
+| `Get-CloudNetwork` | Virtual networks / VPCs (supports `-All`, `-Status`, `-Tag`, `-Name`, `-Detailed` filters) |
+| `Get-CloudRegion` | List supported regions for Azure, AWS, or GCP |
+| `Get-CloudStorage` | Storage accounts / buckets (supports `-All`, `-Status`, `-Tag`, `-Name`, `-Detailed` filters) |
+| `Get-CloudTag` | Tags / labels (supports `-All`, subscription-scoped for Azure) |
+| `Resolve-CloudPath` | Parse a cloud path string into a structured CloudPath object |
+| `Restart-CloudInstance` | Restart a compute instance (supports `-Wait`, `-PassThru`, `-TimeoutSeconds`) |
+| `Set-CloudTag` | Set tags/labels on cloud resources (supports `-Merge`, Azure by Name/ResourceGroup or ResourceId) |
 | `Start-CloudInstance` | Start a compute instance (supports `-Wait`, `-PassThru`) |
 | `Stop-CloudInstance` | Stop a compute instance (supports `-Wait`, `-PassThru`) |
-| `Restart-CloudInstance` | Restart a compute instance |
-| `Test-CloudConnection` | Test connectivity to all connected providers |
+| `Test-CloudConnection` | Test connectivity to all connected providers (defaults to `-All`) |
 
 Read commands return `PSCumulus.CloudRecord`-compatible records with a stable shared shape. For instance inventory, that contract is now implemented with a real base class plus vendor subclasses.
 
@@ -53,10 +57,13 @@ Get-CloudContext
 Get-CloudInstance -All | Where-Object { $_.Tags['environment'] -eq 'prod' }
 
 # New features
-Test-CloudConnection                    # Verify all provider connections
+Test-CloudConnection                    # Verify all provider connections (defaults to all)
 Get-CloudInstance -All -Status Running  # Filter by status
-Get-CloudTag -All                       # Query tags across all providers
-Set-CloudTag -Path 'Azure:\rg\Instances\vm01' -Tags @{Owner = 'adil'} -Merge
+Get-CloudInstance -Name 'web01'        # Filter by name
+Get-CloudTag -All                       # Query tags across all providers (subscription-scoped for Azure)
+Set-CloudTag -ResourceId '/subscriptions/.../disks/disk01' -Tags @{Backup = 'weekly'}  # Tag any Azure resource by ResourceId
+Find-CloudResource -Name 'web-*' -Provider Azure, AWS    # Cross-cloud search
+Export-CloudInventory -Path 'inventory.json'              # Export all inventory to JSON
 Start-CloudInstance -Name 'web01' -ResourceGroup 'prod-rg' -Wait -PassThru
 ```
 
@@ -190,7 +197,6 @@ This module is intentionally not a full cloud framework. It does not cover:
 - **Cost.** Each cloud's billing model is structured differently enough that a shared surface would be more misleading than helpful.
 - **Provisioning.** Terraform exists and is the right tool. PSCumulus standardizes *interaction* with infrastructure; Terraform standardizes the infrastructure itself.
 - **Write commands for most inventory.** The read path landed first. `Start/Stop/Restart-CloudInstance` and `Set-CloudTag` are the lifecycle commands currently in the public surface.
-- **Cross-cloud search by name.** On the roadmap.
 
 The rule behind every decision above: *if the normalized object would be mostly `Metadata`, the abstraction is too weak to deserve a first-class public command.*
 

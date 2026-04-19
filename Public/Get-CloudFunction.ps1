@@ -35,6 +35,16 @@ function Get-CloudFunction {
             Get-CloudFunction -All -Status Active -Tag @{ environment = 'production' }
 
             Gets all active functions with the production environment tag across all connected clouds.
+
+        .EXAMPLE
+            Get-CloudFunction -Provider Azure -ResourceGroup 'prod-rg' -Name 'func-process-order'
+
+            Gets Azure Function Apps matching the specified name.
+
+        .EXAMPLE
+            Get-CloudFunction -Provider AWS -Region 'us-east-1' -Detailed
+
+            Gets AWS Lambda functions with detailed view enabled.
     #>
     [CmdletBinding(DefaultParameterSetName = 'Azure')]
     [OutputType([pscustomobject])]
@@ -64,6 +74,13 @@ function Get-CloudFunction {
         [Parameter(Mandatory, ParameterSetName = 'All')]
         [switch]$All,
 
+        # Filter results by name.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'All')]
+        [string]$Name,
+
         # Filter results by function status.
         [Parameter(ParameterSetName = 'Azure')]
         [Parameter(ParameterSetName = 'AWS')]
@@ -76,7 +93,14 @@ function Get-CloudFunction {
         [Parameter(ParameterSetName = 'AWS')]
         [Parameter(ParameterSetName = 'GCP')]
         [Parameter(ParameterSetName = 'All')]
-        [hashtable]$Tag
+        [hashtable]$Tag,
+
+        # Emit detailed view records.
+        [Parameter(ParameterSetName = 'Azure')]
+        [Parameter(ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'All')]
+        [switch]$Detailed
     )
 
     process {
@@ -84,6 +108,20 @@ function Get-CloudFunction {
             Azure = 'Get-AzureFunctionData'
             AWS   = 'Get-AWSFunctionData'
             GCP   = 'Get-GCPFunctionData'
+        }
+
+        $decorateRecord = {
+            param($Records)
+
+            foreach ($record in @($Records)) {
+                if ($Detailed -and $record) {
+                    if ($record.PSObject.TypeNames[0] -ne 'PSCumulus.CloudRecord.Detailed') {
+                        $record.PSObject.TypeNames.Insert(0, 'PSCumulus.CloudRecord.Detailed')
+                    }
+                }
+
+                $record
+            }
         }
 
         if ($PSCmdlet.ParameterSetName -eq 'All') {
@@ -154,7 +192,11 @@ function Get-CloudFunction {
                 }
             }
 
-            $results
+            if ($PSBoundParameters.ContainsKey('Name')) {
+                $results = $results | Where-Object { [string]::IsNullOrWhiteSpace($Name) -or $_.Name -eq $Name }
+            }
+
+            & $decorateRecord $results
 
             return
         }
@@ -193,6 +235,10 @@ function Get-CloudFunction {
             }
         }
 
-        $results
+        if ($PSBoundParameters.ContainsKey('Name')) {
+            $results = $results | Where-Object { [string]::IsNullOrWhiteSpace($Name) -or $_.Name -eq $Name }
+        }
+
+        & $decorateRecord $results
     }
 }

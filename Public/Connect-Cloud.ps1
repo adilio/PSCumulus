@@ -70,12 +70,12 @@ function Connect-Cloud {
         [string]$Subscription,
 
         # The AWS region to target for the connection context.
-        [Parameter(Mandatory, ParameterSetName = 'AWS')]
+        [Parameter(ParameterSetName = 'AWS')]
         [ValidateNotNullOrEmpty()]
         [string]$Region,
 
         # The GCP project to target for the connection context.
-        [Parameter(Mandatory, ParameterSetName = 'GCP')]
+        [Parameter(ParameterSetName = 'GCP')]
         [ValidateNotNullOrEmpty()]
         [string]$Project
     )

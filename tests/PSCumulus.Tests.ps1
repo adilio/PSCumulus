@@ -9,24 +9,27 @@ Describe 'PSCumulus module' {
             $commands = Get-Command -Module PSCumulus | Select-Object -ExpandProperty Name
             $commands | Should -Contain 'Connect-Cloud'
             $commands | Should -Contain 'Disconnect-Cloud'
+            $commands | Should -Contain 'Export-CloudInventory'
+            $commands | Should -Contain 'Find-CloudResource'
             $commands | Should -Contain 'Get-CloudContext'
-            $commands | Should -Contain 'Get-CloudInstance'
-            $commands | Should -Contain 'Get-CloudStorage'
-            $commands | Should -Contain 'Get-CloudTag'
-            $commands | Should -Contain 'Get-CloudNetwork'
             $commands | Should -Contain 'Get-CloudDisk'
             $commands | Should -Contain 'Get-CloudFunction'
-            $commands | Should -Contain 'Start-CloudInstance'
-            $commands | Should -Contain 'Stop-CloudInstance'
+            $commands | Should -Contain 'Get-CloudInstance'
+            $commands | Should -Contain 'Get-CloudNetwork'
+            $commands | Should -Contain 'Get-CloudRegion'
+            $commands | Should -Contain 'Get-CloudStorage'
+            $commands | Should -Contain 'Get-CloudTag'
             $commands | Should -Contain 'Resolve-CloudPath'
             $commands | Should -Contain 'Restart-CloudInstance'
             $commands | Should -Contain 'Set-CloudTag'
+            $commands | Should -Contain 'Start-CloudInstance'
+            $commands | Should -Contain 'Stop-CloudInstance'
             $commands | Should -Contain 'Test-CloudConnection'
         }
 
-        It 'exports exactly fifteen public functions' {
+        It 'exports exactly eighteen public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 15
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 18
         }
 
         It 'does not export variables' {
@@ -36,7 +39,7 @@ Describe 'PSCumulus module' {
 
         It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $expected = @('conc', 'gcont', 'gcin', 'sci', 'tci', 'rci', 'sct') | Sort-Object
+            $expected = @('conc', 'fcr', 'gcsn', 'gcont', 'gcin', 'rci', 'sci', 'sct', 'tci') | Sort-Object
             $actual = $manifest.AliasesToExport | Sort-Object
             $actual | Should -Be $expected
         }

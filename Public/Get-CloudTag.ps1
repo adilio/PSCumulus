@@ -10,6 +10,10 @@ function Get-CloudTag {
             Use -All to query every provider that has an established session context,
             returning tags/labels from all connected clouds in one pipeline.
 
+            With -All, returns the subscription-scoped tags for Azure, the region-level
+            tagged resources for AWS, and the project-scoped labels for GCP. For more
+            specific tag queries, omit -All and pass -ResourceId/-Project/-Resource explicitly.
+
         .EXAMPLE
             Get-CloudTag -Provider Azure -ResourceId '/subscriptions/.../virtualMachines/vm01'
 
@@ -29,9 +33,8 @@ function Get-CloudTag {
             Get-CloudTag -All
 
             Gets tags/labels from all providers with an established session context.
-            Note: This returns a representative sample of tags per provider based on
-            stored context (region for AWS, resource group for Azure, project for GCP).
-            Use after Connect-Cloud -Provider AWS, Azure, GCP.
+            Returns subscription-scoped tags for Azure, region-level tagged resources for AWS,
+            and project-scoped labels for GCP.
     #>
     [CmdletBinding()]
     [OutputType([pscustomobject])]
@@ -81,11 +84,12 @@ function Get-CloudTag {
                 $argumentMap = @{}
 
                 if ($providerName -eq 'Azure') {
-                    if ($null -eq $ctx.Scope) {
-                        $skippedProviders.Add("$providerName (no stored resource group)")
+                    $subId = $ctx.SubscriptionId
+                    if ([string]::IsNullOrWhiteSpace($subId)) {
+                        $skippedProviders.Add("$providerName (no stored subscription id)")
                         continue
                     }
-                    $argumentMap.ResourceId = $ctx.Scope
+                    $argumentMap.ResourceId = "/subscriptions/$subId"
                 }
 
                 if ($providerName -eq 'AWS') {

@@ -127,7 +127,7 @@ function Disconnect-Cloud {
                     $contextMatches = $false
                 }
 
-                if ($PSBoundParameters.ContainsKey('Account') -and $context.Account -ne $Account) {
+                if ($PSBoundParameters.ContainsKey('AccountEmail') -and $context.Account -ne $AccountEmail) {
                     $contextMatches = $false
                 }
             }
