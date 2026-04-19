@@ -27,6 +27,11 @@ function Set-AliasSection {
     $updated = $content -replace [regex]::Escape("This cmdlet has the following aliases,$([Environment]::NewLine)  {{Insert list of aliases}}"), "This cmdlet has the following aliases,$([Environment]::NewLine)$aliasText"
     $updated = $updated -replace 'Locale: .+', 'Locale: en-US'
     $updated = $updated -replace '(?m)^ms\.date: .+\r?\n', ''
+    $updated = $updated -replace '\{\{ Fill in the Description \}\}', 'See the command description and examples above.'
+    $updated = $updated -replace '\{\{ Fill in the related links here \}\}', 'None.'
+    if ((Split-Path -Leaf $Path) -eq 'Get-CloudInstance.md') {
+        $updated = $updated -replace 'See the command description and examples above\.', 'PSCumulus.CloudRecord or a vendor subclass (PSCumulus.AzureCloudRecord, PSCumulus.AWSCloudRecord, PSCumulus.GCPCloudRecord).'
+    }
     Set-Content -Path $Path -Value $updated -Encoding utf8NoBOM
 }
 
