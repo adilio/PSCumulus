@@ -1,3 +1,6 @@
+[Diagnostic.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'commandName', Justification='Required by Register-ArgumentCompleter signature but not needed when reading from module scope')]
+param()
+
 $script:AzureRegions = @(
     'australiaeast', 'australiasoutheast', 'brazilsouth', 'brazilsoutheast',
     'canadacentral', 'canadaeast', 'centralindia', 'centralus',
