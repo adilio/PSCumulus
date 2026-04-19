@@ -1,8 +1,8 @@
 # PSCumulus Improvement Plan
 
-> **STATUS UPDATE:** Tasks 1-28, 29-31, 34-35 completed. Documentation sync is complete. Tasks 32-33 verification remain. CI was passing before the latest local documentation/alias cleanup.
+> **STATUS UPDATE:** Tasks 1-36 completed. Documentation sync, local verification, push, and CI are complete.
 > **RECENT FIXES (2026-04-19):** Fixed all PSScriptAnalyzer warnings and CI test failures. See summary at end of file.
-> **LATEST LOCAL UPDATE (2026-04-19):** Regenerated command reference docs, removed residual PlatyPS placeholders, synced docs/nav/about-help command and alias lists, and removed stale `gcsn` alias for out-of-scope `Get-CloudSnapshot`.
+> **LATEST LOCAL UPDATE (2026-04-19):** Regenerated command reference docs, made placeholder cleanup stable in `scripts/Update-Docs.ps1`, synced docs/nav/about-help command and alias lists, removed stale `gcsn` alias for out-of-scope `Get-CloudSnapshot`, and confirmed latest Docs and Test and Publish workflows are green.
 
 
 > **SCOPE CHANGE:** Get-CloudSnapshot, Get-CloudImage, and Remove-CloudTag were removed from scope during implementation. Classes were added for Snapshot/Image records but the commands were not fully implemented and were removed from the manifest. Final command count is 18, not 21.
@@ -423,7 +423,7 @@ You are the execution agent. Work top-to-bottom. Every task is atomic. After eac
 **~~33. Run PSScriptAnalyzer locally~~** ✅ COMPLETED (2026-04-19: no findings; local ScriptAnalyzer required checking the four CI paths one at a time.)
 **~~34. Commit~~** ✅ COMPLETED (2026-04-19: Sync generated docs and aliases.)
 **~~35. Push to the current branch (`main` per `git status`)~~** ✅ COMPLETED (2026-04-19: pushed docs/alias cleanup to `origin/main`.)
-36. **Watch CI** — Use `gh run list --limit 5 --branch main` and `gh run watch <id>` to follow the newest run. If the workflow fails, open the run log with `gh run view <id> --log-failed`, fix the failure at the root cause (do not skip PSScriptAnalyzer, do not `--no-verify` any hook), commit, push, and re-watch. Repeat until every check on the latest commit is green. **IN PROGRESS after docs/alias cleanup push.**
+**~~36. Watch CI~~** ✅ COMPLETED (2026-04-19: latest `Docs` and `Test and Publish` workflows completed successfully.)
 
 ### Test-writing rules for new commands
 
