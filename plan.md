@@ -1,7 +1,8 @@
 # PSCumulus Improvement Plan
 
-> **STATUS UPDATE:** Tasks 1-22, 29-31, 34-35 completed. Tasks 23-28 (documentation) remain. CI is currently failing on PSScriptAnalyzer warnings (unused parameter warnings in Register-PSCumulusCompleters.ps1).
+> **STATUS UPDATE:** Tasks 1-22, 29-31, 34-35 completed. Tasks 23-28 (documentation) remain. CI is now passing.
 >
+
 > **SCOPE CHANGE:** Get-CloudSnapshot, Get-CloudImage, and Remove-CloudTag were removed from scope during implementation. Classes were added for Snapshot/Image records but the commands were not fully implemented and were removed from the manifest. Final command count is 18, not 21.
 
 Audience: an execution agent with no prior context. Every instruction below is written to be actioned without further interpretation. File paths are absolute. Where a `Why` appears, it is for your judgement on edge cases — the required change is in the `Action` line.
