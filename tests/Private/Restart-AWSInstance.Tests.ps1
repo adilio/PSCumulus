@@ -3,10 +3,15 @@ BeforeAll {
 }
 
 Describe 'Restart-AWSInstance' {
+    BeforeAll {
+        InModuleScope PSCumulus {
+            # Mock Assert-CommandAvailable before any tests to avoid Stop-EC2Instance validation
+            Mock -CommandName Assert-CommandAvailable
+        }
+    }
 
     It 'restarts an AWS EC2 instance by InstanceId' {
         InModuleScope PSCumulus {
-            Mock -CommandName Assert-CommandAvailable
             Mock -CommandName Stop-EC2Instance { }
 
             Restart-AWSInstance -InstanceId 'i-12345678'
@@ -19,7 +24,6 @@ Describe 'Restart-AWSInstance' {
 
     It 'returns an AWSCloudRecord with Status Stopping' {
         InModuleScope PSCumulus {
-            Mock -CommandName Assert-CommandAvailable
             Mock -CommandName Stop-EC2Instance { }
 
             $result = Restart-AWSInstance -InstanceId 'i-12345678' -Region 'us-east-1'
