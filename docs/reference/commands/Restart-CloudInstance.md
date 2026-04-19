@@ -19,8 +19,9 @@ Restarts a compute instance on a selected cloud provider.
 ### Azure (Default)
 
 ```
-Restart-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Restart-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>] [-Wait]
+ [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### Piped
@@ -28,7 +29,8 @@ Restart-CloudInstance -Name <string> -ResourceGroup <string> [-Provider <string>
 ```
 Restart-CloudInstance -InputObject <psobject> [-Provider <string>] [-Name <string>]
  [-ResourceGroup <string>] [-InstanceId <string>] [-Region <string>] [-Project <string>]
- [-Zone <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Zone <string>] [-Wait] [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Path
@@ -40,15 +42,17 @@ Restart-CloudInstance -Path <string> [-Provider <string>] [-WhatIf] [-Confirm] [
 ### GCP
 
 ```
-Restart-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Restart-CloudInstance -Name <string> -Project <string> -Zone <string> [-Provider <string>] [-Wait]
+ [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Restart-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Restart-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] [-Wait]
+ [-TimeoutSeconds <int>] [-PollingIntervalSeconds <int>] [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -88,6 +92,12 @@ Get-CloudInstance -ResourceGroup 'prod-rg' -Name 'web-server-01' | Restart-Cloud
 Restarts the Azure VM using piped PSCumulus instance output.
 
 ### EXAMPLE 5
+
+Restart-CloudInstance -Provider Azure -Name 'web-server-01' -ResourceGroup 'prod-rg' -Wait -PassThru
+
+Restarts an Azure VM, waits until it reaches Running status, and emits the fresh record.
+
+### EXAMPLE 6
 
 Restart-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
 
@@ -198,6 +208,45 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
+### -PassThru
+
+Emit the instance record after operation completes.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
 ### -Path
 
 A cloud path string (e.g., 'Azure:\prod-rg\Instances\web-server-01')
@@ -213,6 +262,45 @@ ParameterSets:
   IsRequired: true
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: true
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -PollingIntervalSeconds
+
+Seconds between status polls during wait.
+
+```yaml
+Type: System.Int32
+DefaultValue: 5
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -345,6 +433,84 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
+### -TimeoutSeconds
+
+Maximum seconds to wait for the instance to reach Running status.
+
+```yaml
+Type: System.Int32
+DefaultValue: 300
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Wait
+
+Wait for the instance to reach Running status after restart.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Piped
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
 ### -WhatIf
 
 Runs the command in a mode that only reports what would happen without performing the actions.
@@ -405,22 +571,23 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ### System.String
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## OUTPUTS
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-{{ Fill in the related links here }}
+None.
+
 
 

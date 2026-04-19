@@ -14,25 +14,36 @@ The module standardizes a small set of high-value commands for interactive work 
 ## Commands
 
 - `Connect-Cloud`
+- `Disconnect-Cloud`
+- `Export-CloudInventory`
+- `Find-CloudResource`
 - `Get-CloudContext`
-- `Get-CloudInstance`
-- `Get-CloudStorage`
-- `Get-CloudTag`
-- `Get-CloudNetwork`
 - `Get-CloudDisk`
 - `Get-CloudFunction`
+- `Get-CloudInstance`
+- `Get-CloudNetwork`
+- `Get-CloudRegion`
+- `Get-CloudStorage`
+- `Get-CloudTag`
+- `Resolve-CloudPath`
+- `Restart-CloudInstance`
+- `Set-CloudTag`
 - `Start-CloudInstance`
 - `Stop-CloudInstance`
+- `Test-CloudConnection`
 
 ## Aliases
 
 | Alias | Command |
 |---|---|
 | `conc` | `Connect-Cloud` |
+| `fcr` | `Find-CloudResource` |
 | `gcont` | `Get-CloudContext` |
 | `gcin` | `Get-CloudInstance` |
+| `rci` | `Restart-CloudInstance` |
 | `sci` | `Start-CloudInstance` |
-| `tci` | `Stop-CloudInstance` |
+| `sct` | `Set-CloudTag` |
+| `tci` | `Test-CloudConnection` |
 
 ## Output Types
 

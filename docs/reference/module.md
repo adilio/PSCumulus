@@ -25,6 +25,14 @@ Prepares a ready-to-use cloud session for the specified provider.
 
 Clears PSCumulus session context for a specific cloud provider.
 
+### [Export-CloudInventory](commands/Export-CloudInventory.md)
+
+Exports all connected cloud inventory to a file.
+
+### [Find-CloudResource](commands/Find-CloudResource.md)
+
+Searches for cloud resources by name across providers and resource kinds.
+
 ### [Get-CloudContext](commands/Get-CloudContext.md)
 
 Returns the current PSCumulus session context for all connected providers.
@@ -45,6 +53,10 @@ Gets compute instances from a selected cloud provider.
 
 Gets virtual networks from a selected cloud provider.
 
+### [Get-CloudRegion](commands/Get-CloudRegion.md)
+
+Lists supported regions for each cloud provider.
+
 ### [Get-CloudStorage](commands/Get-CloudStorage.md)
 
 Gets storage resources from a selected cloud provider.
@@ -63,7 +75,7 @@ Restarts a compute instance on a selected cloud provider.
 
 ### [Set-CloudTag](commands/Set-CloudTag.md)
 
-{{ Fill in the Synopsis }}
+Sets tags or labels on a cloud resource across Azure, AWS, or GCP.
 
 ### [Start-CloudInstance](commands/Start-CloudInstance.md)
 

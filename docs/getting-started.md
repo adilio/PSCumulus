@@ -74,6 +74,22 @@ Start-CloudInstance -Provider AWS -InstanceId "i-0abc123" -Region "us-east-1"
 Stop-CloudInstance -Provider Azure -Name "web-01" -ResourceGroup "prod-rg"
 ```
 
+## Cross-Cloud Helpers
+
+Use `Find-CloudResource` when you know a name, but not the provider or resource kind:
+
+```powershell
+Find-CloudResource -Name "web-*"
+Find-CloudResource -Name "prod-*" -Provider Azure, AWS -Kind Instance, Disk
+```
+
+Use `Export-CloudInventory` to capture a point-in-time inventory file for audit, demo, or before/after comparison work:
+
+```powershell
+Export-CloudInventory -Path "./inventory.json"
+Export-CloudInventory -Path "./inventory.csv" -Format Csv -Provider Azure
+```
+
 ## Interactive Aliases
 
 These aliases are exported for terminal convenience:
@@ -81,9 +97,12 @@ These aliases are exported for terminal convenience:
 | Alias | Command |
 |---|---|
 | `conc` | `Connect-Cloud` |
+| `fcr` | `Find-CloudResource` |
 | `gcont` | `Get-CloudContext` |
 | `gcin` | `Get-CloudInstance` |
+| `rci` | `Restart-CloudInstance` |
 | `sci` | `Start-CloudInstance` |
-| `tci` | `Stop-CloudInstance` |
+| `sct` | `Set-CloudTag` |
+| `tci` | `Test-CloudConnection` |
 
 Use the full command names in scripts and shared examples.

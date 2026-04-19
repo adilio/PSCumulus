@@ -58,7 +58,7 @@ Stop-CloudInstance -InstanceId <string> [-Provider <string>] [-Region <string>] 
 ## ALIASES
 
 This cmdlet has the following aliases,
-  tci
+  None
 
 ## DESCRIPTION
 
@@ -567,22 +567,23 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ### System.String
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## OUTPUTS
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-{{ Fill in the related links here }}
+None.
+
 
 

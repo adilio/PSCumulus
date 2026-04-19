@@ -25,13 +25,13 @@ Connect-Cloud -Provider <string[]> [-Tenant <string>] [-Subscription <string>] [
 ### GCP
 
 ```
-Connect-Cloud -Provider <string[]> -Project <string> [<CommonParameters>]
+Connect-Cloud -Provider <string[]> [-Project <string>] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Connect-Cloud -Provider <string[]> -Region <string> [<CommonParameters>]
+Connect-Cloud -Provider <string[]> [-Region <string>] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -113,7 +113,7 @@ Aliases: []
 ParameterSets:
 - Name: GCP
   Position: Named
-  IsRequired: true
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -167,7 +167,7 @@ Aliases: []
 ParameterSets:
 - Name: AWS
   Position: Named
-  IsRequired: true
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -231,12 +231,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-{{ Fill in the related links here }}
+None.
+
 
 

@@ -37,7 +37,6 @@
     AliasesToExport   = @(
         'conc',
         'fcr',
-        'gcsn',
         'gcont',
         'gcin',
         'rci',

@@ -39,7 +39,7 @@ Describe 'PSCumulus module' {
 
         It 'exports the expected aliases' {
             $manifest = Import-PowerShellDataFile (Join-Path $PSScriptRoot '..\PSCumulus.psd1')
-            $expected = @('conc', 'fcr', 'gcsn', 'gcont', 'gcin', 'rci', 'sci', 'sct', 'tci') | Sort-Object
+            $expected = @('conc', 'fcr', 'gcont', 'gcin', 'rci', 'sci', 'sct', 'tci') | Sort-Object
             $actual = $manifest.AliasesToExport | Sort-Object
             $actual | Should -Be $expected
         }
@@ -147,7 +147,7 @@ Describe 'PSCumulus module' {
     Context 'aliases' {
         It 'exports the expected interactive aliases' {
             (Get-Command -Module PSCumulus -CommandType Alias).Name |
-                Should -Be @('conc', 'fcr', 'gcin', 'gcont', 'gcsn', 'rci', 'sci', 'sct', 'tci')
+                Should -Be @('conc', 'fcr', 'gcin', 'gcont', 'rci', 'sci', 'sct', 'tci')
         }
     }
 

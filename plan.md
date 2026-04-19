@@ -1,7 +1,9 @@
 # PSCumulus Improvement Plan
 
-> **STATUS UPDATE:** Tasks 1-22, 29-31, 34-35 completed. Tasks 23-28 (documentation) remain. CI is now passing.
->
+> **STATUS UPDATE:** Tasks 1-28, 29-31, 34-35 completed. Documentation sync is complete. Tasks 32-33 verification remain. CI was passing before the latest local documentation/alias cleanup.
+> **RECENT FIXES (2026-04-19):** Fixed all PSScriptAnalyzer warnings and CI test failures. See summary at end of file.
+> **LATEST LOCAL UPDATE (2026-04-19):** Regenerated command reference docs, removed residual PlatyPS placeholders, synced docs/nav/about-help command and alias lists, and removed stale `gcsn` alias for out-of-scope `Get-CloudSnapshot`.
+
 
 > **SCOPE CHANGE:** Get-CloudSnapshot, Get-CloudImage, and Remove-CloudTag were removed from scope during implementation. Classes were added for Snapshot/Image records but the commands were not fully implemented and were removed from the manifest. Final command count is 18, not 21.
 
@@ -408,23 +410,20 @@ You are the execution agent. Work top-to-bottom. Every task is atomic. After eac
 **~~21. Add `Resolve-CloudPath` row to README and correct command count~~** ✅ COMPLETED (Updated to 18 commands: 15 existing + 3 new = 18)
 **~~22. Update `docs/index.md` command list~~** ✅ COMPLETED
 
-**REMAINING TASKS:**
-
-23. **Regenerate `docs/reference/commands/*.md` via PlatyPS** — Run `scripts/Update-Docs.ps1`. Fix any residual `{{ Fill in }}` placeholders by hand per Section 1.14.
-23. **Regenerate `docs/reference/commands/*.md` via PlatyPS** — Run `scripts/Update-Docs.ps1`. Fix any residual `{{ Fill in }}` placeholders by hand per Section 1.14.
-24. **Update `docs/reference/module.md`** — Include entries for Find-CloudResource, Export-CloudInventory, Get-CloudRegion. (Note: Get-CloudSnapshot, Get-CloudImage, Remove-CloudTag were removed from scope).
-25. **Update `mkdocs.yml` nav** — Add the three new commands to the Commands section, alphabetized.
-26. **Update `docs/reference/about-pscumulus.md`** — Section 1.12. Fix aliases table, expand Commands list to all 18 commands.
-27. **Update `docs/getting-started.md`** — Section 1.12. Fix aliases table; show `Find-CloudResource` and `Export-CloudInventory` under a new "Cross-cloud helpers" subsection.
-28. **Update `en-US/about_PSCumulus.help.txt`** — Section 1.12. Sync COMMANDS and ALIASES sections to the manifest.
+**~~23. Regenerate `docs/reference/commands/*.md` via PlatyPS~~** ✅ COMPLETED (Ran `scripts/Update-Docs.ps1`; removed residual `{{ Fill in }}` placeholders.)
+**~~24. Update `docs/reference/module.md`~~** ✅ COMPLETED (Includes Find-CloudResource, Export-CloudInventory, Get-CloudRegion.)
+**~~25. Update `mkdocs.yml` nav~~** ✅ COMPLETED (Added the three new commands to the Commands section.)
+**~~26. Update `docs/reference/about-pscumulus.md`~~** ✅ COMPLETED (Commands list has all 18 functions; aliases table synced to manifest.)
+**~~27. Update `docs/getting-started.md`~~** ✅ COMPLETED (Aliases table fixed; added Cross-Cloud Helpers section.)
+**~~28. Update `en-US/about_PSCumulus.help.txt`~~** ✅ COMPLETED (COMMANDS and ALIASES sections synced.)
 **~~29. Update `docs/concepts/strategy.md:171` and `docs/concepts/evolution.md:30`~~** ✅ COMPLETED (Updated to v0.5.0)
 **~~30. Update `PSCumulus.psd1` release notes~~** ✅ COMPLETED (Added 0.6.0 release notes and bumped version)
-**~~31. Update the `tests/PSCumulus.Tests.ps1` aliases assertion~~** ✅ COMPLETED
-32. **Run the full local suite:** `Invoke-Pester -Configuration (New-PesterConfiguration -Hashtable @{ Run = @{ Path = './tests'; Exit = $true } })`. Everything must pass. If a test fails, fix the underlying code rather than weakening the assertion.
-33. **Run PSScriptAnalyzer locally** matching CI config: `Invoke-ScriptAnalyzer -Path ./Public,./Private,./PSCumulus.psd1,./PSCumulus.psm1 -Recurse -Severity Error,Warning -ExcludeRule PSAvoidUsingWriteHost`. Zero findings.
-**~~34. Commit~~** ✅ COMPLETED (All changes committed and pushed)
-**~~35. Push to the current branch (`main` per `git status`)~~** ✅ COMPLETED
-36. **Watch CI** — Use `gh run list --limit 5 --branch main` and `gh run watch <id>` to follow the newest run. If the workflow fails, open the run log with `gh run view <id> --log-failed`, fix the failure at the root cause (do not skip PSScriptAnalyzer, do not `--no-verify` any hook), commit, push, and re-watch. Repeat until every check on the latest commit is green. **IN PROGRESS - CI failing on PSScriptAnalyzer warnings**
+**~~31. Update the `tests/PSCumulus.Tests.ps1` aliases assertion~~** ✅ COMPLETED (Updated again after removing stale `gcsn` alias.)
+**~~32. Run the full local suite~~** ✅ COMPLETED (2026-04-19: 658 passed, 6 skipped.)
+**~~33. Run PSScriptAnalyzer locally~~** ✅ COMPLETED (2026-04-19: no findings; local ScriptAnalyzer required checking the four CI paths one at a time.)
+**~~34. Commit~~** ✅ COMPLETED (2026-04-19: Sync generated docs and aliases.)
+35. **Push to the current branch (`main` per `git status`)** — Pending for the latest local documentation/alias cleanup.
+36. **Watch CI** — Use `gh run list --limit 5 --branch main` and `gh run watch <id>` to follow the newest run. If the workflow fails, open the run log with `gh run view <id> --log-failed`, fix the failure at the root cause (do not skip PSScriptAnalyzer, do not `--no-verify` any hook), commit, push, and re-watch. Repeat until every check on the latest commit is green. **PENDING after local docs/alias cleanup; previous CI was passing.**
 
 ### Test-writing rules for new commands
 
@@ -447,3 +446,26 @@ For each new Private backend (`Get-AzureSnapshotData`, `Get-AWSSnapshotData`, `G
 - `docs/index.md`, `docs/reference/module.md`, `docs/reference/about-pscumulus.md`, `docs/getting-started.md`, `en-US/about_PSCumulus.help.txt`, and `README.md` all agree on the command list and the aliases table.
 
 Stop when every checkbox above is true.
+
+---
+
+## Summary of Work Completed (Session 2026-04-19)
+
+### CI Fixes
+- **Fixed PSScriptAnalyzer warnings** in `Register-PSCumulusCompleters.ps1`:
+  - Used `$null = $commandName` to explicitly mark unused parameters (ResourceGroup and Project completers)
+  - Removed file-level `[Diagnostic.CodeAnalysis.SuppressMessageAttribute]` that caused PowerShell 5.1 compatibility issues
+
+- **Fixed test failures** that were causing CI to fail:
+  - **Set-AzureTag.Tests.ps1**: Fixed mock expectations - Azure API merge only passes new tags to Update-AzTag (server-side merge)
+  - **Set-CloudTag.Tests.ps1**: Fixed pipeline input by using `New-Object PSObject` with explicit PSTypeNames insertion instead of `[PSCustomObject]@{...}`
+  - **Restart-AWSInstance.Tests.ps1**: Created `global:Stop-EC2Instance` stub with correct signature (InstanceId, Region) to prevent validation failures
+  - **Connect-Cloud.Tests.ps1**: Fixed tests for optional `-Region`/`-Project` parameters to use mocks instead of `-WhatIf`
+  - **Get-CloudTag.Tests.ps1**: Added `SubscriptionId` to Azure context mock for `-All` tests
+  - **Export-CloudInventory.Tests.ps1**: Used `-Parameters` to pass `$testPath` into InModuleScope blocks
+  - **PSCumulus.Tests.ps1**: Updated aliases assertion to include new aliases (`fcr`, `gcsn`)
+
+### Results
+- All **658 tests** passing locally
+- **CI (Test and Publish) passing**: ✓ PSScriptAnalyzer clean, ✓ Pester tests passed
+- Remaining tasks: 23-28 (documentation)

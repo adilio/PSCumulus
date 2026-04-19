@@ -5,22 +5,22 @@ HelpUri: ''
 Locale: en-US
 Module Name: PSCumulus
 PlatyPS schema version: 2024-05-01
-title: Get-CloudTag
+title: Export-CloudInventory
 ---
 
-# Get-CloudTag
+# Export-CloudInventory
 
 ## SYNOPSIS
 
-Gets resource tags or labels from a selected cloud provider.
+Exports all connected cloud inventory to a file.
 
 ## SYNTAX
 
-### All
+### __AllParameterSets
 
 ```
-Get-CloudTag [-Provider <string>] [-ResourceId <string>] [-Project <string>] [-Resource <string>]
- [-All] [<CommonParameters>]
+Export-CloudInventory [-Path] <string> [-Format <string>] [-Kind <string[]>] [-Provider <string[]>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -30,58 +30,45 @@ This cmdlet has the following aliases,
 
 ## DESCRIPTION
 
-Routes resource metadata requests to the matching provider backend for
-Azure, AWS, or GCP.
-
-Use -All to query every provider that has an established session context,
-returning tags/labels from all connected clouds in one pipeline.
-
-With -All, returns the subscription-scoped tags for Azure, the region-level
-tagged resources for AWS, and the project-scoped labels for GCP.
-For more
-specific tag queries, omit -All and pass -ResourceId/-Project/-Resource explicitly.
+Exports a point-in-time snapshot of every resource across every connected cloud
+to a file in JSON or CSV format.
+Useful for compliance audits, before/after snapshots,
+and inventory diffing.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 
-Get-CloudTag -Provider Azure -ResourceId '/subscriptions/.../virtualMachines/vm01'
+Export-CloudInventory -Path 'inventory.json'
 
-Gets Azure tags for a resource identifier.
+Exports all resources from all connected providers to inventory.json (JSON format).
 
 ### EXAMPLE 2
 
-Get-CloudTag -Provider AWS -ResourceId 'i-0123456789abcdef0'
+Export-CloudInventory -Path 'inventory.csv' -Format Csv
 
-Gets AWS tags for a resource identifier.
+Exports all resources to inventory.csv in CSV format.
 
 ### EXAMPLE 3
 
-Get-CloudTag -Provider GCP -Project 'my-project' -Resource 'instances/vm-01'
+Export-CloudInventory -Path 'azure-inventory.json' -Provider Azure -Kind Instance, Disk
 
-Gets GCP labels for a project-scoped resource.
-
-### EXAMPLE 4
-
-Get-CloudTag -All
-
-Gets tags/labels from all providers with an established session context.
-Returns subscription-scoped tags for Azure, region-level tagged resources for AWS,
-and project-scoped labels for GCP.
+Exports only Azure instances and disks to azure-inventory.json.
 
 ## PARAMETERS
 
-### -All
+### -Confirm
 
-Query all providers with an established session context.
+Prompts you for confirmation before running the cmdlet.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
-DefaultValue: False
+DefaultValue: ''
 SupportsWildcards: false
-Aliases: []
+Aliases:
+- cf
 ParameterSets:
-- Name: All
+- Name: (All)
   Position: Named
   IsRequired: false
   ValueFromPipeline: false
@@ -92,9 +79,51 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
-### -Project
+### -Format
 
-The GCP project containing the target resource.
+The output format.
+
+```yaml
+Type: System.String
+DefaultValue: Json
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: (All)
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Kind
+
+The resource kinds to include.
+
+```yaml
+Type: System.String[]
+DefaultValue: "@('Instance', 'Disk', 'Storage', 'Network', 'Function')"
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: (All)
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Path
+
+The output file path.
 
 ```yaml
 Type: System.String
@@ -103,8 +132,8 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: (All)
-  Position: Named
-  IsRequired: false
+  Position: 0
+  IsRequired: true
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -115,10 +144,10 @@ HelpMessage: ''
 
 ### -Provider
 
-The cloud provider to query.
+Limit to specific providers.
 
 ```yaml
-Type: System.String
+Type: System.String[]
 DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
@@ -134,36 +163,16 @@ AcceptedValues: []
 HelpMessage: ''
 ```
 
-### -Resource
+### -WhatIf
 
-The GCP resource path used to resolve labels.
-
-```yaml
-Type: System.String
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: (All)
-  Position: Named
-  IsRequired: false
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -ResourceId
-
-The provider resource identifier for Azure or AWS.
+Runs the command in a mode that only reports what would happen without performing the actions.
 
 ```yaml
-Type: System.String
+Type: System.Management.Automation.SwitchParameter
 DefaultValue: ''
 SupportsWildcards: false
-Aliases: []
+Aliases:
+- wi
 ParameterSets:
 - Name: (All)
   Position: Named
@@ -187,7 +196,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### System.Management.Automation.PSObject
+### System.IO.FileInfo
 
 See the command description and examples above.
 

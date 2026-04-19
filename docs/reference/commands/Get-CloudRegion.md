@@ -5,58 +5,59 @@ HelpUri: ''
 Locale: en-US
 Module Name: PSCumulus
 PlatyPS schema version: 2024-05-01
-title: Get-CloudContext
+title: Get-CloudRegion
 ---
 
-# Get-CloudContext
+# Get-CloudRegion
 
 ## SYNOPSIS
 
-Returns the current PSCumulus session context for all connected providers.
+Lists supported regions for each cloud provider.
 
 ## SYNTAX
 
 ### __AllParameterSets
 
 ```
-Get-CloudContext [[-Provider] <string>] [<CommonParameters>]
+Get-CloudRegion [[-Provider] <string>] [<CommonParameters>]
 ```
 
 ## ALIASES
 
 This cmdlet has the following aliases,
-  gcont
+  None
 
 ## DESCRIPTION
 
-Shows all cloud providers that have been connected in this session, along with
-the active account, scope, and region for each.
-ConnectionState shows whether a
-provider is the current active session context or simply connected in the session.
-IsActive is retained as a compatibility flag and is only populated for the current
-provider.
-
-Use -Provider to filter the output to a specific provider.
+Returns all supported regions for Azure, AWS, or GCP.
+Use this to discover
+valid region values for Connect-Cloud and other provider-specific commands.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 
-Get-CloudContext
+Get-CloudRegion
 
-Returns context entries for all providers connected in this session.
+Returns all regions for all providers.
 
 ### EXAMPLE 2
 
-Get-CloudContext -Provider Azure
+Get-CloudRegion -Provider Azure
 
-Returns context entry only for Azure.
+Returns only Azure regions.
+
+### EXAMPLE 3
+
+Get-CloudRegion -Provider AWS | Where-Object { $_.Name -like 'us-*' }
+
+Returns AWS regions in the US.
 
 ## PARAMETERS
 
 ### -Provider
 
-Filter to a specific provider.
+The cloud provider to list regions for.
 
 ```yaml
 Type: System.String

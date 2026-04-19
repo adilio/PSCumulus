@@ -12,21 +12,28 @@ title: Set-CloudTag
 
 ## SYNOPSIS
 
-Sets tags or labels on cloud resources across Azure, AWS, and GCP.
+Sets tags or labels on a cloud resource across Azure, AWS, or GCP.
 
 ## SYNTAX
 
 ### Piped (Default)
 
 ```
-Set-CloudTag -InputObject <CloudRecord> -Tags <hashtable> [-Merge] [-WhatIf] [-Confirm]
+Set-CloudTag -InputObject <psobject> -Tags <hashtable> [-Merge] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
-### Azure
+### AzureByName
 
 ```
 Set-CloudTag -Name <string> -ResourceGroup <string> -Tags <hashtable> [-Merge] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
+```
+
+### AzureById
+
+```
+Set-CloudTag -AzureResourceId <string> -Tags <hashtable> [-Merge] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
@@ -44,12 +51,6 @@ Set-CloudTag -Project <string> -Resource <string> -Tags <hashtable> [-Merge] [-W
  [<CommonParameters>]
 ```
 
-### Path
-
-```
-Set-CloudTag -Path <string> -Tags <hashtable> [-Merge] [-WhatIf] [-Confirm] [<CommonParameters>]
-```
-
 ## ALIASES
 
 This cmdlet has the following aliases,
@@ -57,30 +58,66 @@ This cmdlet has the following aliases,
 
 ## DESCRIPTION
 
-Sets tags or labels on cloud resources across Azure, AWS, and GCP.
-Use -Merge to combine with existing tags instead of replacing them.
+Set-CloudTag applies tags (Azure), tags (AWS), or labels (GCP) to cloud resources.
+For Azure, you can specify a VM by Name/ResourceGroup or any resource by ResourceId.
+For AWS, provide the ResourceId and Region.
+For GCP, provide the Project and Resource.
+You can also pipe CloudRecord objects from other PSCumulus commands.
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 
-Set-CloudTag -Name 'web-01' -ResourceGroup 'prod-rg' -Tags @{Environment = 'Prod'; Owner = 'Adil'}
+Set-CloudTag -Name 'vm01' -ResourceGroup 'rg-test' -Tags @{Environment='Dev'; Owner='TeamA'}
 
-Sets tags on an Azure VM, replacing any existing tags.
+Tags an Azure VM by name and resource group.
 
-### Example 2
+### EXAMPLE 2
 
-Set-CloudTag -ResourceId 'i-12345' -Region 'us-east-1' -Tags @{Environment = 'Prod'} -Merge
+Set-CloudTag -AzureResourceId '/subscriptions/123/resourceGroups/rg/providers/Microsoft.Compute/disks/disk01' -Tags @{Backup='Weekly'}
 
-Adds or updates the Environment tag on an AWS EC2 instance while preserving existing tags.
+Tags an Azure disk using its full resource ID (AzureById parameter set).
 
-### Example 3
+### EXAMPLE 3
 
-Get-CloudInstance -Name 'gcp-vm' | Set-CloudTag -Tags @{CostCenter = '12345'} -Merge
+Set-CloudTag -ResourceId 'i-1234567890abcdef0' -Region 'us-east-1' -Tags @{Environment='Prod'}
 
-Adds a CostCenter tag to a GCP instance using pipeline input, preserving existing tags.
+Tags an AWS EC2 instance by its resource ID.
+
+### EXAMPLE 4
+
+Set-CloudTag -Project 'my-project' -Resource 'projects/my/zones/us-central1-a/instances/vm01' -Tags @{Owner='Ops'}
+
+Tags a GCP compute instance.
+
+### EXAMPLE 5
+
+Get-CloudDisk -Provider Azure | Set-CloudTag -Tags @{Encrypted='AES256'}
+
+Tags all Azure disks returned from Get-CloudDisk (piped input).
 
 ## PARAMETERS
+
+### -AzureResourceId
+
+{{ Fill AzureResourceId Description }}
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: AzureById
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
 
 ### -Confirm
 
@@ -106,7 +143,7 @@ HelpMessage: ''
 
 ### -InputObject
 
-A PSCumulus cloud record piped from Get-CloudInstance or other Get-* commands.
+{{ Fill InputObject Description }}
 
 ```yaml
 Type: System.Management.Automation.PSObject
@@ -117,8 +154,8 @@ ParameterSets:
 - Name: Piped
   Position: Named
   IsRequired: true
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: true
+  ValueFromPipeline: true
+  ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
 DontShow: false
 AcceptedValues: []
@@ -127,11 +164,11 @@ HelpMessage: ''
 
 ### -Merge
 
-Merge the specified tags with existing tags on the resource. If not specified, all existing tags are replaced.
+{{ Fill Merge Description }}
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
-DefaultValue: ''
+DefaultValue: False
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
@@ -148,7 +185,7 @@ HelpMessage: ''
 
 ### -Name
 
-The Azure resource name.
+{{ Fill Name Description }}
 
 ```yaml
 Type: System.String
@@ -156,28 +193,7 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: Azure
-  Position: Named
-  IsRequired: true
-  ValueFromPipeline: false
-  ValueFromPipelineByPropertyName: false
-  ValueFromRemainingArguments: false
-DontShow: false
-AcceptedValues: []
-HelpMessage: ''
-```
-
-### -Path
-
-A cloud path string (e.g., 'Azure:\prod-rg\Instances\web-01')
-
-```yaml
-Type: System.String
-DefaultValue: ''
-SupportsWildcards: false
-Aliases: []
-ParameterSets:
-- Name: Path
+- Name: AzureByName
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
@@ -190,7 +206,7 @@ HelpMessage: ''
 
 ### -Project
 
-The GCP project containing the target resource.
+{{ Fill Project Description }}
 
 ```yaml
 Type: System.String
@@ -211,7 +227,7 @@ HelpMessage: ''
 
 ### -Region
 
-The AWS region where the resource resides.
+{{ Fill Region Description }}
 
 ```yaml
 Type: System.String
@@ -232,7 +248,7 @@ HelpMessage: ''
 
 ### -Resource
 
-The GCP resource path (e.g., 'projects/test/zones/us-central1-a/instances/vm01')
+{{ Fill Resource Description }}
 
 ```yaml
 Type: System.String
@@ -253,7 +269,7 @@ HelpMessage: ''
 
 ### -ResourceGroup
 
-The Azure resource group containing the target resource.
+{{ Fill ResourceGroup Description }}
 
 ```yaml
 Type: System.String
@@ -261,7 +277,7 @@ DefaultValue: ''
 SupportsWildcards: false
 Aliases: []
 ParameterSets:
-- Name: Azure
+- Name: AzureByName
   Position: Named
   IsRequired: true
   ValueFromPipeline: false
@@ -274,7 +290,7 @@ HelpMessage: ''
 
 ### -ResourceId
 
-The AWS resource identifier (e.g., EC2 instance ID).
+{{ Fill ResourceId Description }}
 
 ```yaml
 Type: System.String
@@ -295,7 +311,7 @@ HelpMessage: ''
 
 ### -Tags
 
-A hashtable of tags to set on the resource.
+{{ Fill Tags Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -347,18 +363,19 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-PSCumulus cloud records from Get-CloudInstance or other Get-* commands.
+See the command description and examples above.
 
 ## OUTPUTS
 
 ### System.Management.Automation.PSObject
 
-Cloud records with updated tags.
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-[Get-CloudInstance](./Get-CloudInstance.md)
+None.
+
 
 

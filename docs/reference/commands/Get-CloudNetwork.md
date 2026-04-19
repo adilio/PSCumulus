@@ -19,28 +19,29 @@ Gets virtual networks from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudNetwork -ResourceGroup <string> [-Provider <string>] [-Status <CloudNetworkStatus>]
- [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudNetwork -ResourceGroup <string> [-Provider <string>] [-Name <string>]
+ [-Status <CloudNetworkStatus>] [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudNetwork -Project <string> [-Provider <string>] [-Status <CloudNetworkStatus>]
- [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudNetwork -Project <string> [-Provider <string>] [-Name <string>]
+ [-Status <CloudNetworkStatus>] [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudNetwork -Region <string> [-Provider <string>] [-Status <CloudNetworkStatus>]
- [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudNetwork -Region <string> [-Provider <string>] [-Name <string>]
+ [-Status <CloudNetworkStatus>] [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### All
 
 ```
-Get-CloudNetwork -All [-Status <CloudNetworkStatus>] [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudNetwork -All [-Name <string>] [-Status <CloudNetworkStatus>] [-Tag <hashtable>] [-Detailed]
+ [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -89,6 +90,18 @@ Get-CloudNetwork -All -Status Available -Tag @{ environment = 'production' }
 
 Gets all available networks with the production environment tag across all connected clouds.
 
+### EXAMPLE 6
+
+Get-CloudNetwork -Provider Azure -ResourceGroup 'prod-rg' -Name 'vnet-prod'
+
+Gets Azure virtual networks matching the specified name.
+
+### EXAMPLE 7
+
+Get-CloudNetwork -Provider AWS -Region 'us-east-1' -Detailed
+
+Gets AWS VPCs with detailed view enabled.
+
 ## PARAMETERS
 
 ### -All
@@ -104,6 +117,84 @@ ParameterSets:
 - Name: All
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Detailed
+
+Emit detailed view records.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Name
+
+Filter results by name.
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -300,12 +391,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-{{ Fill in the related links here }}
+None.
+
 
 

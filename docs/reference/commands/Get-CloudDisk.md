@@ -19,28 +19,29 @@ Gets managed disks from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudDisk -ResourceGroup <string> [-Provider <string>] [-Status <CloudDiskStatus>]
- [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudDisk -ResourceGroup <string> [-Provider <string>] [-Name <string>]
+ [-Status <CloudDiskStatus>] [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudDisk -Project <string> [-Provider <string>] [-Status <CloudDiskStatus>] [-Tag <hashtable>]
- [<CommonParameters>]
+Get-CloudDisk -Project <string> [-Provider <string>] [-Name <string>] [-Status <CloudDiskStatus>]
+ [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudDisk -Region <string> [-Provider <string>] [-Status <CloudDiskStatus>] [-Tag <hashtable>]
- [<CommonParameters>]
+Get-CloudDisk -Region <string> [-Provider <string>] [-Name <string>] [-Status <CloudDiskStatus>]
+ [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### All
 
 ```
-Get-CloudDisk -All [-Status <CloudDiskStatus>] [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudDisk -All [-Name <string>] [-Status <CloudDiskStatus>] [-Tag <hashtable>] [-Detailed]
+ [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -89,6 +90,18 @@ Get-CloudDisk -All -Status Available -Tag @{ environment = 'production' }
 
 Gets all available disks with the production environment tag across all connected clouds.
 
+### EXAMPLE 6
+
+Get-CloudDisk -Provider Azure -ResourceGroup 'prod-rg' -Name 'data-disk-01'
+
+Gets Azure managed disks matching the specified name.
+
+### EXAMPLE 7
+
+Get-CloudDisk -Provider AWS -Region 'us-east-1' -Detailed
+
+Gets AWS EBS volumes with detailed view enabled.
+
 ## PARAMETERS
 
 ### -All
@@ -104,6 +117,84 @@ ParameterSets:
 - Name: All
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Detailed
+
+Emit detailed view records.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Name
+
+Filter results by name.
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -300,12 +391,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-{{ Fill in the related links here }}
+None.
+
 
 

@@ -19,28 +19,29 @@ Gets serverless functions from a selected cloud provider.
 ### Azure (Default)
 
 ```
-Get-CloudFunction -ResourceGroup <string> [-Provider <string>] [-Status <CloudFunctionStatus>]
- [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudFunction -ResourceGroup <string> [-Provider <string>] [-Name <string>]
+ [-Status <CloudFunctionStatus>] [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### GCP
 
 ```
-Get-CloudFunction -Project <string> [-Provider <string>] [-Status <CloudFunctionStatus>]
- [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudFunction -Project <string> [-Provider <string>] [-Name <string>]
+ [-Status <CloudFunctionStatus>] [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### AWS
 
 ```
-Get-CloudFunction -Region <string> [-Provider <string>] [-Status <CloudFunctionStatus>]
- [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudFunction -Region <string> [-Provider <string>] [-Name <string>]
+ [-Status <CloudFunctionStatus>] [-Tag <hashtable>] [-Detailed] [<CommonParameters>]
 ```
 
 ### All
 
 ```
-Get-CloudFunction -All [-Status <CloudFunctionStatus>] [-Tag <hashtable>] [<CommonParameters>]
+Get-CloudFunction -All [-Name <string>] [-Status <CloudFunctionStatus>] [-Tag <hashtable>]
+ [-Detailed] [<CommonParameters>]
 ```
 
 ## ALIASES
@@ -89,6 +90,18 @@ Get-CloudFunction -All -Status Active -Tag @{ environment = 'production' }
 
 Gets all active functions with the production environment tag across all connected clouds.
 
+### EXAMPLE 6
+
+Get-CloudFunction -Provider Azure -ResourceGroup 'prod-rg' -Name 'func-process-order'
+
+Gets Azure Function Apps matching the specified name.
+
+### EXAMPLE 7
+
+Get-CloudFunction -Provider AWS -Region 'us-east-1' -Detailed
+
+Gets AWS Lambda functions with detailed view enabled.
+
 ## PARAMETERS
 
 ### -All
@@ -104,6 +117,84 @@ ParameterSets:
 - Name: All
   Position: Named
   IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Detailed
+
+Emit detailed view records.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+DefaultValue: False
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Name
+
+Filter results by name.
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: All
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: GCP
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: AWS
+  Position: Named
+  IsRequired: false
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+- Name: Azure
+  Position: Named
+  IsRequired: false
   ValueFromPipeline: false
   ValueFromPipelineByPropertyName: false
   ValueFromRemainingArguments: false
@@ -300,12 +391,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-{{ Fill in the related links here }}
+None.
+
 
 

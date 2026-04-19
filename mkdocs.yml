@@ -38,11 +38,14 @@ nav:
       - Commands:
           - Connect-Cloud: reference/commands/Connect-Cloud.md
           - Disconnect-Cloud: reference/commands/Disconnect-Cloud.md
+          - Export-CloudInventory: reference/commands/Export-CloudInventory.md
+          - Find-CloudResource: reference/commands/Find-CloudResource.md
           - Get-CloudContext: reference/commands/Get-CloudContext.md
           - Get-CloudDisk: reference/commands/Get-CloudDisk.md
           - Get-CloudFunction: reference/commands/Get-CloudFunction.md
           - Get-CloudInstance: reference/commands/Get-CloudInstance.md
           - Get-CloudNetwork: reference/commands/Get-CloudNetwork.md
+          - Get-CloudRegion: reference/commands/Get-CloudRegion.md
           - Get-CloudStorage: reference/commands/Get-CloudStorage.md
           - Get-CloudTag: reference/commands/Get-CloudTag.md
           - Resolve-CloudPath: reference/commands/Resolve-CloudPath.md

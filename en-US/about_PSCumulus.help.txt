@@ -25,20 +25,33 @@ LONG DESCRIPTION
 
 COMMANDS
     Connect-Cloud
-    Get-CloudInstance
-    Get-CloudStorage
-    Get-CloudTag
-    Get-CloudNetwork
+    Disconnect-Cloud
+    Export-CloudInventory
+    Find-CloudResource
+    Get-CloudContext
     Get-CloudDisk
     Get-CloudFunction
+    Get-CloudInstance
+    Get-CloudNetwork
+    Get-CloudRegion
+    Get-CloudStorage
+    Get-CloudTag
+    Resolve-CloudPath
+    Restart-CloudInstance
+    Set-CloudTag
     Start-CloudInstance
     Stop-CloudInstance
+    Test-CloudConnection
 
 ALIASES
-    cc      Connect-Cloud
+    conc    Connect-Cloud
+    fcr     Find-CloudResource
+    gcont   Get-CloudContext
     gcin    Get-CloudInstance
+    rci     Restart-CloudInstance
     sci     Start-CloudInstance
-    tci     Stop-CloudInstance
+    sct     Set-CloudTag
+    tci     Test-CloudConnection
 
 OUTPUT TYPES
     Inventory commands return PSCumulus.CloudRecord objects with these common

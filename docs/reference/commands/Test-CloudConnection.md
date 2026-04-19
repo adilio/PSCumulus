@@ -33,6 +33,8 @@ Tests whether stored credentials for cloud providers are still valid.
 Makes a lightweight read-only API call to verify authentication.
 Returns connection test results without throwing on auth failure.
 
+When run without parameters, defaults to testing all providers (equivalent to -All).
+
 ## EXAMPLES
 
 ### EXAMPLE 1
@@ -48,6 +50,12 @@ Test-CloudConnection -All
 Tests all stored provider credentials.
 
 ### EXAMPLE 3
+
+Test-CloudConnection
+
+Tests all stored provider credentials (equivalent to -All).
+
+### EXAMPLE 4
 
 Test-CloudConnection -All | Where-Object { -not $_.Connected }
 
@@ -110,12 +118,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.Management.Automation.PSObject
 
-{{ Fill in the Description }}
+See the command description and examples above.
 
 ## NOTES
 
 ## RELATED LINKS
 
-{{ Fill in the related links here }}
+None.
+
 
 
