@@ -128,31 +128,39 @@ PSCumulus is being evolved in stages so each step ships independently, delivers 
 
 The staged direction sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the key insight that unlocked the next move: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the plan, but it now follows that corrected object-model foundation rather than defining it. The longer-form rationale lives in the [Evolution](https://adilio.github.io/PSCumulus/concepts/evolution/) doc.
 
-**Current status:** Stages 1, 2, and 3 are complete (v0.6.0).
+**Current status:** v0.6.1 is the documentation narrative refresh for the completed Stages 1, 2, 3, and v0.6.0 hardening pass.
 
-1. **Stage 1: Internal Typed Contract**  
-   Purpose: establish a typed internal vocabulary without changing the public cmdlet surface.  
-   Additive capability: internal types, wrapper converters, semantic instance status normalization, `Metadata.NativeStatus`, and no public cmdlet or output-type break.  
+0. **Stage 0: Cmdlet Contract**
+   Purpose: prove that a narrow verb-noun surface can make common cross-cloud operations feel coherent.
+   Additive capability: stable commands, normalized records, provider contexts side by side, and `-All` fan-out.
+   Why separate: it is the product foundation, not scaffolding for a later Provider.
+1. **Stage 1: Internal Typed Contract**
+   Purpose: establish a typed internal vocabulary without changing the public cmdlet surface.
+   Additive capability: internal types, wrapper converters, semantic instance status normalization, `Metadata.NativeStatus`, and no public cmdlet or output-type break.
    Why separate: it fixes correctness first and gives every later stage the same status/tag vocabulary.
-2. **Stage 2: Vendor Subclass Records**  
-   Purpose: introduce a real `CloudRecord` base class, vendor subclasses, subclass-owned factory methods, and a `Kind` field.  
-   Additive capability: instance normalization now lives in one place per provider, and future path or Provider work can build on typed records instead of generic property bags.  
+2. **Stage 2: Vendor Subclass Records**
+   Purpose: introduce a real `CloudRecord` base class, vendor subclasses, subclass-owned factory methods, and a `Kind` field.
+   Additive capability: instance normalization now lives in one place per provider, and future path or Provider work can build on typed records instead of generic property bags.
    Why separate: it fixes the record model directly and absorbs resource-kind awareness into the same stage.
-3. **Stage 3: Cloud Path Model**  
-   Purpose: define and resolve hierarchical cloud paths independently of any Provider implementation.  
-   Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.  
+3. **Stage 3: Cloud Path Model**
+   Purpose: define and resolve hierarchical cloud paths independently of any Provider implementation.
+   Additive capability: a structured path model and resolver that can turn paths into backend calls and stable cloud identity.
    Why separate: path parsing and resolution are useful and testable on their own, and they are the hardest part of Provider work to get right.
-4. **Stage 4: The Provider (Read-Only)**  
-   Purpose: make cloud resources navigable through PowerShell drives, building on the Stage 3 path model.  
-   Additive capability: read-only navigation layered over the same backend engine the cmdlets already use.  
+4. **Stage 3.5: v0.6.0 Hardening And Cross-Cloud Helpers**
+   Purpose: make the cmdlet surface more trustworthy before adding navigation.
+   Additive capability: `Find-CloudResource`, `Export-CloudInventory`, `Get-CloudRegion`, lifecycle consistency, better docs/completers, and deliberate removal of incomplete scope.
+   Why separate: users benefit from a confidence pass even if a Provider never lands.
+5. **Stage 4: The Provider (Read-Only)**
+   Purpose: make cloud resources navigable through PowerShell drives, building on the Stage 3 path model.
+   Additive capability: read-only navigation layered over the same backend engine the cmdlets already use.
    Why separate: the Provider is additive, belongs in a PS 7+ companion module, and the implementation path has not been chosen.
-5. **Stage 5: Write Operations Through the Provider**  
-   Purpose: let lifecycle actions flow through path context once navigation is stable.  
-   Additive capability: path-driven start/stop style operations with `ShouldProcess` behavior preserved.  
+6. **Stage 5: Write Operations Through the Provider**
+   Purpose: let lifecycle actions flow through path context once navigation is stable.
+   Additive capability: path-driven start/stop style operations with `ShouldProcess` behavior preserved.
    Why separate: write operations need careful `-WhatIf` and confirmation behavior, so the read-only Provider needs to prove itself first.
-6. **Stage 6: Cross-Cloud Aggregation**  
-   Purpose: expose the existing cross-cloud aggregation story through navigation as well as cmdlets.  
-   Additive capability: a synthetic cross-cloud view such as `Cloud:\Instances` spanning all connected providers.  
+7. **Stage 6: Cross-Cloud Aggregation**
+   Purpose: expose the existing cross-cloud aggregation story through navigation as well as cmdlets.
+   Additive capability: a synthetic cross-cloud view such as `Cloud:\Instances` spanning all connected providers.
    Why separate: it depends on the earlier path and Provider work being stable, and it carries the highest performance and UX risk.
 
 ## Per-provider usage

@@ -25,6 +25,8 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 |---|---|
 | `Connect-Cloud` | Prepare a ready-to-use cloud session, including auth if needed |
 | `Disconnect-Cloud` | Clear stored session context for a selected provider |
+| `Export-CloudInventory` | Export connected inventory to JSON or CSV |
+| `Find-CloudResource` | Search by name across connected providers and resource kinds |
 | `Get-CloudContext` | Inspect established provider sessions for the current shell |
 | `Get-CloudInstance` | Enumerate compute instances, optionally filtered by exact name within scope |
 | `Get-CloudStorage` | Enumerate storage resources |
@@ -32,8 +34,13 @@ The public surface focuses on a small set of cross-cloud tasks where the user in
 | `Get-CloudNetwork` | Enumerate virtual networks |
 | `Get-CloudDisk` | Enumerate disks or volumes |
 | `Get-CloudFunction` | Enumerate serverless functions |
+| `Get-CloudRegion` | List supported Azure, AWS, and GCP regions |
+| `Resolve-CloudPath` | Parse a cloud path string into a structured `CloudPath` object |
+| `Restart-CloudInstance` | Restart a compute instance |
+| `Set-CloudTag` | Set tags or labels on a resource |
 | `Start-CloudInstance` | Start a compute instance |
 | `Stop-CloudInstance` | Stop a compute instance |
+| `Test-CloudConnection` | Test connectivity to one or all providers |
 
 ## What This Repo Already Was
 
@@ -70,9 +77,9 @@ The test behind every unified command: do the underlying CSP philosophies behind
 - For compute, storage, disk, network, functions, and tags, yes. The question translates. The answer can be normalized.
 - For IAM, the question is the same. The answer cannot be. AWS thinks in policy documents. Azure thinks in role assignments scoped to a resource hierarchy. GCP thinks in bindings. Forcing a single surface over those would erase distinctions that matter in practice.
 
-Provider-native differences that survive normalization belong in `Metadata`, not in the public command noun.
+Provider-native differences that survive normalization do not belong in the public command noun.
 
-For Stage 2, that principle gets sharpened: genuinely opaque detail stays in `Metadata`, but commonly-needed vendor identity fields graduate into first-class properties on vendor subclasses.
+Stage 2 sharpened that principle: genuinely opaque detail stays in `Metadata`, but commonly-needed vendor identity fields graduate into first-class properties on vendor subclasses.
 
 ### Shared Output Contract
 
@@ -113,7 +120,7 @@ For Azure instances, when no power state can be read, PSCumulus now emits `Unkno
 
 - native status strings
 - provider-native long-tail details that do not deserve a stable first-class property
-- transitional compatibility data while older resource kinds still use the legacy construction path
+- native identifiers and shape details that are useful but not common enough to deserve a stable property
 
 ### What Not To Normalize
 
@@ -168,16 +175,20 @@ PSCumulus is being built in additive stages so each one is shippable on its own.
 
 This direction became much clearer after the Summit talk on **Monday, April 13, 2026**, when Jeffrey Snover offered the insight that unlocked the roadmap: use a base class for shared properties, subclass per vendor, and let the subclass own parsing. The future Provider remains in the roadmap, but it now follows the corrected record model instead of leading it. The full rationale and stage-by-stage narrative live in [Evolution](evolution.md).
 
-**Current status:** Stages 1, 2, and 3 are complete (v0.6.0).
+**Current status:** v0.6.1 is the documentation narrative refresh for the completed Stages 1, 2, 3, and v0.6.0 hardening pass.
 
 Broad outline:
 
-1. **Stage 1: Internal Typed Contract**: strengthen internal correctness without changing the public cmdlet surface.
+0. **Stage 0: Cmdlet Contract**: prove that a narrow verb-noun surface can make common cross-cloud operations feel coherent.
+1. **Stage 1: Internal Typed Contract**: strengthen status and tag correctness without changing the public cmdlet surface.
 2. **Stage 2: Vendor Subclass Records**: introduce a real base record class, vendor subclasses, subclass-owned normalization factories, and `Kind`.
 3. **Stage 3: Cloud Path Model**: define a structured path/resolver layer independent of any Provider mechanics.
-4. **Stage 4: The Provider (Read-Only)**: add additive navigation over the same backend engine.
-5. **Stage 5: Write Operations Through the Provider**: let lifecycle actions flow through path context once navigation is stable.
-6. **Stage 6: Cross-Cloud Aggregation**: expose multi-provider views through navigation as well as cmdlets.
+4. **Stage 3.5: v0.6.0 Hardening And Cross-Cloud Helpers**: add search, inventory export, region data, lifecycle consistency, completer/doc cleanup, and deliberate scope cuts before attempting navigation.
+5. **Stage 4: The Provider (Read-Only)**: add additive navigation over the same backend engine.
+6. **Stage 5: Write Operations Through the Provider**: let lifecycle actions flow through path context once navigation is stable.
+7. **Stage 6: Cross-Cloud Navigation And Aggregation**: expose multi-provider views through navigation as well as cmdlets.
+
+The v0.6.0 hardening pass is important enough to name because it explains why the module got smaller in some places and more complete in others. `Find-CloudResource`, `Export-CloudInventory`, and `Get-CloudRegion` landed because they reinforce the existing cmdlet story. `Get-CloudSnapshot`, `Get-CloudImage`, `Remove-CloudTag`, and `Set-CloudTag -Path` were held back because they were not ready to carry the same promise.
 
 For the full stage-by-stage plan, rationale, origin story, and decision details, see [Evolution](evolution.md).
 

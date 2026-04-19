@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.6.0'
+    ModuleVersion     = '0.6.1'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -51,6 +51,14 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.6.1
+- Updated the evolution narrative to explain the v0.6.0 hardening pass, current staged roadmap, and the why behind the cmdlet-first architecture.
+- Updated the strategy documentation with all 18 public commands, the Stage 0 foundation, and the Stage 3.5 hardening phase.
+- Updated README roadmap details to show the current stage plan and clarify that any future Provider remains additive.
+- Updated docs landing, getting-started, and about pages to include cross-cloud search, inventory export, region data, tagging, and connection testing.
+- Updated reeval.md with a continuation note for the documentation narrative pass.
+- No runtime command behavior changed in this release.
+
 0.6.0
 - New command: Find-CloudResource, with alias fcr, searches by name across connected providers and resource kinds.
 - New command: Export-CloudInventory exports connected inventory to JSON or CSV for audits, demos, and before/after snapshots.

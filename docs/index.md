@@ -8,6 +8,9 @@ It keeps a small set of high-value cloud tasks consistent in the shell without p
 
 - Connect to Azure, AWS, or GCP with a single verb-noun entry point
 - Query common infrastructure categories with a shared command shape
+- Search by name across connected clouds when the provider or resource kind is unknown
+- Export point-in-time inventory for audit, demo, and comparison work
+- Surface supported regions for completion and scripting
 - Return a stable inventory object for cross-cloud inspection
 - Normalize tags and labels from all three providers into a consistent `Tags` hashtable
 - Keep provider-native details available in `Metadata`

@@ -8,7 +8,11 @@ The module standardizes a small set of high-value commands for interactive work 
 
 - connect to a provider
 - query common infrastructure categories
+- search for resources by name across connected clouds
+- export a point-in-time inventory
 - start and stop compute instances
+- set tags or labels
+- test session connectivity
 - return a stable output shape for inventory-style commands
 
 ## Commands
@@ -60,7 +64,7 @@ Inventory commands return `PSCumulus.CloudRecord` objects with these common prop
 - `CreatedAt`
 - `Metadata`
 
-For instance inventory, the shared contract is now backed by a real base class with vendor subclasses. Common provider identity fields such as Azure `ResourceGroup`, AWS `InstanceId`, and GCP `Project` are first-class properties on those vendor-specific instance records rather than living only in `Metadata`.
+The shared contract is backed by a real base class with vendor and resource-kind subclasses. Common provider identity fields such as Azure `ResourceGroup`, AWS `InstanceId`, AWS `VolumeId`, and GCP `Project` are first-class properties on those vendor-specific records rather than living only in `Metadata`.
 
 `Connect-Cloud` returns `PSCumulus.ConnectionResult`.
 

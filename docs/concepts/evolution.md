@@ -1,440 +1,428 @@
 # PSCumulus Evolution
 
-This document explains where PSCumulus is going, why it is being evolved in stages, what each stage is meant to accomplish, and what has already landed.
+PSCumulus is a cross-cloud PowerShell module for Azure, AWS, and GCP. That sentence is simple, but the work behind it is not. The goal is not to hide every provider difference, and it is not to build a universal cloud API. The goal is to give operators one fluent PowerShell shape for the questions that really can be asked across clouds.
 
-It is intentionally more reflective and more explicit than the README. The README explains what the module is and how to use it. This document explains why the architecture is being reshaped the way it is.
+This document explains the why behind the architecture, the staged roadmap, what landed in **v0.6.0**, what the **v0.6.1** documentation refresh clarified, and why several tempting features were deliberately held back.
+
+## The Short Version
+
+PSCumulus is evolving around five ideas:
+
+- **PowerShell is the stable layer.** Azure, AWS, and GCP disagree on names, scopes, APIs, identity models, and output shapes. PowerShell gives the module a consistent verb-noun and pipeline model.
+- **The cmdlets are the product.** A future Provider may be useful, but the current value lives in commands like `Get-CloudInstance`, `Find-CloudResource`, and `Export-CloudInventory`.
+- **Normalize only where it stays honest.** Compute, storage, disks, networks, functions, tags, regions, and inventory can share a useful shape. IAM should not be flattened into pretend sameness.
+- **Provider detail must remain reachable.** PSCumulus should make common workflows easier without hiding the fields users need for real cloud operations.
+- **Correctness beats cleverness.** The project should fix broken assumptions, dead branches, stale docs, and leaky semantics before adding larger abstractions.
 
 ## Origin Story
 
-The staged roadmap did not appear in a vacuum. It crystallized after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**.
+The roadmap sharpened after the PowerShell + DevOps Global Summit 2026 talk on **Monday, April 13, 2026**.
 
-That talk was the public proof that PSCumulus already had a useful shape as a cmdlet-first module. The audience could see the point of the normalized records, the cross-cloud pipelines, and the narrowness of the abstraction. But the future direction of the module still felt open-ended.
+The talk proved that PSCumulus already had a useful shape: normalized records, cross-cloud pipelines, and a deliberately narrow abstraction. It also made clear that the next architectural move could not be "build a Provider because Providers are cool." That would skip over the harder question: what exactly is the object model the Provider would navigate?
 
-The real unlock came in the room: **Jeffrey Snover sat in the front row and offered an insight that clarified the next move**:
+The most important guidance came from Jeffrey Snover:
 
 > Base class that has all of the common properties, the subclass for each vendor, then base output parser on subclass.
 
-That advice was initially misremembered as being primarily about a future Provider layer. The corrected reading is more precise and more useful: the next architectural move is to fix the **record model** first, then let later navigation work build on top of that stronger foundation.
+That advice changed the roadmap. The immediate problem was not a missing filesystem-like drive. The immediate problem was making records trustworthy, typed, self-describing, and owned by the right layer.
 
-It reframed the roadmap from "what should this module become instead?" to "how can this module grow without betraying the thing that already makes it useful?"
+The corrected direction became:
 
-Once that clicked, the stages became much easier to define:
-
-- fix correctness first
-- make records and paths more self-describing
-- only then add navigation
-- keep the Provider additive rather than foundational
+- keep the existing cmdlets stable
+- fix correctness issues first
+- make record construction explicit and typed
+- make path parsing testable before attempting navigation
+- add a Provider later only if it can sit on top of those foundations
 
 ## Current Status
 
-PSCumulus has completed **Stage 3: Cloud Path Model** (v0.6.0).
+PSCumulus is at **v0.6.1**. Stages 1, 2, 3, and the v0.6.0 hardening pass are complete. v0.6.1 does not change runtime command behavior; it updates the release notes and public documentation so the story behind the hardening pass is easier to understand.
 
-**Stage 1 is complete:**
-- Internal typed vocabulary is established
-- Status normalization is semantic for all resource types
-- `Metadata.NativeStatus` preserves provider-native state
-- Tag conversion has a dedicated internal home
+The public surface is intentionally finite:
 
-**Stage 2 is complete:**
-- Every `Get-*Data` backend delegates to a kind-specific subclass factory method
-- `ConvertTo-CloudRecord` is removed
-- Start/Stop lifecycle responses return typed records
-- No `[pscustomobject]` escape hatch remains for creating records
-- `Kind` is populated on every record type
-- All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses
-- 15 vendor-specific record classes with promoted first-class properties
-- Metadata dual-write consistency across all resource kinds
-- Kind-level detailed format views showing vendor-specific properties
-- Semantic status normalization for all resource types with enum-based status maps
-- Native status preserved in `Metadata.NativeStatus` for all resource types
+- 18 exported functions
+- 8 aliases
+- cmdlet-first usage
+- PowerShell 5.1-compatible core module
+- Azure, AWS, and GCP support across the same normalized record contract
 
-**Stage 3 is complete:**
-- `CloudPath` model with structured parsing and depth tracking
-- `CloudPathResolver` maps paths to backend commands
-- Case-insensitive provider and kind name handling
-- Singular/plural kind normalization
-- `Resolve-CloudPath` public cmdlet
-- Path parameter set on `Start-CloudInstance` and `Stop-CloudInstance`
-- GCP Zone auto-resolution via instance lookup for path-based lifecycle ops
-- Comprehensive path validation tested with Pester
+The biggest change in v0.6.0 is philosophical as much as technical: the module stopped treating "more commands" as automatic progress. `Get-CloudSnapshot`, `Get-CloudImage`, and `Remove-CloudTag` were removed from the release scope because they were not complete enough to carry the same promise as the rest of the module. Half-wired features make a module feel larger and less trustworthy at the same time.
 
-The module still behaves the same way from the outside:
-- the public interface is still cmdlet-first
-- `Get-CloudInstance`, `Get-CloudDisk`, `Get-CloudStorage`, and the rest still return `PSCumulus.CloudRecord`
-- the public command surface has not been broken or renamed
-- format and display behavior still target `PSCumulus.CloudRecord`
+## What v0.6.1 Clarified
 
-## Why Evolve In Stages
+v0.6.1 is a documentation and release-notes refresh. It explains the current staged roadmap, names Stage 0 and Stage 3.5 explicitly, and makes the "why" behind the v0.6.0 hardening pass easier for future contributors and users to follow.
 
-The staged plan exists for three reasons.
+## What v0.6.0 Actually Did
 
-### 1. The cmdlets are the product today
+v0.6.0 was not a flashy Provider release. It was a confidence release. It made the module more honest, more consistent, and easier to explain.
 
-PSCumulus already works as a cmdlet-based module. People can use it now. That means future changes should not treat the current surface as disposable scaffolding. The public commands are not a temporary bootstrap for a Provider. They are the primary user experience, and any future Provider is an additional affordance layered on top.
+### New Cross-Cloud Helpers
 
-This is why the plan insists on:
+`Find-CloudResource` answers a very common operational question:
 
-- keeping the existing cmdlets stable
-- preserving `PSCumulus.CloudRecord` as the public-facing contract, even while the implementation shifts from stamped objects to real classes
-- adding future navigation as an additive path, not a replacement
+```powershell
+Find-CloudResource -Name 'payment-*'
+```
 
-### 2. Correctness should land before cleverness
+The point is not to replace provider-native search. The point is to help when you know the name, or part of the name, but not the cloud or resource kind. It searches across connected providers and resource kinds using the same normalized output shape as the rest of PSCumulus.
 
-The biggest real problems in the codebase were not the absence of a Provider. They were simpler and more fundamental:
+`Export-CloudInventory` turns the current connected state into an audit-friendly artifact:
 
-- status normalization was too close to string prettification
-- provider-native status meaning was being lost
-- tag conversion rules were repeated inline and had no shared internal home
+```powershell
+Export-CloudInventory -Path ./inventory.json
+Export-CloudInventory -Path ./inventory.csv -Format Csv
+```
 
-Fixing those first is valuable on its own. It improves the module even if the later stages never happen.
+This is the same philosophy as `Get-CloudInstance -All`: one command can fan out across connected clouds, but the output should still be predictable PowerShell data.
 
-### 3. PowerShell version constraints are real
+`Get-CloudRegion` makes region knowledge visible and reusable:
 
-The core module still targets PowerShell 5.1. That matters. Some future ideas, especially around Providers and class-based navigation infrastructure, fit PowerShell 7+ much better than 5.1.
+```powershell
+Get-CloudRegion
+Get-CloudRegion -Provider AWS | Where-Object Name -like 'us-*'
+```
 
-The staged plan preserves a clean split:
+The region lists also feed argument completion now, so there is one source of truth instead of duplicated static arrays.
 
-- the **core module** stays broadly compatible
-- the **future navigation layer** can make stronger assumptions when it is ready
+### Usability Consistency
 
-That lets PSCumulus improve now without forcing the entire project to jump versions or change delivery model prematurely.
+The read commands now line up more cleanly:
 
-## The Philosophy Behind The Plan
+- `Get-CloudStorage`
+- `Get-CloudNetwork`
+- `Get-CloudDisk`
+- `Get-CloudFunction`
 
-PSCumulus started from a very specific thesis:
+all gained `-Name` and `-Detailed`, matching the pattern users already had on `Get-CloudInstance`.
 
-> Build on what does not move.
+Lifecycle commands also became more consistent:
 
-The clouds differ wildly. PowerShell does not. The module works because PowerShell's verb-noun model provides a stable lens through which Azure, AWS, and GCP can be queried without pretending they are identical.
+- `Start-CloudInstance`
+- `Stop-CloudInstance`
+- `Restart-CloudInstance`
 
-That thesis imposes two obligations:
+now share `-Wait`, `-TimeoutSeconds`, `-PollingIntervalSeconds`, and `-PassThru` behavior across direct, piped, and path-based usage. When `-Wait -PassThru` is used, the command emits the freshest polled record rather than stale input.
 
-### Normalize only where the answer is still honest
+### Correctness Fixes
 
-If the providers are expressing the same practical thing in different dialects, normalization is useful.
+Several fixes were about removing false confidence:
 
-That is true for:
+- `Get-CloudContext` now reads AWS expiry from the correct variable.
+- The broken GCP token-expiry branch was replaced with an active-account check because `gcloud` access tokens are opaque.
+- `Get-CloudContext -Provider` now exists, because both users and internal helpers naturally want that filter.
+- `Get-CloudTag -All` now uses Azure subscription-scoped resource IDs rather than subscription display names.
+- `Test-CloudConnection` now defaults to all providers when called with no arguments.
+- `Connect-Cloud -Region` and `Connect-Cloud -Project` are optional so native configured defaults can be used.
+- `Disconnect-Cloud -AccountEmail` works for GCP, and the dead `-Account` parameter was removed.
+- `Invoke-CloudProvider` now wraps backend failures with PSCumulus-specific guidance instead of surfacing raw provider SDK errors with no context.
 
-- compute inventory
-- disks
-- storage
-- networks
-- functions
-- tags and labels
+These are not glamorous changes, but they matter. A module that claims to smooth over three clouds has to be especially careful about its own false assumptions.
 
-It is not true for every cloud problem. IAM remains the clearest non-example. A fake cross-cloud IAM surface would flatten differences that actually matter.
+### Azure Scope Was Treated More Honestly
 
-### Preserve the seam when the seam is meaningful
+One of the most important v0.6.0 corrections was Azure scope handling in `Find-CloudResource` and `Export-CloudInventory`.
 
-A good abstraction is not one that erases every difference. It is one that gives the user a stable top-level shape while still preserving the provider-native detail that they will sometimes need.
+The first implementation assumed the stored Azure context had a single `ResourceGroup` value. Real Azure session context does not work that way. A subscription can contain many resource groups, and the stored context does not name exactly one.
 
-That is why `Metadata` exists.
+The fix was to enumerate visible resource groups with `Get-AzResourceGroup` and query each one. This is slower than pretending there is one resource group, but it is honest. If no resource groups are visible, the command skips Azure with verbose context instead of silently making up a scope.
 
-The evolution plan keeps that philosophy intact. Even the new typed internals are not an attempt to pretend all providers are the same. They are a way to make the module more precise about which differences are normalized and which differences remain native.
+This is a good example of the module's larger philosophy: normalize the shape of the answer, not the structure of the cloud.
 
-The important correction is that not every provider-specific field belongs in `Metadata`. A field like `ResourceGroup`, `InstanceId`, or `Project` is not opaque long-tail detail. It is well-defined, commonly needed, and deserves to be declared as a first-class property on the relevant vendor subclass.
+### Deliberate Scope Cuts
 
-## Design Principles Across All Stages
+Three planned commands were held back:
 
-These principles apply to the full roadmap.
+- `Get-CloudSnapshot`
+- `Get-CloudImage`
+- `Remove-CloudTag`
 
-- Each stage should ship independently and provide value on its own.
-- The cmdlet surface remains the primary interface.
-- The Provider, if and when it lands, is additive.
-- The core module keeps its PowerShell 5.1-compatible posture.
-- Later navigation work may require PowerShell 7+.
-- New providers and new resource kinds should get easier to add over time, not harder.
-- **Locality of knowledge.** When a piece of provider-specific logic needs to exist, it should live in exactly one place. The vendor subclass is that place. Helpers like `CloudInstanceStatusMap` and `CloudTagHelper` exist to be called *by* subclass factory methods, not to duplicate their responsibility.
+The snapshot and image classes that had been added early were also removed. Leaving unused record classes in the module would have implied a supported surface that did not exist.
 
-That last point is especially important. The roadmap is not only about new user features. It is also about making PSCumulus cheaper to extend without turning it into an over-abstracted framework.
+`Set-CloudTag -Path` was also removed. Path-based tagging is a good future idea, but the old implementation depended on a nonexistent resource lookup path. It was better to remove the parameter set than ship a command shape that looked complete and failed at runtime.
 
-### Hierarchy Design: Kind-Split Flat
+## The Architecture In One Mental Model
 
-The module adopts a **kind-split flat hierarchy**: one class per (vendor, kind) pair. This means fifteen leaf classes total, each small and focused:
+PSCumulus has three layers today.
 
-- `AzureInstanceRecord : CloudRecord` — Kind='Instance', ResourceGroup, VmId, OsType
-- `AzureDiskRecord : CloudRecord` — Kind='Disk', ResourceGroup, DiskSizeGB, Sku
-- `AzureStorageRecord : CloudRecord` — Kind='Storage', ResourceGroup, AccountName
-- `AzureNetworkRecord : CloudRecord` — Kind='Network', ResourceGroup, AddressSpace
-- `AzureFunctionRecord : CloudRecord` — Kind='Function', ResourceGroup, Runtime
-- `AWSInstanceRecord : CloudRecord` — Kind='Instance', InstanceId, VpcId, SubnetId
-- `AWSDiskRecord : CloudRecord` — Kind='Disk', VolumeId, VolumeType
-- `AWSStorageRecord : CloudRecord` — Kind='Storage', BucketName
-- `AWSNetworkRecord : CloudRecord` — Kind='Network', VpcId, CidrBlock
-- `AWSFunctionRecord : CloudRecord` — Kind='Function', FunctionName, Runtime
-- `GCPInstanceRecord : CloudRecord` — Kind='Instance', Project, Zone, Id
-- `GCPDiskRecord : CloudRecord` — Kind='Disk', Project, Zone, SourceImage
-- `GCPStorageRecord : CloudRecord` — Kind='Storage', BucketName
-- `GCPNetworkRecord : CloudRecord` — Kind='Network', Project, NetworkName
-- `GCPFunctionRecord : CloudRecord` — Kind='Function', Project, Runtime
+### 1. Public Cmdlets
 
-Each factory method (`AzureInstanceRecord::FromAzVM`, `AzureDiskRecord::FromAzDisk`) owns exactly one parsing contract. This matches the locality principle most faithfully.
+These are the product surface:
 
-### Metadata Backward Compatibility
+```powershell
+Get-CloudInstance
+Get-CloudDisk
+Find-CloudResource
+Export-CloudInventory
+Start-CloudInstance
+Set-CloudTag
+```
 
-Fields promoted from `Metadata` to typed properties follow a **dual-write with deprecation** pattern:
+They should feel like PowerShell: discoverable parameters, pipeline-friendly records, `ShouldProcess` for writes, useful aliases, and predictable output.
 
-- In version 0.2.x: Promoted fields exist both as typed properties AND in `Metadata` for backward compatibility
-- In version 0.3.0: Promoted fields are removed from `Metadata` to eliminate duplication
+### 2. Provider Backends
 
-This gives users time to migrate their scripts without accepting permanent duplication.
+Private backend functions talk to Az modules, AWS.Tools modules, or `gcloud`.
 
-User scripts that access `Metadata.ResourceGroup` will continue working in 0.2.x, but should transition to the direct `.ResourceGroup` property before 0.3.0.
+Their job is not to decide what a PSCumulus record means. Their job is to retrieve provider-native data and hand it to the right typed factory method.
+
+### 3. Typed Records And Path Model
+
+The record layer owns normalization:
+
+- base `CloudRecord`
+- vendor and kind-specific subclasses
+- status maps
+- tag helpers
+- `Metadata.NativeStatus`
+
+The path layer owns path parsing:
+
+- `CloudPath`
+- `CloudPathDepth`
+- `CloudPathResolver`
+- `Resolve-CloudPath`
+
+This split matters because it keeps responsibilities small. Backend functions fetch. Record classes normalize. Path classes parse and resolve identity. Public cmdlets compose those pieces into a PowerShell experience.
+
+## Design Principles
+
+### Cmdlet-First, Provider-Later
+
+PSCumulus is not waiting for a Provider to become useful. The cmdlet surface is already the stable interface.
+
+That is why a future Provider must be additive. If `Azure:\prod-rg\Instances\web-01` eventually works, it should build on the same backend engine as:
+
+```powershell
+Get-CloudInstance -Provider Azure -ResourceGroup prod-rg -Name web-01
+```
+
+The Provider should not create a second implementation of the module.
+
+### Thin Abstraction, Not Universal Cloud
+
+PSCumulus should normalize practical operational shapes:
+
+- name
+- provider
+- kind
+- region
+- status
+- size
+- created time
+- tags
+- common provider identity fields
+
+It should not pretend every cloud has the same mental model. Azure resource groups, AWS regions, and GCP projects are not interchangeable concepts. PSCumulus can route through those scopes consistently, but it should still name the native concept when the user needs it.
+
+### Common Fields Become Properties
+
+Earlier versions leaned heavily on `Metadata`. That preserved detail, but it made common fields feel hidden.
+
+The newer record model promotes commonly-used fields to typed properties:
+
+- Azure `ResourceGroup`, `VmId`, `DiskSizeGB`
+- AWS `InstanceId`, `VpcId`, `VolumeId`, `BucketName`
+- GCP `Project`, `Zone`, `NetworkName`
+
+`Metadata` still matters, but it is no longer the junk drawer for fields users need constantly.
+
+### Native Meaning Must Be Preserved
+
+Semantic status normalization is useful only if the native state is not lost.
+
+For example:
+
+- AWS `shutting-down` normalizes to `Terminating`
+- Azure deallocated VMs normalize to `Stopped`
+- GCP `TERMINATED` normalizes to `Stopped`, because in GCP it usually means stopped but restartable
+
+PSCumulus exposes a cross-cloud status, but preserves native status in `Metadata.NativeStatus` where that difference matters.
+
+### Completion And Docs Are Part Of UX
+
+The v0.6.0 pass treated argument completers, generated docs, aliases, and about-help as part of the product. That matters because a PowerShell module is discovered as much through tab completion and `Get-Help` as through README examples.
+
+If docs list commands that do not exist, if generated reference pages contain unfinished placeholder markers, or if completers fail silently, the module feels less real. The release fixed those because confidence is a feature.
+
+## Stage Map
+
+The roadmap is staged so each step can ship independently and remain useful even if later stages change.
+
+## Stage 0: Cmdlet Contract
+
+**Status:** Complete.
+
+This is the original useful module shape:
+
+- connect to Azure, AWS, and GCP
+- keep provider contexts side by side
+- query instances, storage, disks, networks, functions, and tags
+- start, stop, restart, and tag resources
+- use `-All` to query every connected provider
+- return normalized PowerShell objects
+
+This stage proved the thesis: a small cmdlet vocabulary can make cross-cloud work feel less like context switching.
 
 ## Stage 1: Internal Typed Contract
 
-### Purpose
+**Status:** Complete.
 
-Establish an internal typed vocabulary for provider state and tag conversion without breaking the existing public contract.
+Stage 1 gave the module a stronger internal language:
 
-### What It Introduces
-
-- `Classes/PSCumulus.Types.ps1`
 - `CloudProvider`
-- `CloudInstanceStatus`
-- `CloudInstanceStatusMap`
-- `CloudTagHelper`
-- wrapper converter functions that now delegate to the typed mapping layer
-- semantic instance-state normalization
-- `Metadata.NativeStatus` on instance records
+- semantic status enums
+- status map helpers
+- tag conversion helpers
+- `Metadata.NativeStatus`
 
-### Why This Stage Exists
-
-Stage 1 fixes correctness first.
-
-Before this stage, the module had a stable public shape, but some of its semantics were weaker than they appeared. A state string that looks normalized is not the same thing as a state model that is normalized semantically.
-
-Examples:
-
-- AWS `shutting-down` should not remain effectively "just a prettified string"; it should normalize to `Terminating`
-- Azure `VM deallocated` should normalize to `Stopped`
-- GCP `TERMINATED` should normalize to `Stopped`, because in GCP it means stopped-but-restartable, not permanently gone
-
-This stage gives PSCumulus a more honest and more testable internal language for those cases.
-
-### Why It Stops Where It Does
-
-Stage 1 deliberately does **not**:
-
-- replace record construction with a class-based model
-- add methods like `.Start()` to records
-- introduce a Provider
-- change public command signatures
-
-That restraint is the point. This stage is about making the existing module more trustworthy, not about changing how users interact with it.
+The reason was correctness. A prettified string is not the same as a normalized state model. This stage made state and tag handling testable without changing how users called the module.
 
 ## Stage 2: Vendor Subclass Records
 
-### Purpose
+**Status:** Complete.
 
-Implement Snover's guidance directly: shared base class, kind-split vendor subclasses, and factory methods that own normalization.
+Stage 2 implemented the Snover direction directly:
 
-### Completion Criteria
+- `CloudRecord` base class
+- vendor and kind-specific subclasses
+- factory methods such as `AzureInstanceRecord::FromAzVM()` and `GCPDiskRecord::FromGcpDisk()`
+- typed first-class provider properties
+- kind-aware detailed formatting
+- backend functions delegating normalization to record classes
 
-Stage 2 is complete only when:
-
-- Every `Get-*Data` backend delegates to a kind-specific subclass factory method
-- `ConvertTo-CloudRecord` is removed (not just unused)
-- Start/Stop lifecycle responses return typed records
-- No `[pscustomobject]` escape hatch remains for creating records
-- `Kind` is populated on every record type
-- All resource kinds (Instance, Disk, Storage, Network, Function, Tag) use typed subclasses
-
-### What It Introduces
-
-- `CloudRecord` as a real PowerShell base class
-- Kind-split vendor subclasses: `AzureInstanceRecord`, `AWSDiskRecord`, `GCPStorageRecord`, etc.
-- A `Kind` field on the base class populated for all records
-- Typed first-class provider properties on each vendor+kind subclass
-- Subclass `From*` factory methods that perform normalization and record construction
-- Instance backends that fetch provider data and delegate construction to those factory methods
-- Format/type-name compatibility so `PSCumulus.CloudRecord` remains the public display contract
-
-### User-Visible Changes
-
-**Tab-completion works on typed properties:**
-```powershell
-$vm = Get-CloudInstance -Provider Azure -ResourceGroup prod-rg -Name web-01
-$vm.Re<tab>   # completes to .ResourceGroup
-$vm.Vm<tab>   # completes to .VmId
-```
-
-**Where-Object shorthand filtering works:**
-```powershell
-Get-CloudInstance -Provider Azure | Where-Object ResourceGroup -eq prod-rg
-# Previously: Where-Object { $_.Metadata.ResourceGroup -eq 'prod-rg' }
-```
-
-**Get-Member is self-documenting:**
-```powershell
-Get-CloudInstance -Provider Azure | Get-Member
-# Shows typed provider-specific properties (ResourceGroup, VmId, OsType)
-```
-
-**Select-Object works against typed fields:**
-```powershell
-Get-CloudInstance -Provider Azure | Select-Object Name, ResourceGroup, Status
-```
-
-### Why This Stage Exists
-
-Before this stage, normalization knowledge was scattered across backend functions, wrapper converters, tag helpers, and `ConvertTo-CloudRecord`. That made the final output shape harder to reason about and harder to test.
-
-This stage creates one place of authority per provider per resource kind. If you want to understand what an Azure instance record is, you read `AzureInstanceRecord::FromAzVM()`. If you want to understand an Azure disk record, you read `AzureDiskRecord::FromAzDisk()`. The backend functions shrink back to their core job: talk to the provider, then delegate.
-
-### Why It Is Separate
-
-This stage is valuable even if a Provider never lands. It also gives later path and Provider work a better foundation because those layers can return strongly typed records rather than generic property bags.
-
-### Format View Strategy
-
-The module uses **kind-level detailed views** for now:
-- `PSCumulus.CloudRecord.Instance.Detailed` shows instance-specific columns
-- `PSCumulus.CloudRecord.Disk.Detailed` shows disk-specific columns
-- etc.
-
-This provides the biggest UX win per unit of effort. Vendor-specific detailed views can be added later if demand exists.
+This is the stage that made records self-describing. Users still see `PSCumulus.CloudRecord` compatibility, but the object underneath can carry provider-specific properties cleanly.
 
 ## Stage 3: Cloud Path Model
 
-### Purpose
+**Status:** Complete.
 
-Define a structured cloud path and a resolver that can translate paths into backend calls.
+Stage 3 introduced:
 
-### What It Introduces
+- `CloudPath`
+- `CloudPathDepth`
+- `CloudPathResolver`
+- `Resolve-CloudPath`
+- path parameter sets for lifecycle commands
 
-- a `CloudPath` model
-- a resolver layer that maps paths to backend operations
-- a public helper for path resolution if useful
+The point was to make path identity explicit before building any navigation layer. A Provider without a tested path model would be fragile.
 
-### Why This Stage Exists
-
-The path model is the heart of any future Provider. It is also useful independently of a Provider because it turns path parsing and identity resolution into something explicit and testable.
-
-This matters because cloud hierarchies do not line up neatly:
-
-- Azure groups many workflows around resource groups
-- AWS often scopes lookups around regions
-- GCP often scopes them around projects
-
-The path model is where PSCumulus decides how to turn those different scope systems into one navigable hierarchy without lying about the underlying structure.
-
-The records returned by that resolver now benefit from Stage 2: a path can resolve to a typed kind-specific record like `AzureInstanceRecord`, `AWSDiskRecord`, or `GCPStorageRecord` rather than a generic object with implied provider-specific fields hiding in `Metadata`.
-
-### Why It Is Separate
-
-A Provider built without a clean path model would be fragile. Pulling the model out into its own stage means the hard part can be reasoned about and tested without mixing it with PowerShell Provider mechanics.
-
-## Stage 4: The Provider (Read-Only)
-
-### Purpose
-
-Expose the existing backend engine through a read-only PowerShell navigation layer,
-making cloud resources browsable with familiar filesystem-style commands.
-
-### What It Would Introduce
-
-- navigable drives (`dir Azure:\prod-rg\Instances\`)
-- `Get-ChildItem` over cloud scopes and resource containers
-- `Get-Item` / `Test-Path` style access over cloud paths
-- drive-backed discovery on top of the same backend logic the cmdlets already use
-
-### Why This Stage Exists
-
-The CloudPath model (Stage 3) is the prerequisite. A Provider built without a clean path
-model would be fragile — the hard work of path parsing and identity resolution is already
-done, and any Provider implementation can now delegate directly to `CloudPathResolver`.
-
-### Status
-
-Not yet implemented. Stage 3 provides the foundation. The implementation path has not been
-chosen. Any Provider work belongs in PowerShell 7+ where provider class infrastructure is
-more reliable; the core module's PS 5.1 posture must stay intact.
-
-## Stage 5: Write Operations
-
-### Purpose
-
-Let lifecycle actions flow through path context and, eventually, through Provider navigation.
-
-### What Has Landed (Stage 3 / v0.6.0)
-
-Path-based start and stop are already available via the `Path` parameter set on
-`Start-CloudInstance` and `Stop-CloudInstance`:
+Path-based lifecycle operations now work for:
 
 ```powershell
-Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01'
-Stop-CloudInstance  -Path 'AWS:\us-east-1\Instances\i-0abc123'
+Start-CloudInstance   -Path 'Azure:\prod-rg\Instances\web-server-01'
+Stop-CloudInstance    -Path 'AWS:\us-east-1\Instances\i-0abc123'
+Restart-CloudInstance -Path 'GCP:\contoso-prod\Instances\prod-web-01'
 ```
 
-This works today with no external dependencies — it uses `CloudPath::Parse()` from Stage 3.
+For GCP, path-based lifecycle commands resolve zone information by looking up the instance, because the path uses project as its scope while the native operation needs a zone.
 
-### What Is Not Yet Implemented
+## Stage 3.5: v0.6.0 Hardening And Cross-Cloud Helpers
 
-Provider-driven write operations (acting on a resource discovered via `Get-Item` or
-directory navigation) depend on Stage 4 being stable first. Write operations need reliable
-identity resolution, clear `-WhatIf` behavior, and strong confirmation semantics.
+**Status:** Complete.
 
-## Stage 6: Cross-Cloud Aggregation
+This was the release that made the module feel more complete without jumping to Stage 4.
 
-### Purpose
+It added:
 
-Expose the existing multi-provider aggregation story through navigation as well as through cmdlets.
+- `Find-CloudResource`
+- `Export-CloudInventory`
+- `Get-CloudRegion`
+- `Get-CloudContext -Provider`
+- `-Name` and `-Detailed` consistency across inventory commands
+- completed lifecycle `-Wait` / `-PassThru` behavior
+- better backend error guidance
+- better completers
+- cleaner generated docs
+- canonical alias/about-help docs
 
-### What It Would Introduce
+It also removed or deferred incomplete work:
 
-- a synthetic cross-cloud view
-- navigable multi-provider containers
-- a path-based form of the same "query all connected providers" story that `-All` already provides today
+- no public `Get-CloudSnapshot`
+- no public `Get-CloudImage`
+- no public `Remove-CloudTag`
+- no broken `Set-CloudTag -Path`
+- no unused snapshot/image record classes
 
-### Why This Stage Exists
+This stage exists in the roadmap because it explains the real work between "path model exists" and "Provider exists." The module needed a trust pass before a navigation layer.
 
-PSCumulus already shines when it can say:
+## Stage 4: Read-Only Provider
+
+**Status:** Planned.
+
+Stage 4 would expose the same backend engine through read-only navigation:
+
+```powershell
+Get-ChildItem Azure:\prod-rg\Instances
+Get-Item AWS:\us-east-1\Instances\i-0abc123
+Test-Path GCP:\contoso-prod\Storage\contoso-prod-assets
+```
+
+The important word is "same." The Provider should call into the same resolver and backend logic the cmdlets use. It should not fork the implementation.
+
+The likely shape is a separate PowerShell 7+ companion layer. The core module still targets PowerShell 5.1, and that compatibility should not be broken just to ship navigation.
+
+## Stage 5: Provider-Aware Writes
+
+**Status:** Partially prepared, not implemented as Provider behavior.
+
+Path-based lifecycle writes already exist through cmdlet parameters:
+
+```powershell
+Start-CloudInstance -Path 'Azure:\prod-rg\Instances\web-server-01' -Wait -PassThru
+```
+
+But Provider-driven writes are a separate problem. Acting on resources discovered through `Get-Item` or directory navigation needs:
+
+- reliable identity resolution
+- clear confirmation messages
+- correct `-WhatIf` behavior
+- predictable refresh behavior after writes
+
+That belongs after read-only navigation is stable.
+
+## Stage 6: Cross-Cloud Navigation And Aggregation
+
+**Status:** Future.
+
+PSCumulus already has cmdlet aggregation:
 
 ```powershell
 Get-CloudInstance -All | Group-Object Provider, Status
+Find-CloudResource -Name 'prod-*'
+Export-CloudInventory -Path ./inventory.json
 ```
 
-Stage 6 asks what the navigation equivalent of that should look like.
+Stage 6 asks what the navigation equivalent should be. That might mean synthetic cross-cloud containers or multi-provider discovery views. It is last because fan-out behavior is powerful but easy to make surprising.
 
-### Why It Is Last
+Performance, caching, progress, and skipped-provider reporting all matter more when one navigation command can touch three clouds.
 
-Because it depends on every prior stage being correct:
+## What PSCumulus Deliberately Does Not Do Yet
 
-- typed vocabulary
-- self-describing records
-- stable path model
-- reliable read-only Provider behavior
+### It Does Not Abstract IAM
 
-It also has the highest potential for surprising performance behavior, because a single navigation command can fan out across multiple connected providers.
+IAM is the clearest example of where honest normalization stops.
 
-## What The Plan Deliberately Does Not Prioritize
+AWS policies, Azure role assignments, and GCP IAM bindings do not merely use different names for the same object. They encode different grammars. Flattening them too early would hide the differences users most need to understand.
 
-Some ideas are intentionally deferred even though they are interesting.
+### It Does Not Put Methods On Records
 
-### Record methods
+Records could eventually grow helper methods, but lifecycle operations belong naturally to cmdlets today:
 
-Methods like `.Start()` or `.Stop()` on records may sound attractive, but the cmdlet and Provider surfaces already map more naturally onto PowerShell's `ShouldProcess` and pipeline behavior.
+```powershell
+Get-CloudInstance -All | Where-Object Status -eq Stopped | Start-CloudInstance -WhatIf
+```
 
-### Abstract backend class hierarchies
+Cmdlets give PowerShell the right places for `ShouldProcess`, pipeline binding, help, examples, and confirmation behavior.
 
-The current function-based routing is repetitive, but it is also very readable and proportional to the module's size. More abstraction is only worth it when it clearly reduces complexity.
+### It Does Not Add Commands Just Because A Type Exists
 
-### Full context-object refactors
+The removed snapshot and image work is the best example. A record class is not a feature. A feature needs backend support, tests, docs, provider-specific edge cases, and a story for how it fits the public surface.
 
-The session context can remain simple until later stages genuinely require stronger structure.
+### It Does Not Depend On SHiPS
 
-### A compiled provider-first architecture
+SHiPS can simplify Provider construction, but it is not the right dependency for PSCumulus right now. It is not active enough, it pushes the project away from its current compatibility posture, and it would make the Provider layer feel foundational instead of additive.
 
-That is a valid future option if the Provider direction becomes central. It is not the right first move while the module is still proving its staged architecture.
-
-### A SHiPS dependency for the Provider layer
-
-SHiPS (Simple Hierarchy in PowerShell) simplifies building `NavigationCmdletProvider`
-subclasses. It is not the right dependency for PSCumulus: it is barely maintained, requires
-PS 6+, and exporting cmdlets that silently fail on PS 5.1 contradicts the module's
-compatibility posture. If a Provider is built, it will use a raw `CmdletProvider` subclass
-in a separate PS 7+ companion module.
+If a Provider lands, it should likely be raw Provider implementation in a separate PS7+ layer.
 
 ## What Success Looks Like
 
@@ -442,15 +430,18 @@ The roadmap is working if PSCumulus becomes:
 
 - more correct internally
 - easier to extend
-- more expressive for users
-- still recognizably the same module from the outside
+- easier to explain
+- richer for interactive PowerShell users
+- still recognizably the same cmdlet-first module
 
-That last point matters. A good evolution plan should make the module feel more capable, not unfamiliar.
+The measure is not how many abstractions exist. The measure is whether someone operating across Azure, AWS, and GCP can ask a practical question once, receive predictable objects, and still reach provider-native detail when it matters.
 
 ## The Through-Line
 
-Every stage in this plan is trying to protect the same original insight:
+The original insight still holds:
 
-PowerShell is the stable layer. The clouds are not.
+> Build on what does not move.
 
-The job of PSCumulus is not to erase that reality. It is to make it livable.
+The clouds do not move together. PowerShell gives PSCumulus a stable language for the parts of cloud operations that can be made common.
+
+The job of PSCumulus is not to erase provider reality. It is to make that reality easier to work with, one honest abstraction at a time.

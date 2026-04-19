@@ -51,6 +51,7 @@ After connecting to one or more providers, use `Get-CloudContext` to see all est
 
 ```powershell
 Get-CloudContext
+Test-CloudConnection
 ```
 
 ```
@@ -88,6 +89,13 @@ Use `Export-CloudInventory` to capture a point-in-time inventory file for audit,
 ```powershell
 Export-CloudInventory -Path "./inventory.json"
 Export-CloudInventory -Path "./inventory.csv" -Format Csv -Provider Azure
+```
+
+Use `Get-CloudRegion` when you want provider-specific region names without leaving the PSCumulus command surface:
+
+```powershell
+Get-CloudRegion -Provider AWS
+Get-CloudRegion -Provider Azure -Name "*canada*"
 ```
 
 ## Interactive Aliases

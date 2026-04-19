@@ -1,6 +1,6 @@
 # PSCumulus Re-evaluation — Execution Pass Verification
 
-Branch: `main`. Module version at `PSCumulus.psd1:3` is `0.6.0`.
+Branch: `main`. Module version at `PSCumulus.psd1:3` is `0.6.1`.
 Final public surface reports 18 functions and 8 aliases, matching the revised plan scope.
 
 ---
@@ -55,6 +55,35 @@ Picked up the follow-up queue and completed Groups 1 through 8 from Section 4.
 ### Current handoff state
 - Section 4 Groups 1 through 9 are complete for this continuation.
 - Working tree should be clean after the final handoff-note commit, except for any future changes made by the next agent.
+
+---
+
+## Documentation Narrative Update — 2026-04-18
+
+Updated the public docs so the v0.6.0 story explains both what changed and why the release deliberately tightened scope before Provider work.
+
+### Completed in this docs pass
+- Rewrote `docs/concepts/evolution.md` around the current v0.6.0 reality:
+  - cmdlet-first philosophy
+  - Snover base-class/subclass guidance
+  - Stage 0 through Stage 6 roadmap
+  - Stage 3.5 hardening pass
+  - cross-cloud helpers (`Find-CloudResource`, `Export-CloudInventory`, `Get-CloudRegion`)
+  - Azure scope honesty
+  - deliberate cuts (`Get-CloudSnapshot`, `Get-CloudImage`, `Remove-CloudTag`, `Set-CloudTag -Path`)
+- Updated `docs/concepts/strategy.md`:
+  - command table now includes all 18 exported functions
+  - roadmap now names Stage 0 and Stage 3.5
+  - normalization language now distinguishes first-class vendor identity fields from opaque `Metadata`
+- Updated `README.md` roadmap status and stage list to include the v0.6.0 hardening pass.
+- Updated `docs/index.md`, `docs/getting-started.md`, and `docs/reference/about-pscumulus.md` so the landing/help docs mention search, export, regions, tagging, and connection testing where appropriate.
+- Bumped `PSCumulus.psd1` to `0.6.1` and added release notes for the documentation narrative refresh.
+
+### Verification status for this docs pass
+- `rg` stale-doc sweep across `README.md` and `docs/` found no old v0.5.0/v0.4.0 references, placeholder markers, obsolete command counts, or stale Stage 3/v0.6.0 wording.
+- `git diff --check` passed.
+- `mkdocs build --strict` was attempted but blocked because `mkdocs` is not installed in the current environment.
+- If `mkdocs` is available later, run `mkdocs build --strict`.
 
 ---
 
