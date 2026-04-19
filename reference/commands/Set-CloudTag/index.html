@@ -2070,7 +2070,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <p>Tags all Azure disks returned from Get-CloudDisk (piped input).</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
 <h3 id="-azureresourceid">-AzureResourceId<a class="headerlink" href="#-azureresourceid" title="Permanent link">&para;</a></h3>
-<p>{{ Fill AzureResourceId Description }}</p>
+<p>The full Azure resource id to tag.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2105,7 +2105,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-inputobject">-InputObject<a class="headerlink" href="#-inputobject" title="Permanent link">&para;</a></h3>
-<p>{{ Fill InputObject Description }}</p>
+<p>A PSCumulus cloud record or object with Provider and Name properties.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.PSObject</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2122,7 +2122,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-merge">-Merge<a class="headerlink" href="#-merge" title="Permanent link">&para;</a></h3>
-<p>{{ Fill Merge Description }}</p>
+<p>Merge the supplied tags with existing tags instead of replacing them.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2139,7 +2139,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-name">-Name<a class="headerlink" href="#-name" title="Permanent link">&para;</a></h3>
-<p>{{ Fill Name Description }}</p>
+<p>The Azure VM name when tagging by name and resource group.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2156,7 +2156,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-project">-Project<a class="headerlink" href="#-project" title="Permanent link">&para;</a></h3>
-<p>{{ Fill Project Description }}</p>
+<p>The GCP project containing the resource.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2173,7 +2173,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-region">-Region<a class="headerlink" href="#-region" title="Permanent link">&para;</a></h3>
-<p>{{ Fill Region Description }}</p>
+<p>The AWS region containing the resource.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2190,7 +2190,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-resource">-Resource<a class="headerlink" href="#-resource" title="Permanent link">&para;</a></h3>
-<p>{{ Fill Resource Description }}</p>
+<p>The GCP resource path to label.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2207,7 +2207,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-resourcegroup">-ResourceGroup<a class="headerlink" href="#-resourcegroup" title="Permanent link">&para;</a></h3>
-<p>{{ Fill ResourceGroup Description }}</p>
+<p>The Azure resource group containing the VM.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2224,7 +2224,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-resourceid">-ResourceId<a class="headerlink" href="#-resourceid" title="Permanent link">&para;</a></h3>
-<p>{{ Fill ResourceId Description }}</p>
+<p>The AWS resource id to tag.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -2241,7 +2241,7 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 </code></pre></div>
 <h3 id="-tags">-Tags<a class="headerlink" href="#-tags" title="Permanent link">&para;</a></h3>
-<p>{{ Fill Tags Description }}</p>
+<p>The tags or labels to apply.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Collections.Hashtable</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
