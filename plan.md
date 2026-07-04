@@ -1,4 +1,115 @@
-# PSCumulus Improvement Plan
+# PSCumulus — Plan
+
+PSCumulus is a cross-cloud PowerShell module (Azure/AWS/GCP), currently **v0.6.1 and
+healthy**: 18 exported commands, 669 tests green, PSScriptAnalyzer clean, docs synced,
+CI green. The prior improvement plan (tasks 1-36 — correctness bugs, UX consistency,
+docs drift, plus `Find-CloudResource` and `Export-CloudInventory`) is **done** and
+archived below. Nothing is broken; this is forward build-out work.
+
+The conference this was built for (PowerShell + DevOps Global Summit, April 2026) has
+passed — there's no deadline. This is evolve-the-module work.
+
+## Executing this with Fable
+
+- **Effort** `high`/`xhigh`; give each item its full spec up front.
+- **No refusal risk** — DevOps/cloud tooling, not security tooling. Do not add the
+  QRCheck-style `fallbacks` / `server-side-fallback` boilerplate.
+- **Fable under-reaches for subagents by default** — the per-provider fan-out in each
+  command (Azure/AWS/GCP branches) can be built and tested in parallel; say so.
+- **Module conventions (match exactly):** cmdlet-first; commands in `Public/`, private
+  helpers in `Private/`; the `CloudRecord` base + vendor-subclass pattern in
+  `Classes/PSCumulus.Types.ps1`; **reuse the `Invoke-CloudProvider` + `Get-*Data`
+  backend layer — do not add new backends**; every new command goes into
+  `FunctionsToExport` in `PSCumulus.psd1` (and any alias into `AliasesToExport` +
+  `PSCumulus.psm1`); tests go in `tests/Public/` mirroring the `Get-CloudInstance`
+  test style, mocking the `Get-*Data` backends.
+- **Verify before each commit:**
+  - `Invoke-Pester -Path tests -Output Normal` — green.
+  - `Invoke-ScriptAnalyzer -Path Classes,Private,Public,scripts -Recurse -Severity Error,Warning -ExcludeRule PSAvoidUsingWriteHost` — no findings.
+  - `pwsh -NoProfile -File scripts/Update-Docs.ps1`, then confirm no `{{ Fill`
+    placeholders remain in `docs/reference/`.
+- **Commit** with `/cp` from inside `PSCumulus/` (never from the code-folder root).
+
+## Priority order
+
+1. **S1 — Stage 4: `CloudPath` + `Get-CloudResource`** (flagship).
+2. **S2 — revive `Get-CloudSnapshot` / `Get-CloudImage`** (additive).
+3. **S3 — integration-test scaffolding** (structure only; real runs deferred until
+   throwaway cloud accounts exist).
+
+## S1 — Stage 4: `CloudPath` + `Get-CloudResource`
+
+The module already exports `Resolve-CloudPath` (path parsing) but has no way to
+*resolve a path to a live resource* — which is why `Set-CloudTag -Path` was removed in
+v0.6 (see archived item 1.3). Stage 4 closes this gap.
+
+- **Read first:** `Public/Resolve-CloudPath.ps1`, to match the existing CloudPath
+  grammar. Do not invent a new path format.
+- **Add `Get-CloudResource`:** take a CloudPath, parse it via `Resolve-CloudPath`,
+  dispatch to the matching `Get-Cloud<Kind>` backend (instance / disk / network /
+  storage / function) through `Invoke-CloudProvider`, and return the normalized
+  `CloudRecord`. Cross-provider by construction.
+- **Re-wire `Set-CloudTag -Path`:** restore the `-Path` parameter set, now backed by
+  `Get-CloudResource`. Replace the archived plan's "assert `-Path` is unknown" test
+  with real path-driven tagging coverage.
+- **Export + docs + tests:** add `Get-CloudResource` to `FunctionsToExport`;
+  regenerate docs; add `tests/Public/Get-CloudResource.Tests.ps1` and update
+  `Set-CloudTag.Tests.ps1`.
+- **Done when:** `Get-CloudResource <path>` returns the correct `CloudRecord` per
+  provider (mocked backends), `Set-CloudTag -Path <path>` tags through it, tests
+  green, analyzer clean, docs regenerated.
+
+## S2 — revive `Get-CloudSnapshot` / `Get-CloudImage`
+
+Cut from v0.6 (commands unimplemented, record classes later removed — see the archived
+scope note). Snapshots are the most honestly-normalizable concept not yet covered:
+every provider's snapshot knows its source disk, size, and creation date.
+
+- **Re-add record classes:** Snapshot (and Image) `CloudRecord` subclasses in
+  `Classes/PSCumulus.Types.ps1`, with first-class normalized fields (source
+  disk/volume, size, created); vendor specifics go in `Metadata`.
+- **`Get-CloudSnapshot`:** normalized snapshot listing across Azure (snapshots), AWS
+  (EBS snapshots), GCP (disk snapshots) via the existing backend layer. Support
+  `-All`, `-Name`, `-Detailed` to match the other `Get-Cloud*` commands.
+- **`Get-CloudImage`:** same shape for images / AMIs / GCP images.
+- **Export + alias + docs + tests** per the conventions above (the `gcsn` alias was
+  removed when snapshot was cut — re-add if reviving).
+- **Done when:** both commands return normalized records across all three providers
+  (mocked), match the `Get-Cloud*` UX, tests green, analyzer clean, docs + manifest
+  updated.
+
+## S3 — integration-test scaffolding (structure only — do not go deep)
+
+The 669 tests are all **mocked**; the module has never run against real clouds. Real
+integration tests need throwaway Azure/AWS/GCP accounts that don't exist yet, so **do
+not build a deep harness or run anything live.** Just lay the rails so it's ready when
+credentials arrive:
+
+- Add `tests/Integration/` with Pester tests tagged `Integration`, **skipped by
+  default** — gated on an env flag (e.g. `$env:PSCUMULUS_INTEGRATION`) plus per-
+  provider credential presence, so a normal `Invoke-Pester -Path tests` never runs
+  them.
+- Add **one or two example skipped tests only** — e.g. a `Connect-Cloud` →
+  `Get-CloudInstance` round-trip per provider — as templates, not a full suite.
+- Add `tests/Integration/README.md` documenting exactly which accounts, env vars, and
+  scopes are needed to enable them later.
+- **Done when:** `Invoke-Pester -Path tests` still runs only the mocked suite (green,
+  integration skipped) and the scaffolding + README make it obvious how to light it up
+  once accounts exist. **Stop there** — no deeper.
+
+---
+
+# Archived — Improvement Plan (completed, v0.6.1)
+
+> Tasks 1-36 are complete: all Section 1 correctness bugs fixed, UX consistency raised
+> across the public surface, README/docs drift closed, and `Find-CloudResource` +
+> `Export-CloudInventory` added. `Get-CloudSnapshot` / `Get-CloudImage` /
+> `Remove-CloudTag` were cut from scope (revived as S2 above). 669 tests green,
+> analyzer clean, docs synced, CI green. Preserved for reference — the Section 2
+> command templates and the `Set-CloudTag -Path` removal rationale in item 1.3 are
+> useful source material for S1/S2 above.
+
+## PSCumulus Improvement Plan (archived)
 
 > **STATUS UPDATE:** Tasks 1-36 completed. Documentation sync, local verification, push, and CI are complete.
 > **RECENT FIXES (2026-04-19):** Fixed all PSScriptAnalyzer warnings and CI test failures. See summary at end of file.
