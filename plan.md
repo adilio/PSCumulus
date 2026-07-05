@@ -103,7 +103,17 @@ every provider's snapshot knows its source disk, size, and creation date.
   (mocked), match the `Get-Cloud*` UX, tests green, analyzer clean, docs + manifest
   updated.
 
-## S3 — integration-test scaffolding (structure only — do not go deep)
+## ✅ S3 — integration-test scaffolding — DONE (structure only, as specified)
+
+> Shipped: `tests/Integration/` with three per-provider Connect-Cloud →
+> Get-CloudInstance round-trip templates tagged `Integration`, double-gated on
+> `$env:PSCUMULUS_INTEGRATION` plus per-provider credential env vars — a
+> normal `Invoke-Pester -Path tests` shows them as skipped (730 total, 721
+> passed, 9 skipped, 0 failed). README documents the throwaway accounts, env
+> vars, scopes, and how to extend once credentials exist. Stopped there per
+> the plan.
+
+## S3 (original spec) — integration-test scaffolding (structure only — do not go deep)
 
 The 669 tests are all **mocked**; the module has never run against real clouds. Real
 integration tests need throwaway Azure/AWS/GCP accounts that don't exist yet, so **do
