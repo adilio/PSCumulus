@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Get-CloudRegion/">
+        <link rel="canonical" href="https://adilio.github.io/PSCumulus/reference/commands/Get-CloudResource/">
       
       
-        <link rel="prev" href="../Get-CloudNetwork/">
+        <link rel="prev" href="../Get-CloudRegion/">
       
       
-        <link rel="next" href="../Get-CloudResource/">
+        <link rel="next" href="../Get-CloudStorage/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Get-CloudRegion - PSCumulus</title>
+        <title>Get-CloudResource - PSCumulus</title>
       
     
     
@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#get-cloudregion" class="md-skip">
+        <a href="#get-cloudresource" class="md-skip">
           Skip to content
         </a>
       
@@ -104,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Get-CloudRegion
+              Get-CloudResource
             
           </span>
         </div>
@@ -833,6 +833,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../Get-CloudRegion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudRegion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -852,7 +880,7 @@
   <span class="md-ellipsis">
     
   
-    Get-CloudRegion
+    Get-CloudResource
   
 
     
@@ -870,7 +898,7 @@
   <span class="md-ellipsis">
     
   
-    Get-CloudRegion
+    Get-CloudResource
   
 
     
@@ -1001,6 +1029,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1019,10 +1058,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#-provider" class="md-nav__link">
+  <a href="#-detailed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -Provider
+        -Detailed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Path
       
     </span>
   </a>
@@ -1053,6 +1103,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="INPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System.String
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1110,34 +1177,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../Get-CloudResource/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Get-CloudResource
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1514,6 +1553,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 4
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1532,10 +1582,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#-provider" class="md-nav__link">
+  <a href="#-detailed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        -Provider
+        -Detailed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Path
       
     </span>
   </a>
@@ -1566,6 +1627,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="INPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System.String
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1639,33 +1717,64 @@
   
 
 
-<h1 id="get-cloudregion">Get-CloudRegion<a class="headerlink" href="#get-cloudregion" title="Permanent link">&para;</a></h1>
+<h1 id="get-cloudresource">Get-CloudResource<a class="headerlink" href="#get-cloudresource" title="Permanent link">&para;</a></h1>
 <h2 id="synopsis">SYNOPSIS<a class="headerlink" href="#synopsis" title="Permanent link">&para;</a></h2>
-<p>Lists supported regions for each cloud provider.</p>
+<p>Resolves a CloudPath to live cloud resources.</p>
 <h2 id="syntax">SYNTAX<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <h3 id="__allparametersets">__AllParameterSets<a class="headerlink" href="#__allparametersets" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>Get-CloudRegion [[-Provider] &lt;string&gt;] [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CloudResource [-Path] &lt;string&gt; [-Detailed] [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
   None</p>
 <h2 id="description">DESCRIPTION<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
-<p>Returns all supported regions for Azure, AWS, or GCP.
-Use this to discover
-valid region values for Connect-Cloud and other provider-specific commands.</p>
+<p>Get-CloudResource takes a CloudPath string (the same grammar that
+Resolve-CloudPath parses), dispatches to the matching provider backend,
+and returns normalized CloudRecord objects.</p>
+<p>The path must reach at least Kind depth:</p>
+<div class="highlight"><pre><span></span><code>{Provider}:\{Scope}\{Kind}[\{ResourceName}]
+</code></pre></div>
+<p>A Kind-depth path (for example 'Azure:\prod-rg\Instances') lists every
+resource of that kind in the scope.
+A Resource-depth path (for example
+'Azure:\prod-rg\Instances\web-01') returns the single matching resource,
+or writes a non-terminating error when nothing matches.</p>
+<p>The Tags kind is not addressable through Get-CloudResource; use
+Get-CloudTag for tag queries.</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
-<p>Get-CloudRegion</p>
-<p>Returns all regions for all providers.</p>
+<p>Get-CloudResource 'Azure:\prod-rg\Instances\web-server-01'</p>
+<p>Returns the normalized record for one Azure VM.</p>
 <h3 id="example-2">EXAMPLE 2<a class="headerlink" href="#example-2" title="Permanent link">&para;</a></h3>
-<p>Get-CloudRegion -Provider Azure</p>
-<p>Returns only Azure regions.</p>
+<p>Get-CloudResource 'AWS:\us-east-1\Disks'</p>
+<p>Lists every EBS volume in the region as CloudRecord objects.</p>
 <h3 id="example-3">EXAMPLE 3<a class="headerlink" href="#example-3" title="Permanent link">&para;</a></h3>
-<p>Get-CloudRegion -Provider AWS | Where-Object { $_.Name -like 'us-*' }</p>
-<p>Returns AWS regions in the US.</p>
+<p>Get-CloudResource 'GCP:\my-project\Functions\resize-images' -Detailed</p>
+<p>Returns a GCP Cloud Function with the detailed view enabled.</p>
+<h3 id="example-4">EXAMPLE 4<a class="headerlink" href="#example-4" title="Permanent link">&para;</a></h3>
+<p>'Azure:\prod-rg\Storage\proddata01' | Get-CloudResource | Set-CloudTag -Tags @{ owner = 'ops' }</p>
+<p>Resolves a storage account by path and pipes it into tagging.</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
-<h3 id="-provider">-Provider<a class="headerlink" href="#-provider" title="Permanent link">&para;</a></h3>
-<p>The cloud provider to list regions for.</p>
+<h3 id="-detailed">-Detailed<a class="headerlink" href="#-detailed" title="Permanent link">&para;</a></h3>
+<p>Emit detailed view records.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.Management.Automation.SwitchParameter</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-path">-Path<a class="headerlink" href="#-path" title="Permanent link">&para;</a></h3>
+<p>The CloudPath to resolve.
+Must include at least Provider, Scope, and Kind.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
 <span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -1673,9 +1782,9 @@ valid region values for Connect-Cloud and other provider-specific commands.</p>
 <span class="nt">ParameterSets</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
@@ -1687,6 +1796,8 @@ valid region values for Connect-Cloud and other provider-specific commands.</p>
 -ProgressAction, -Verbose, -WarningAction, and -WarningVariable. For more information, see
 <a href="https://go.microsoft.com/fwlink/?LinkID=113216">about_CommonParameters</a>.</p>
 <h2 id="inputs">INPUTS<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
+<h3 id="systemstring">System.String<a class="headerlink" href="#systemstring" title="Permanent link">&para;</a></h3>
+<p>See the command description and examples above.</p>
 <h2 id="outputs">OUTPUTS<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h2>
 <h3 id="systemmanagementautomationpsobject">System.Management.Automation.PSObject<a class="headerlink" href="#systemmanagementautomationpsobject" title="Permanent link">&para;</a></h3>
 <p>See the command description and examples above.</p>

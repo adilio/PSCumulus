@@ -864,6 +864,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../Get-CloudResource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get-CloudResource
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Get-CloudStorage/" class="md-nav__link">
         
   
@@ -1113,6 +1141,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Path
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1207,6 +1246,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 6
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1273,6 +1323,17 @@
     <span class="md-ellipsis">
       
         -Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Path
       
     </span>
   </a>
@@ -1662,6 +1723,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Path
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1756,6 +1828,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#example-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EXAMPLE 6
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1822,6 +1905,17 @@
     <span class="md-ellipsis">
       
         -Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -Path
       
     </span>
   </a>
@@ -2043,6 +2137,9 @@
 <div class="highlight"><pre><span></span><code>Set-CloudTag -Project &lt;string&gt; -Resource &lt;string&gt; -Tags &lt;hashtable&gt; [-Merge] [-WhatIf] [-Confirm]
  [&lt;CommonParameters&gt;]
 </code></pre></div>
+<h3 id="path">Path<a class="headerlink" href="#path" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Set-CloudTag -Path &lt;string&gt; -Tags &lt;hashtable&gt; [-Merge] [-WhatIf] [-Confirm] [&lt;CommonParameters&gt;]
+</code></pre></div>
 <h2 id="aliases">ALIASES<a class="headerlink" href="#aliases" title="Permanent link">&para;</a></h2>
 <p>This cmdlet has the following aliases,
   sct</p>
@@ -2051,7 +2148,8 @@
 For Azure, you can specify a VM by Name/ResourceGroup or any resource by ResourceId.
 For AWS, provide the ResourceId and Region.
 For GCP, provide the Project and Resource.
-You can also pipe CloudRecord objects from other PSCumulus commands.</p>
+You can also pipe CloudRecord objects from other PSCumulus commands, or address a
+resource by CloudPath with -Path (resolved through Get-CloudResource).</p>
 <h2 id="examples">EXAMPLES<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="example-1">EXAMPLE 1<a class="headerlink" href="#example-1" title="Permanent link">&para;</a></h3>
 <p>Set-CloudTag -Name 'vm01' -ResourceGroup 'rg-test' -Tags @{Environment='Dev'; Owner='TeamA'}</p>
@@ -2068,6 +2166,9 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <h3 id="example-5">EXAMPLE 5<a class="headerlink" href="#example-5" title="Permanent link">&para;</a></h3>
 <p>Get-CloudDisk -Provider Azure | Set-CloudTag -Tags @{Encrypted='AES256'}</p>
 <p>Tags all Azure disks returned from Get-CloudDisk (piped input).</p>
+<h3 id="example-6">EXAMPLE 6<a class="headerlink" href="#example-6" title="Permanent link">&para;</a></h3>
+<p>Set-CloudTag -Path 'Azure:\prod-rg\Instances\web-01' -Tags @{Environment='Prod'}</p>
+<p>Resolves the CloudPath through Get-CloudResource and tags the matching resource.</p>
 <h2 id="parameters">PARAMETERS<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
 <h3 id="-azureresourceid">-AzureResourceId<a class="headerlink" href="#-azureresourceid" title="Permanent link">&para;</a></h3>
 <p>The full Azure resource id to tag.</p>
@@ -2146,6 +2247,23 @@ You can also pipe CloudRecord objects from other PSCumulus commands.</p>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 <span class="nt">ParameterSets</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AzureByName</span>
+<span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
+<span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromPipelineByPropertyName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">ValueFromRemainingArguments</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">DontShow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">AcceptedValues</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">HelpMessage</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+</code></pre></div>
+<h3 id="-path">-Path<a class="headerlink" href="#-path" title="Permanent link">&para;</a></h3>
+<p>A CloudPath addressing the resource(s) to tag (resolved via Get-CloudResource).</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System.String</span>
+<span class="nt">DefaultValue</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="nt">SupportsWildcards</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="nt">ParameterSets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Path</span>
 <span class="w">  </span><span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span>
 <span class="w">  </span><span class="nt">IsRequired</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">  </span><span class="nt">ValueFromPipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
