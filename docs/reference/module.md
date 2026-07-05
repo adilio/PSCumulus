@@ -57,6 +57,10 @@ Gets virtual networks from a selected cloud provider.
 
 Lists supported regions for each cloud provider.
 
+### [Get-CloudResource](commands/Get-CloudResource.md)
+
+Resolves a CloudPath to live cloud resources.
+
 ### [Get-CloudStorage](commands/Get-CloudStorage.md)
 
 Gets storage resources from a selected cloud provider.

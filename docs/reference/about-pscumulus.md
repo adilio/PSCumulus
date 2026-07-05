@@ -27,6 +27,7 @@ The module standardizes a small set of high-value commands for interactive work 
 - `Get-CloudInstance`
 - `Get-CloudNetwork`
 - `Get-CloudRegion`
+- `Get-CloudResource`
 - `Get-CloudStorage`
 - `Get-CloudTag`
 - `Resolve-CloudPath`

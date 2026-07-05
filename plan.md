@@ -37,7 +37,21 @@ passed — there's no deadline. This is evolve-the-module work.
 3. **S3 — integration-test scaffolding** (structure only; real runs deferred until
    throwaway cloud accounts exist).
 
-## S1 — Stage 4: `CloudPath` + `Get-CloudResource`
+## ✅ S1 — Stage 4: `CloudPath` + `Get-CloudResource` — DONE
+
+> Shipped: `Get-CloudResource` resolves CloudPaths through the existing
+> `Resolve-CloudPath` grammar + `CloudPathResolver`, dispatching via
+> `Invoke-CloudProvider` to the `Get-*Data` backends (instance backends get
+> `-Name` server-side; other kinds filter client-side). Kind-depth paths list
+> the scope; resource-depth paths return one record or a non-terminating
+> ObjectNotFound error; Tags kind directs to `Get-CloudTag`. `Set-CloudTag
+> -Path` is restored, backed by `Get-CloudResource`, sharing one
+> record→target mapping with the Piped branch (which also gained an
+> AWS Id fallback for non-instance records). Exported, docs regenerated, all
+> doc surfaces synced to nineteen commands. 690 tests green (21 new),
+> analyzer clean.
+
+## S1 (original spec) — Stage 4: `CloudPath` + `Get-CloudResource`
 
 The module already exports `Resolve-CloudPath` (path parsing) but has no way to
 *resolve a path to a live resource* — which is why `Set-CloudTag -Path` was removed in

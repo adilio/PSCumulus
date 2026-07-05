@@ -108,11 +108,71 @@ Describe 'Set-CloudTag' {
         }
     }
 
-    Context 'Path parameter removed' {
-        It 'Should error when -Path parameter is used' {
-            # -Path parameter was removed in v0.6.0; this verifies it's no longer accepted
-            { Set-CloudTag -Path 'Azure:\rg-test\Instances\vm01' -Tags @{Environment = 'Dev' } -ErrorAction Stop } |
-                Should -Throw -ExpectedMessage '*Path*'
+    Context 'Path parameter set (Stage 4)' {
+        # -Path was removed in v0.6.0 and restored in Stage 4, now backed by Get-CloudResource.
+        It 'Should resolve the path via Get-CloudResource and tag the resolved Azure resource' {
+            InModuleScope PSCumulus {
+                Mock Get-CloudResource {
+                    $record = New-Object PSObject -Property @{
+                        Name          = 'vm01'
+                        Provider      = 'Azure'
+                        ResourceGroup = 'rg-test'
+                        Id            = '/subscriptions/123/resourceGroups/rg-test/providers/Microsoft.Compute/virtualMachines/vm01'
+                    }
+                    $record.PSTypeNames.Insert(0, 'PSCumulus.CloudRecord')
+                    $record
+                }
+                Mock Set-AzureTag { @() }
+
+                Set-CloudTag -Path 'Azure:\rg-test\Instances\vm01' -Tags @{Environment = 'Dev' } -Confirm:$false
+
+                Should -Invoke Get-CloudResource -Times 1 -ParameterFilter { $Path -eq 'Azure:\rg-test\Instances\vm01' }
+                Should -Invoke Set-AzureTag -Times 1 -ParameterFilter {
+                    $ResourceId -eq '/subscriptions/123/resourceGroups/rg-test/providers/Microsoft.Compute/virtualMachines/vm01'
+                }
+            }
+        }
+
+        It 'Should tag every resource a kind-depth path resolves to' {
+            InModuleScope PSCumulus {
+                Mock Get-CloudResource {
+                    foreach ($name in 'vol-1', 'vol-2') {
+                        $record = New-Object PSObject -Property @{
+                            Name     = $name
+                            Provider = 'AWS'
+                            Id       = $name
+                            Region   = 'us-east-1'
+                        }
+                        $record.PSTypeNames.Insert(0, 'PSCumulus.CloudRecord')
+                        $record
+                    }
+                }
+                Mock Set-AWSTag { @() }
+
+                Set-CloudTag -Path 'AWS:\us-east-1\Disks' -Tags @{team = 'ops' } -Confirm:$false
+
+                Should -Invoke Set-AWSTag -Times 2
+            }
+        }
+
+        It 'Should support -WhatIf without calling any tag backend' {
+            InModuleScope PSCumulus {
+                Mock Get-CloudResource {
+                    $record = New-Object PSObject -Property @{
+                        Name          = 'vm01'
+                        Provider      = 'Azure'
+                        ResourceGroup = 'rg-test'
+                        Id            = '/id/vm01'
+                    }
+                    $record.PSTypeNames.Insert(0, 'PSCumulus.CloudRecord')
+                    $record
+                }
+                Mock Set-AzureTag { @() }
+
+                Set-CloudTag -Path 'Azure:\rg-test\Instances\vm01' -Tags @{Environment = 'Dev' } -WhatIf
+
+                Should -Invoke Set-AzureTag -Times 0
+            }
         }
     }
 

@@ -46,6 +46,7 @@ nav:
           - Get-CloudInstance: reference/commands/Get-CloudInstance.md
           - Get-CloudNetwork: reference/commands/Get-CloudNetwork.md
           - Get-CloudRegion: reference/commands/Get-CloudRegion.md
+          - Get-CloudResource: reference/commands/Get-CloudResource.md
           - Get-CloudStorage: reference/commands/Get-CloudStorage.md
           - Get-CloudTag: reference/commands/Get-CloudTag.md
           - Resolve-CloudPath: reference/commands/Resolve-CloudPath.md

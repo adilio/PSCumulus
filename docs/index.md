@@ -27,6 +27,7 @@ It keeps a small set of high-value cloud tasks consistent in the shell without p
 - `Get-CloudInstance`
 - `Get-CloudNetwork`
 - `Get-CloudRegion`
+- `Get-CloudResource`
 - `Get-CloudStorage`
 - `Get-CloudTag`
 - `Resolve-CloudPath`

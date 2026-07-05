@@ -22,6 +22,7 @@
         'Get-CloudInstance',
         'Get-CloudNetwork',
         'Get-CloudRegion',
+        'Get-CloudResource',
         'Get-CloudStorage',
         'Get-CloudTag',
         'Restart-CloudInstance',

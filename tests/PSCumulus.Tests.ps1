@@ -29,7 +29,7 @@ Describe 'PSCumulus module' {
 
         It 'exports exactly eighteen public functions' {
             $commands = Get-Command -Module PSCumulus
-            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 18
+            ($commands | Where-Object CommandType -eq 'Function').Count | Should -Be 19
         }
 
         It 'does not export variables' {

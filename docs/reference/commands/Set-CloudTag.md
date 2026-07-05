@@ -51,6 +51,12 @@ Set-CloudTag -Project <string> -Resource <string> -Tags <hashtable> [-Merge] [-W
  [<CommonParameters>]
 ```
 
+### Path
+
+```
+Set-CloudTag -Path <string> -Tags <hashtable> [-Merge] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
 ## ALIASES
 
 This cmdlet has the following aliases,
@@ -62,7 +68,8 @@ Set-CloudTag applies tags (Azure), tags (AWS), or labels (GCP) to cloud resource
 For Azure, you can specify a VM by Name/ResourceGroup or any resource by ResourceId.
 For AWS, provide the ResourceId and Region.
 For GCP, provide the Project and Resource.
-You can also pipe CloudRecord objects from other PSCumulus commands.
+You can also pipe CloudRecord objects from other PSCumulus commands, or address a
+resource by CloudPath with -Path (resolved through Get-CloudResource).
 
 ## EXAMPLES
 
@@ -95,6 +102,12 @@ Tags a GCP compute instance.
 Get-CloudDisk -Provider Azure | Set-CloudTag -Tags @{Encrypted='AES256'}
 
 Tags all Azure disks returned from Get-CloudDisk (piped input).
+
+### EXAMPLE 6
+
+Set-CloudTag -Path 'Azure:\prod-rg\Instances\web-01' -Tags @{Environment='Prod'}
+
+Resolves the CloudPath through Get-CloudResource and tags the matching resource.
 
 ## PARAMETERS
 
@@ -194,6 +207,27 @@ SupportsWildcards: false
 Aliases: []
 ParameterSets:
 - Name: AzureByName
+  Position: Named
+  IsRequired: true
+  ValueFromPipeline: false
+  ValueFromPipelineByPropertyName: false
+  ValueFromRemainingArguments: false
+DontShow: false
+AcceptedValues: []
+HelpMessage: ''
+```
+
+### -Path
+
+A CloudPath addressing the resource(s) to tag (resolved via Get-CloudResource).
+
+```yaml
+Type: System.String
+DefaultValue: ''
+SupportsWildcards: false
+Aliases: []
+ParameterSets:
+- Name: Path
   Position: Named
   IsRequired: true
   ValueFromPipeline: false

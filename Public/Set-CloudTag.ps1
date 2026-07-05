@@ -7,7 +7,8 @@ function Set-CloudTag {
             Set-CloudTag applies tags (Azure), tags (AWS), or labels (GCP) to cloud resources.
             For Azure, you can specify a VM by Name/ResourceGroup or any resource by ResourceId.
             For AWS, provide the ResourceId and Region. For GCP, provide the Project and Resource.
-            You can also pipe CloudRecord objects from other PSCumulus commands.
+            You can also pipe CloudRecord objects from other PSCumulus commands, or address a
+            resource by CloudPath with -Path (resolved through Get-CloudResource).
 
         .EXAMPLE
             Set-CloudTag -Name 'vm01' -ResourceGroup 'rg-test' -Tags @{Environment='Dev'; Owner='TeamA'}
@@ -33,6 +34,11 @@ function Set-CloudTag {
             Get-CloudDisk -Provider Azure | Set-CloudTag -Tags @{Encrypted='AES256'}
 
             Tags all Azure disks returned from Get-CloudDisk (piped input).
+
+        .EXAMPLE
+            Set-CloudTag -Path 'Azure:\prod-rg\Instances\web-01' -Tags @{Environment='Prod'}
+
+            Resolves the CloudPath through Get-CloudResource and tags the matching resource.
     #>
     [CmdletBinding(
         DefaultParameterSetName = 'Piped',
@@ -72,6 +78,11 @@ function Set-CloudTag {
         [Parameter(Mandatory, ValueFromPipeline = $true, ParameterSetName = 'Piped')]
         [psobject]$InputObject,
 
+        # A CloudPath addressing the resource(s) to tag (resolved via Get-CloudResource).
+        [Parameter(Mandatory, ParameterSetName = 'Path')]
+        [ValidateNotNullOrEmpty()]
+        [string]$Path,
+
         # The tags or labels to apply.
         [Parameter(Mandatory)]
         [hashtable]$Tags,
@@ -82,10 +93,48 @@ function Set-CloudTag {
 
     begin {
         $results = [System.Collections.Generic.List[psobject]]::new()
+
+        $mapRecordToTarget = {
+            param($record)
+
+            if (-not $record.Provider -or -not $record.Name) {
+                throw [System.ArgumentException]::new(
+                    "Set-CloudTag requires a PSCumulus CloudRecord, or any object with non-null Provider and Name properties."
+                )
+            }
+
+            $target = @{
+                Provider = $record.Provider
+                Name     = $record.Name
+                InputObj = $record
+            }
+
+            switch ($record.Provider) {
+                'Azure' {
+                    $target.ResourceGroup = $record.ResourceGroup
+                    $target.ResourceId = $record.Id
+                }
+                'AWS' {
+                    $target.ResourceId = if ($record.PSObject.Properties['InstanceId'] -and $record.InstanceId) {
+                        $record.InstanceId
+                    } else {
+                        $record.Id
+                    }
+                    $target.Region = $record.Region
+                }
+                'GCP' {
+                    $target.Project = $record.Project
+                    $target.Resource = $record.Id
+                }
+            }
+
+            $target
+        }
     }
 
     process {
         $targetInfo = $null
+        $targetInfos = [System.Collections.Generic.List[hashtable]]::new()
 
         switch ($PSCmdlet.ParameterSetName) {
             'AzureByName' {
@@ -124,35 +173,23 @@ function Set-CloudTag {
             }
 
             'Piped' {
-                if (-not $InputObject.Provider -or -not $InputObject.Name) {
-                    throw [System.ArgumentException]::new(
-                        "Set-CloudTag requires a PSCumulus CloudRecord, or any object with non-null Provider and Name properties."
-                    )
-                }
+                $targetInfo = & $mapRecordToTarget $InputObject
+            }
 
-                $targetInfo = @{
-                    Provider   = $InputObject.Provider
-                    Name       = $InputObject.Name
-                    InputObj   = $InputObject
-                }
-                switch ($InputObject.Provider) {
-                    'Azure' {
-                        $targetInfo.ResourceGroup = $InputObject.ResourceGroup
-                        $targetInfo.ResourceId = $InputObject.Id
-                    }
-                    'AWS' {
-                        $targetInfo.ResourceId = $InputObject.InstanceId
-                        $targetInfo.Region = $InputObject.Region
-                    }
-                    'GCP' {
-                        $targetInfo.Project = $InputObject.Project
-                        $targetInfo.Resource = $InputObject.Id
+            'Path' {
+                foreach ($record in @(Get-CloudResource -Path $Path)) {
+                    if ($record) {
+                        $targetInfos.Add((& $mapRecordToTarget $record))
                     }
                 }
             }
         }
 
         if ($targetInfo) {
+            $targetInfos.Add($targetInfo)
+        }
+
+        foreach ($targetInfo in $targetInfos) {
             $targetDisplay = switch ($targetInfo.Provider) {
                 'Azure' {
                     if ($targetInfo.ResourceGroup) {
