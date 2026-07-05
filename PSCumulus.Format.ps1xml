@@ -172,6 +172,78 @@
       </ListControl>
     </View>
 
+    <!-- PSCumulus.CloudRecord.Snapshot.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Snapshot.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureSnapshotRecord</TypeName>
+        <TypeName>PSCumulus.AWSSnapshotRecord</TypeName>
+        <TypeName>PSCumulus.GCPSnapshotRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>Size</PropertyName></ListItem>
+              <ListItem><PropertyName>SizeGB</PropertyName></ListItem>
+              <ListItem><PropertyName>SourceDiskId</PropertyName></ListItem>
+              <ListItem><PropertyName>CreatedAt</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
+    <!-- PSCumulus.CloudRecord.Image.Detailed -->
+    <View>
+      <Name>PSCumulus.CloudRecord.Image.Detailed</Name>
+      <ViewSelectedBy>
+        <TypeName>PSCumulus.AzureImageRecord</TypeName>
+        <TypeName>PSCumulus.AWSImageRecord</TypeName>
+        <TypeName>PSCumulus.GCPImageRecord</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>Provider</PropertyName></ListItem>
+              <ListItem><PropertyName>Region</PropertyName></ListItem>
+              <ListItem><Label>State</Label><PropertyName>Status</PropertyName></ListItem>
+              <ListItem><PropertyName>ImageId</PropertyName></ListItem>
+              <ListItem><PropertyName>Publisher</PropertyName></ListItem>
+              <ListItem><PropertyName>OsType</PropertyName></ListItem>
+              <ListItem><PropertyName>CreatedAt</PropertyName></ListItem>
+              <ListItem>
+                <Label>Tags</Label>
+                <ScriptBlock>
+                  if ($_.Tags) {
+                    ($_.Tags.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join '; '
+                  } else {
+                    ''
+                  }
+                </ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
     <!-- PSCumulus.CloudRecord.Storage.Detailed -->
     <View>
       <Name>PSCumulus.CloudRecord.Storage.Detailed</Name>

@@ -28,6 +28,7 @@ Set-Alias -Name conc  -Value Connect-Cloud -Scope Script
 Set-Alias -Name fcr   -Value Find-CloudResource -Scope Script
 Set-Alias -Name gcont -Value Get-CloudContext -Scope Script
 Set-Alias -Name gcin  -Value Get-CloudInstance -Scope Script
+Set-Alias -Name gcsn  -Value Get-CloudSnapshot -Scope Script
 Set-Alias -Name sci   -Value Start-CloudInstance -Scope Script
 Set-Alias -Name tci   -Value Test-CloudConnection -Scope Script
 Set-Alias -Name rci   -Value Restart-CloudInstance -Scope Script

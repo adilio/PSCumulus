@@ -45,6 +45,10 @@ Gets managed disks from a selected cloud provider.
 
 Gets serverless functions from a selected cloud provider.
 
+### [Get-CloudImage](commands/Get-CloudImage.md)
+
+Gets OS images from a selected cloud provider.
+
 ### [Get-CloudInstance](commands/Get-CloudInstance.md)
 
 Gets compute instances from a selected cloud provider.
@@ -60,6 +64,10 @@ Lists supported regions for each cloud provider.
 ### [Get-CloudResource](commands/Get-CloudResource.md)
 
 Resolves a CloudPath to live cloud resources.
+
+### [Get-CloudSnapshot](commands/Get-CloudSnapshot.md)
+
+Gets disk snapshots from a selected cloud provider.
 
 ### [Get-CloudStorage](commands/Get-CloudStorage.md)
 

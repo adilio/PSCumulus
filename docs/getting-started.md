@@ -108,6 +108,7 @@ These aliases are exported for terminal convenience:
 | `fcr` | `Find-CloudResource` |
 | `gcont` | `Get-CloudContext` |
 | `gcin` | `Get-CloudInstance` |
+| `gcsn` | `Get-CloudSnapshot` |
 | `rci` | `Restart-CloudInstance` |
 | `sci` | `Start-CloudInstance` |
 | `sct` | `Set-CloudTag` |

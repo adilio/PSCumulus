@@ -35,6 +35,8 @@ COMMANDS
     Get-CloudNetwork
     Get-CloudRegion
     Get-CloudResource
+    Get-CloudSnapshot
+    Get-CloudImage
     Get-CloudStorage
     Get-CloudTag
     Resolve-CloudPath

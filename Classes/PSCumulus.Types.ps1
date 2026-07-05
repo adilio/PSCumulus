@@ -1299,3 +1299,246 @@ class GCPTagRecord : CloudRecord {
         return $record
     }
 }
+
+# Azure Snapshot Record
+class AzureSnapshotRecord : CloudRecord {
+    [string]$ResourceGroup
+    [string]$SourceDiskId
+    [int]$SizeGB
+    [string]$Sku
+
+    AzureSnapshotRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureSnapshotRecord')
+    }
+
+    static [AzureSnapshotRecord] FromAzSnapshot([object]$snapshot) {
+        $record = [AzureSnapshotRecord]::new()
+        $sourceId = if ($snapshot.CreationData -and $snapshot.CreationData.SourceResourceId) {
+            $snapshot.CreationData.SourceResourceId
+        } else {
+            $null
+        }
+        $skuName = if ($snapshot.Sku -and $snapshot.Sku.Name) { $snapshot.Sku.Name } else { $null }
+
+        $record.Kind = 'Snapshot'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $snapshot.Name
+        $record.Region = $snapshot.Location
+        $record.Status = if ($snapshot.ProvisioningState) { $snapshot.ProvisioningState.ToString() } else { $null }
+        $record.Size = "$($snapshot.DiskSizeGB) GB"
+        $record.CreatedAt = $snapshot.TimeCreated
+        $record.ResourceGroup = $snapshot.ResourceGroupName
+        $record.SourceDiskId = $sourceId
+        $record.SizeGB = $snapshot.DiskSizeGB
+        $record.Sku = $skuName
+        $record.Metadata = @{
+            ResourceGroup = $snapshot.ResourceGroupName
+            SourceDiskId  = $sourceId
+            SizeGB        = $snapshot.DiskSizeGB
+            Sku           = $skuName
+            Incremental   = $snapshot.Incremental
+        }
+
+        return $record
+    }
+}
+
+# AWS Snapshot Record
+class AWSSnapshotRecord : CloudRecord {
+    [string]$SnapshotId
+    [string]$SourceDiskId
+    [int]$SizeGB
+
+    AWSSnapshotRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSSnapshotRecord')
+    }
+
+    static [AWSSnapshotRecord] FromEC2Snapshot([object]$snapshot) {
+        $record = [AWSSnapshotRecord]::new()
+        $nameTag = $snapshot.Tags |
+            Where-Object { $_.Key -eq 'Name' } |
+            Select-Object -First 1 -ExpandProperty Value
+
+        $resolvedName = if ([string]::IsNullOrWhiteSpace($nameTag)) {
+            $snapshot.SnapshotId
+        } else {
+            $nameTag
+        }
+
+        $nativeStatus = if ($snapshot.State -and $snapshot.State.Value) { $snapshot.State.Value } else { $null }
+
+        $record.Kind = 'Snapshot'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $resolvedName
+        $record.Status = $nativeStatus
+        $record.Size = "$($snapshot.VolumeSize) GB"
+        $record.CreatedAt = $snapshot.StartTime
+        $record.SnapshotId = $snapshot.SnapshotId
+        $record.SourceDiskId = $snapshot.VolumeId
+        $record.SizeGB = $snapshot.VolumeSize
+        $record.Metadata = @{
+            SnapshotId   = $snapshot.SnapshotId
+            SourceDiskId = $snapshot.VolumeId
+            SizeGB       = $snapshot.VolumeSize
+            Description  = $snapshot.Description
+            OwnerId      = $snapshot.OwnerId
+        }
+
+        return $record
+    }
+}
+
+# GCP Snapshot Record
+class GCPSnapshotRecord : CloudRecord {
+    [string]$Project
+    [string]$SourceDiskId
+    [int]$SizeGB
+
+    GCPSnapshotRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPSnapshotRecord')
+    }
+
+    static [GCPSnapshotRecord] FromGCloudJson([object]$snapshot, [string]$project) {
+        $record = [GCPSnapshotRecord]::new()
+        $sourceDisk = if ($snapshot.sourceDisk) { $snapshot.sourceDisk } else { $null }
+
+        $createdAt = $null
+        if (-not [string]::IsNullOrWhiteSpace($snapshot.creationTimestamp)) {
+            $createdAt = [datetime]::Parse($snapshot.creationTimestamp)
+        }
+
+        $record.Kind = 'Snapshot'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $snapshot.name
+        $record.Status = $snapshot.status
+        $record.Size = "$($snapshot.diskSizeGb) GB"
+        $record.CreatedAt = $createdAt
+        $record.Project = $project
+        $record.SourceDiskId = $sourceDisk
+        $record.SizeGB = [int]$snapshot.diskSizeGb
+        $record.Metadata = @{
+            Project      = $project
+            SourceDiskId = $sourceDisk
+            SizeGB       = $snapshot.diskSizeGb
+            StorageBytes = $snapshot.storageBytes
+        }
+
+        return $record
+    }
+}
+
+# Azure Image Record
+class AzureImageRecord : CloudRecord {
+    [string]$ResourceGroup
+    [string]$ImageId
+    [string]$Publisher
+    [string]$OsType
+
+    AzureImageRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AzureImageRecord')
+    }
+
+    static [AzureImageRecord] FromAzImage([object]$image) {
+        $record = [AzureImageRecord]::new()
+        $resolvedOsType = if ($image.StorageProfile -and $image.StorageProfile.OsDisk -and $image.StorageProfile.OsDisk.OsType) {
+            $image.StorageProfile.OsDisk.OsType.ToString()
+        } else {
+            $null
+        }
+
+        $record.Kind = 'Image'
+        $record.Provider = [CloudProvider]::Azure.ToString()
+        $record.Name = $image.Name
+        $record.Region = $image.Location
+        $record.Status = if ($image.ProvisioningState) { $image.ProvisioningState.ToString() } else { $null }
+        $record.ResourceGroup = $image.ResourceGroupName
+        $record.ImageId = $image.Id
+        $record.OsType = $resolvedOsType
+        $record.Metadata = @{
+            ResourceGroup        = $image.ResourceGroupName
+            ImageId              = $image.Id
+            OsType               = $resolvedOsType
+            SourceVirtualMachine = if ($image.SourceVirtualMachine) { $image.SourceVirtualMachine.Id } else { $null }
+        }
+
+        return $record
+    }
+}
+
+# AWS Image Record
+class AWSImageRecord : CloudRecord {
+    [string]$ImageId
+    [string]$Publisher
+    [string]$OsType
+
+    AWSImageRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.AWSImageRecord')
+    }
+
+    static [AWSImageRecord] FromEC2Image([object]$image) {
+        $record = [AWSImageRecord]::new()
+
+        $createdAt = $null
+        if (-not [string]::IsNullOrWhiteSpace($image.CreationDate)) {
+            $createdAt = [datetime]::Parse($image.CreationDate)
+        }
+
+        $nativeStatus = if ($image.State -and $image.State.Value) { $image.State.Value } else { $null }
+
+        $record.Kind = 'Image'
+        $record.Provider = [CloudProvider]::AWS.ToString()
+        $record.Name = $image.Name
+        $record.Status = $nativeStatus
+        $record.CreatedAt = $createdAt
+        $record.ImageId = $image.ImageId
+        $record.Publisher = $image.OwnerId
+        $record.OsType = $image.PlatformDetails
+        $record.Metadata = @{
+            ImageId     = $image.ImageId
+            Publisher   = $image.OwnerId
+            OsType      = $image.PlatformDetails
+            Description = $image.Description
+        }
+
+        return $record
+    }
+}
+
+# GCP Image Record
+class GCPImageRecord : CloudRecord {
+    [string]$Project
+    [string]$ImageId
+    [string]$Publisher
+    [string]$OsType
+
+    GCPImageRecord() : base() {
+        $this.PSObject.TypeNames.Insert(0, 'PSCumulus.GCPImageRecord')
+    }
+
+    static [GCPImageRecord] FromGCloudJson([object]$image, [string]$project) {
+        $record = [GCPImageRecord]::new()
+
+        $createdAt = $null
+        if (-not [string]::IsNullOrWhiteSpace($image.creationTimestamp)) {
+            $createdAt = [datetime]::Parse($image.creationTimestamp)
+        }
+
+        $record.Kind = 'Image'
+        $record.Provider = [CloudProvider]::GCP.ToString()
+        $record.Name = $image.name
+        $record.Status = $image.status
+        $record.Size = "$($image.diskSizeGb) GB"
+        $record.CreatedAt = $createdAt
+        $record.Project = $project
+        $record.ImageId = "$($image.id)"
+        $record.Publisher = $image.family
+        $record.Metadata = @{
+            Project    = $project
+            ImageId    = "$($image.id)"
+            Family     = $image.family
+            SourceDisk = $image.sourceDisk
+        }
+
+        return $record
+    }
+}

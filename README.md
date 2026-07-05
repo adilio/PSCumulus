@@ -21,7 +21,7 @@ The module is evidence for an argument. The argument is that a deliberately narr
 
 ## The public surface
 
-Nineteen commands. Verb-noun, normalized output, no provider marketing in the noun.
+Twenty-one commands. Verb-noun, normalized output, no provider marketing in the noun.
 
 | Command | Intent |
 |---|---|
@@ -36,6 +36,8 @@ Nineteen commands. Verb-noun, normalized output, no provider marketing in the no
 | `Get-CloudNetwork` | Virtual networks / VPCs (supports `-All`, `-Status`, `-Tag`, `-Name`, `-Detailed` filters) |
 | `Get-CloudRegion` | List supported regions for Azure, AWS, or GCP |
 | `Get-CloudResource` | Resolve a CloudPath to live, normalized cloud resources |
+| `Get-CloudSnapshot` | Normalized disk-snapshot inventory across Azure, AWS, and GCP |
+| `Get-CloudImage` | Normalized OS image / AMI inventory across Azure, AWS, and GCP |
 | `Get-CloudStorage` | Storage accounts / buckets (supports `-All`, `-Status`, `-Tag`, `-Name`, `-Detailed` filters) |
 | `Get-CloudTag` | Tags / labels (supports `-All`, subscription-scoped for Azure) |
 | `Resolve-CloudPath` | Parse a cloud path string into a structured CloudPath object |

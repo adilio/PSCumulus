@@ -28,6 +28,8 @@ The module standardizes a small set of high-value commands for interactive work 
 - `Get-CloudNetwork`
 - `Get-CloudRegion`
 - `Get-CloudResource`
+- `Get-CloudSnapshot`
+- `Get-CloudImage`
 - `Get-CloudStorage`
 - `Get-CloudTag`
 - `Resolve-CloudPath`
@@ -45,6 +47,7 @@ The module standardizes a small set of high-value commands for interactive work 
 | `fcr` | `Find-CloudResource` |
 | `gcont` | `Get-CloudContext` |
 | `gcin` | `Get-CloudInstance` |
+| `gcsn` | `Get-CloudSnapshot` |
 | `rci` | `Restart-CloudInstance` |
 | `sci` | `Start-CloudInstance` |
 | `sct` | `Set-CloudTag` |

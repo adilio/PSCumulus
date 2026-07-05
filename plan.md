@@ -73,7 +73,18 @@ v0.6 (see archived item 1.3). Stage 4 closes this gap.
   provider (mocked backends), `Set-CloudTag -Path <path>` tags through it, tests
   green, analyzer clean, docs regenerated.
 
-## S2 — revive `Get-CloudSnapshot` / `Get-CloudImage`
+## ✅ S2 — revive `Get-CloudSnapshot` / `Get-CloudImage` — DONE
+
+> Shipped: six record classes (Azure/AWS/GCP × Snapshot/Image) with normalized
+> SourceDiskId/SizeGB (snapshots) and ImageId/Publisher/OsType (images), six
+> `Get-*Data` backends (AWS listings restricted to self-owned; GCP images
+> exclude standard public images and pin `--project`), both public commands
+> matching the `Get-Cloud*` UX (`-All`/`-Name`/`-Tag`/`-Detailed`, no
+> `-Status` — snapshots/images share no stable status vocabulary), detailed
+> format views, `gcsn` alias re-added, manifest at 21 functions, all docs
+> surfaces synced. 727 tests green (37 new), analyzer clean.
+
+## S2 (original spec) — revive `Get-CloudSnapshot` / `Get-CloudImage`
 
 Cut from v0.6 (commands unimplemented, record classes later removed — see the archived
 scope note). Snapshots are the most honestly-normalizable concept not yet covered:
