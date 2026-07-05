@@ -36,7 +36,7 @@ The corrected direction became:
 
 ## Current Status
 
-PSCumulus is at **v0.6.1**. Stages 1, 2, 3, and the v0.6.0 hardening pass are complete. v0.6.1 does not change runtime command behavior; it updates the release notes and public documentation so the story behind the hardening pass is easier to understand.
+PSCumulus is at **v0.7.0**. Stages 1 through 4 are complete: v0.7.0 adds `Get-CloudResource` path navigation, restores `Set-CloudTag -Path` on top of it, and revives `Get-CloudSnapshot` / `Get-CloudImage` — the pieces deliberately held back from v0.6.0 until they could carry the module's normalization promise.
 
 The public surface is intentionally finite:
 

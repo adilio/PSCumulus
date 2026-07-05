@@ -1,6 +1,6 @@
 @{
     RootModule        = 'PSCumulus.psm1'
-    ModuleVersion     = '0.6.1'
+    ModuleVersion     = '0.7.0'
     GUID              = '9e7bb15e-7fc3-47ec-a6f9-86a8b4478fd7'
     Author            = 'Adil Leghari'
     CompanyName       = 'Open Source'
@@ -55,6 +55,12 @@
             ProjectUri   = 'https://github.com/adilio/PSCumulus'
             LicenseUri   = 'https://opensource.org/licenses/MIT'
             ReleaseNotes = @'
+0.7.0
+- Stage 4 navigation: added Get-CloudResource, resolving CloudPaths to live normalized records across Azure, AWS, and GCP.
+- Restored Set-CloudTag -Path, now genuinely backed by Get-CloudResource (removed as half-wired in v0.6.0).
+- Revived Get-CloudSnapshot and Get-CloudImage with normalized records, self-owned listings on AWS, project-scoped images on GCP, and the gcsn alias.
+- Added integration-test scaffolding under tests/Integration, skipped by default until throwaway cloud accounts exist.
+
 0.6.1
 - Updated the evolution narrative to explain the v0.6.0 hardening pass, current staged roadmap, and the why behind the cmdlet-first architecture.
 - Updated the strategy documentation with all 18 public commands, the Stage 0 foundation, and the Stage 3.5 hardening phase.
