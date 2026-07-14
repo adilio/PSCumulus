@@ -43,11 +43,18 @@ try {
     New-Item -ItemType Directory -Path $commandOutputRoot -Force | Out-Null
     New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
 
-    if (-not (Get-Module -ListAvailable -Name Microsoft.PowerShell.PlatyPS)) {
-        Install-Module Microsoft.PowerShell.PlatyPS -Scope CurrentUser -Force -AllowClobber
+    # Pinned: PlatyPS releases change generated-markdown details (1.0.2 drops
+    # [<CommonParameters>] from syntax blocks), which breaks the CI drift
+    # check against the committed docs. Bump deliberately and regenerate
+    # the reference docs in the same commit.
+    $platyPsVersion = '1.0.1'
+    $platyPs = Get-Module -ListAvailable -Name Microsoft.PowerShell.PlatyPS |
+        Where-Object Version -eq $platyPsVersion
+    if (-not $platyPs) {
+        Install-Module Microsoft.PowerShell.PlatyPS -RequiredVersion $platyPsVersion -Scope CurrentUser -Force -AllowClobber
     }
 
-    Import-Module Microsoft.PowerShell.PlatyPS -Force
+    Import-Module Microsoft.PowerShell.PlatyPS -RequiredVersion $platyPsVersion -Force
 
     # Load classes first before importing the module
     $classesPath = Join-Path $repoRoot 'Classes'
