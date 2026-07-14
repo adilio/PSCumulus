@@ -44,7 +44,9 @@ passed — there's no deadline. This is evolve-the-module work.
 > `Invoke-CloudProvider` to the `Get-*Data` backends (instance backends get
 > `-Name` server-side; other kinds filter client-side). Kind-depth paths list
 > the scope; resource-depth paths return one record or a non-terminating
-> ObjectNotFound error; Tags kind directs to `Get-CloudTag`. `Set-CloudTag
+> ObjectNotFound error; Tags-kind paths throw an ArgumentException telling
+> the user to invoke `Get-CloudTag` instead (they are not auto-forwarded).
+> `Set-CloudTag
 > -Path` is restored, backed by `Get-CloudResource`, sharing one
 > record→target mapping with the Piped branch (which also gained an
 > AWS Id fallback for non-instance records). Exported, docs regenerated, all
