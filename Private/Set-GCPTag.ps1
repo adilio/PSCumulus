@@ -23,7 +23,16 @@ function Set-GCPTag {
         -InstallHint "Install the Google Cloud SDK: https://cloud.google.com/sdk/docs/install"
 
     if ($Merge) {
-        $existingLabels = Invoke-GCloudJson -Arguments @('resource-manager', 'tags', 'list', '--filter', "resource:$Resource", '--format=json') -ErrorAction SilentlyContinue
+        # Best-effort read of existing labels. Invoke-GCloudJson signals failure
+        # with a terminating throw, which -ErrorAction SilentlyContinue does not
+        # suppress, so catch it explicitly and fall back to the supplied tags.
+        $existingLabels = $null
+        try {
+            $existingLabels = Invoke-GCloudJson -Arguments @('resource-manager', 'tags', 'list', '--filter', "resource:$Resource", '--format=json')
+        }
+        catch {
+            Write-Verbose "Could not list existing labels for '$Resource'; proceeding with supplied tags only. $($_.Exception.Message)"
+        }
 
         if ($existingLabels) {
             foreach ($binding in $existingLabels) {

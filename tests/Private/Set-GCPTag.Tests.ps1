@@ -174,5 +174,21 @@ Describe 'Set-GCPTag' {
                 { Set-GCPTag -Project 'test-project' -Resource 'test-resource' -Tags @{Key = 'Value'} -ErrorAction Stop } | Should -Throw
             }
         }
+
+        It 'Should continue and still create tags when the merge label read fails' {
+            InModuleScope PSCumulus {
+                Mock -CommandName Assert-CommandAvailable
+                # Fail the "list" read, succeed on "create". The merge read is
+                # best-effort, so the overall call must not throw.
+                Mock -CommandName Invoke-GCloudJson -MockWith {
+                    param($Arguments)
+                    if ($Arguments -contains 'list') { throw 'permission denied listing tags' }
+                    @()
+                }
+
+                { Set-GCPTag -Project 'test-project' -Resource 'test-resource' -Tags @{Key = 'Value'} -Merge } | Should -Not -Throw
+                Should -Invoke -CommandName Invoke-GCloudJson -ParameterFilter { $Arguments -contains 'create' } -Times 1
+            }
+        }
     }
 }
